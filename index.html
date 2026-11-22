@@ -1301,6 +1301,70 @@ const EV=[
  {t:"Irme a dormir con hambre.",fx:{s:5,h:-3},r:"Sueñas con un kebab gigante que canta tus canciones. Mejor que tú."},
  {t:"Subirme al mostrador a cantar.",fx:{h:15,o:-5,s:-5},r:"Concierto improvisado para seis trasnochadores y un repartidor. Grabado en vertical. Tu mejor directo."}]},
 
+/* ---------- En el cielo: San Pedro (un diálogo distinto en cada muerte) ---------- */
+{id:"pedro_mision",chain:1,st:[1,2,3,4],c:"pedro",q:"Así que tú eres {name}. Escucha bien, que solo lo diré una vez. El mundo va a ser destruido. No sé cuándo ni cómo: la profecía tiene una letra horrible. Solo sé que se salvará si llegas a ser una leyenda. Por eso no puedes morirte. Bueno, puedes, pero yo te devolveré. Una y otra vez.",opts:[
+ {t:"¿Por qué yo?",r:"«Eso mismo pregunté yo cuando me dieron tu expediente. Ahora baja. Y vigila al encapuchado»."},
+ {t:"¿El encapuchado? ¿El de los pitillos?",r:"San Pedro se pone serio: «No fumes nada más que te dé. Y no le pierdas de vista». Te empuja suavemente hacia una nube con forma de tobogán."},
+ {t:"¿Y si prefiero quedarme aquí?",r:"«Aquí no hay wifi ni bares». Bajas por voluntad propia."}]},
+{id:"pedro_profecia",chain:1,st:[1,2,3,4],c:"pedro",q:"He conseguido leer otro trozo de la profecía. Dice: «Y la voz desafinará en el momento justo, y el mundo contendrá el aliento». Los teólogos creen que eres tú. Los musicólogos, que no.",opts:[
+ {t:"¿Qué momento justo?",r:"«Si lo supiera, no estaría aquí repartiendo resurrecciones como churros». Te da un sello en la mano y te manda abajo."},
+ {t:"Yo no desafino.",r:"San Pedro pone una grabación tuya de 2019. Te callas. Bajas en silencio."},
+ {t:"¿Puedo leer la profecía?",r:"Te la enseña. Es una servilleta del Bar Pepe con una mancha de calamar. No entiendes nada. Él tampoco."}]},
+{id:"pedro_apuestas",chain:1,st:[1,2,3,4],c:"pedro",q:"Tu muerte de hoy la ha visto todo el cielo en pantalla gigante. Hay apuestas sobre la siguiente. El arcángel Gabriel lleva ganadas veinte nubes.",opts:[
+ {t:"¿A qué ha apostado?",r:"«A que la próxima vez te mata tu cuñado. Paga a cuarenta a uno». Te despide con un guiño preocupante."},
+ {t:"Quiero apostar yo.",r:"«Los muertos no apuestan. Bueno, los muertos de verdad. Tú eres un caso administrativo». Sello, firma y abajo."},
+ {t:"Qué vergüenza.",r:"«Peor fue lo de Elvis. Venga, para abajo, que hay cola»."}]},
+{id:"pedro_encapuchado",chain:1,st:[1,2,3,4],c:"pedro",q:"El encapuchado ha vuelto a pasar por aquí. Siempre pregunta por ti. Nunca se queda a tomar café. Huele a incienso y a gasolina, y me deja la nube perdida de ceniza.",opts:[
+ {t:"¿Qué quiere de mí?",r:"«Lo mismo que yo, creo. Pero con más prisa». San Pedro barre la ceniza mientras te desvaneces."},
+ {t:"¿Es peligroso?",r:"San Pedro tarda demasiado en contestar «no». Bajas con un mal presentimiento."},
+ {t:"¿Tiene cara?",r:"«Tiene. Pero no se la enseña a cualquiera. A ti te la enseñará cuando estés preparad[o|a]»."}]},
+{id:"pedro_kira",chain:1,st:[1,2,3,4],c:"pedro",q:"Te voy a contar algo que no debería: en el archivo hay otro expediente casi tan gordo como el tuyo. El de Kira Star. Ella también tiene que ver con el fin del mundo. No sé si para salvarlo o para provocarlo.",opts:[
+ {t:"¡Lo sabía!",r:"«No lo sabías. Pero te dejo creerlo, que hoy has tenido un mal día»."},
+ {t:"¿Estamos en el mismo bando?",r:"«La profecía no lo aclara. Tiene muy mala letra». Cierra el archivo de golpe. Del cajón sale purpurina."},
+ {t:"¿Puedo cargármela yo primero?",r:"«No. Y te he visto pensarlo. Apunto tres avemarías». Te pone una multa celestial y te manda abajo."}]},
+{id:"pedro_cancion",chain:1,st:[1,2,3,4],c:"pedro",q:"Arriba están nerviosos. Dicen que el fin del mundo empezará con una canción. Una canción que todavía no se ha escrito. Unos creen que la escribirás tú. Otros, que tu cuñado.",opts:[
+ {t:"¿Mi cuñado?",r:"«Ya. A mí también me da miedo». San Pedro se santigua dos veces."},
+ {t:"Entonces no la escribo.",r:"«Ojalá fuera tan fácil. Las canciones se escriben solas cuando quieren»."},
+ {t:"¿Y si la canto mal a propósito?",r:"San Pedro te mira un buen rato. «Eso… podría funcionar. Olvida que te lo he dicho»."}]},
+{id:"pedro_mudanza",chain:1,st:[1,2,3,4],c:"pedro",q:"Perdona el desorden, estamos de mudanza. Si el mundo se acaba, el cielo cierra: sin preaviso y sin indemnización. Así que, por la cuenta que nos trae a todos, intenta no morirte tan a menudo.",opts:[
+ {t:"Lo intentaré.",r:"«Eso dijiste la última vez. Y la anterior. Y la anterior». Te da una palmadita y caes."},
+ {t:"¿Adónde os mudáis?",r:"«A un bajo en el purgatorio. Sin ascensor». Suspira. Tú también."},
+ {t:"¿Necesitáis ayuda con las cajas?",r:"Cargas tres cajas de aureolas. Al despertar abajo, aún te duelen los brazos. Agujetas celestiales."}]},
+
+/* ---------- De vuelta en la Tierra: quién te recibe ---------- */
+{id:"rev_manolo",chain:1,st:[1,2,3,4],c:"manolo",q:"Te puse una vela en la barra, al lado de los mejillones. Ya decía yo que esos mejillones se movían.",opts:[
+ {t:"Comerme un mejillón por los viejos tiempos.",fx:{s:-5,o:5},r:"Sobrevives. Esta vez. Manolo te mira con orgullo y miedo a partes iguales."},
+ {t:"Un café, Manolo.",fx:{s:3},r:"Te lo pone con la vela todavía encendida al lado. No la apaga. «Por si acaso»."},
+ {t:"Apagar la vela.",fx:{o:-3,h:3},r:"Manolo la vuelve a encender en cuanto te giras."}]},
+{id:"rev_toni",chain:1,st:[1,2,3,4],c:"toni",q:"Hombre, el muerto. Ya había repartido a tus clientes… digo, tus cosas. ¿Algo para celebrar que vuelves?",opts:[
+ {t:"Hoy no, Toni.",fx:{s:5},r:"Toni asiente con respeto. «La resurrección es mejor sin aditivos», concede."},
+ {t:"Un poquito, para el susto.",fx:{h:5,s:-5},f:{drogas:1},r:"Un poquito se convierte en una noche entera. Resucitar da mucha sed."},
+ {t:"Contarle lo del cielo.",fx:{o:-3},r:"Toni asiente: «Yo también he estado. Pero en el de las rebajas»."}]},
+{id:"rev_salas",chain:1,st:[1,2,3,4],c:"salas",q:"Te declaré muert[o|a] a las 3:47. Ahora tengo que explicarle a mi jefe por qué estás de pie en mi consulta.",opts:[
+ {t:"Pedirle un chequeo.",fx:{s:10,d:-5},r:"Todo bien, salvo que no tienes pulso los jueves. Te recomienda no preocuparte. Ella sí se preocupa."},
+ {t:"Ofrecerle mi caso para un congreso.",fx:{h:10},r:"La Dra. Salas presenta «El paciente que no se quedaba muerto». Ovación. Te usan de diapositiva."},
+ {t:"Irme sin pagar la consulta.",fx:{d:5,o:-5},r:"Te persigue por el pasillo con el talonario. Corre más rápido que tú."}]},
+{id:"rev_paco",chain:1,st:[1,2,3,4],c:"paco",q:"¡Tengo la exclusiva de tu resurrección! ¿Posas, o la publico con tu cara de recién resucitad[o|a]?",opts:[
+ {t:"Posar con dignidad.",fx:{h:10},r:"Portada: «HA VUELTO». La foto es buena. Sales con un brillo celestial que no sabes explicar."},
+ {t:"Pagarle para que no la publique.",fx:{d:-10},r:"Te vende los negativos. Y una copia de seguridad «por si vuelves a morirte»."},
+ {t:"Hacerme el muerto otra vez.",fx:{h:5,o:-3},r:"Te quedas quiet[o|a] en la acera. Paco te hace una foto igualmente. Titular: «Ni resucitar sabe»."}]},
+{id:"rev_tito",chain:1,st:[1,2,3,4],c:"tito",q:"¡Hombre! ¡Ya decía yo que tú no te ibas sin pagar la última ronda!",opts:[
+ {t:"Pagar la ronda.",fx:{d:-5,o:5},r:"Pagas la ronda. Y la de tu funeral, que también se te había quedado a deber."},
+ {t:"Invitas tú, Tito.",fx:{o:-3,s:3},r:"El Tito se ríe tanto que se le cae el palillo. No invita."},
+ {t:"Una caña por la resurrección.",fx:{h:3,s:-3},f:{alcohol:1},r:"Brindáis por la vida. El Tito brinda también por la muerte, por si acaso."}]},
+{id:"rev_herrera",chain:1,st:[1,2,3,4],c:"herrera",q:"Tu testamento ya se había leído. Tu cuñado se quedó la tele y tu madre, los discos. Recuperarlo todo va a costar un juicio.",opts:[
+ {t:"Pleitear por la tele.",fx:{d:-10,h:5},r:"Ganas el juicio. La tele vuelve con una pegatina de tu cuñado que no sale ni con aguarrás."},
+ {t:"Dejarlo todo como está.",fx:{o:10,d:-5},r:"Tu familia te quiere más ahora que no les quitas nada. Es la primera vez."},
+ {t:"Pedir que me devuelvan las flores del funeral.",fx:{d:3,o:-5},r:"Te devuelven tres coronas mustias. Una dice «Siempre en nuestro corazón, Kira»."}]},
+{id:"rev_chema",chain:1,st:[1,2,3,4],c:"chema",q:"Ya había buscado otr[o|a] cantante. Canta peor que tú. Bueno… igual. ¿Vuelves?",opts:[
+ {t:"Vuelvo, y que se quede de corista.",fx:{h:5,o:5},r:"El nuevo hace los coros con rencor. Suena sorprendentemente bien."},
+ {t:"Despedir al sustituto.",fx:{o:-5,h:3},r:"Se va dando un portazo. Funda un grupo de tributo a ti. Tiene más bolos que tú."},
+ {t:"Abrazar a Chema.",fx:{s:5,o:3},r:"Chema llora. Te dice que el sustituto no sabía ni dónde estaba el bombo."}]},
+{id:"rev_jessica",chain:1,st:[1,2,3,4],c:"jessica",q:"¡LO SABÍA! Le he rezado a tu altar todas las noches. ¿Ves cómo funciona?",opts:[
+ {t:"Darle las gracias.",fx:{o:5,s:-3},r:"Jessica añade una vela más al altar. Ahora el altar tiene licencia de actividad."},
+ {t:"Pedirle que me enseñe el altar.",fx:{h:5,s:-5},r:"Hay fotos tuyas que ni tú sabías que existían. Una es de mañana."},
+ {t:"Pedirle que rece un poco menos.",fx:{s:5,o:-3},r:"«Imposible», dice. «Ahora sé que funciona»."}]},
+
 /* ---------- Al resucitar ---------- */
 {id:"rev_benito",chain:1,st:[1,2,3,4],c:"benito",q:"¡Te enterré el martes! ¿Te importa si cuento lo de tu resurrección en la homilía del domingo? Es temporada baja.",opts:[
  {t:"Cuéntalo, padre.",fx:{h:10,o:5},r:"La iglesia se llena. Benito cobra entrada. Tú no ves un euro, pero bendicen tu coche."},
@@ -1327,7 +1391,8 @@ const byId=Object.fromEntries(EV.map(e=>[e.id,e]));
 /* Personajes y amenazas que te persiguen también en las etapas 3 y 4 */
 const EXTRA_ST={toni_rep:[3,4],mama_rep:[3,4],ruiz:[3,4],guru:[3],guru_2:[3,4],bruno_dm:[3],gasolinera:[3,4],nazi_ruedas:[3,4],toni_moldavia:[3,4],forense:[3,4],hater:[3,4],mariano:[3],mariano_2:[3,4],kira_venganza:[3,4],afterparty:[3],yate:[3],paparazzi:[3],tuit:[3,4],cola:[3],fausto:[3],maripili:[3],nodulos:[3,4]};
 for(const id in EXTRA_ST) byId[id].st.push(...EXTRA_ST[id]);
-const REVIVE_EV=["rev_benito","rev_forense","rev_mama","rev_kira","rev_cunado"];
+const REVIVE_EV=["rev_benito","rev_forense","rev_mama","rev_kira","rev_cunado","rev_manolo","rev_toni","rev_salas","rev_paco","rev_tito","rev_herrera","rev_chema","rev_jessica"];
+const PEDRO_EV=["pedro_profecia","pedro_apuestas","pedro_encapuchado","pedro_kira","pedro_cancion","pedro_mudanza"];
 
 /* ============ MUERTES (todas inmediatas) ============ */
 const DEATHS={
@@ -1372,7 +1437,7 @@ const BONUS=0.8; // y recorta todo lo que suma
 /* Etapas: p = desgaste por decisión; la etapa acaba al llevar `min` decisiones en ella con hype >= `hype`, o al llegar a `max`.
    Al acabar la etapa 4, la partida termina en «Leyenda». */
 const STG={
- 1:{name:"Etapa 1 · Los garitos",p:{d:1,h:3},min:14,hype:40,max:18,msg:"El público olvida rápido y el alquiler no perdona"},
+ 1:{name:"Etapa 1 · Los garitos",p:{d:1,h:3},min:16,hype:40,max:20,msg:"El público olvida rápido y el alquiler no perdona"},
  2:{name:"Etapa 2 · Primer éxito",p:{d:1,h:2},min:13,hype:30,max:16,msg:"Vida de estrella. La fama desgasta"},
  3:{name:"Etapa 3 · Estrellato",p:{d:2,h:2},min:13,hype:30,max:16,msg:"Mansión, séquito y abogados"},
  4:{name:"Etapa 4 · Decadencia o leyenda",p:{d:1,h:3,s:1},min:12,hype:0,max:12,msg:"Los años pesan y el público busca caras nuevas"}
@@ -1385,14 +1450,6 @@ const INTER={
  3:{i:"🏟️",x:"Estadio lleno. Sesenta mil personas gritan tu nombre (mal pronunciado). Tienes mansión, mayordomo y tres abogados. También tienes enemigos que todavía no conoces."},
  4:{i:"🥀",x:"Han pasado los años. Tu último single lo escucharon tu madre y un algoritmo. Toca elegir: decadencia o leyenda. La dignidad no está incluida en ninguna de las dos."}
 };
-const PEDRO=[
- "«Aquí no entras con ese historial. Baja y arréglalo». Te devuelve a la Tierra de una patada.",
- "«¿Otra vez tú? Esto no es una puerta giratoria». Te manda de vuelta con un folleto de autoayuda.",
- "«En el cielo ya tenemos suficientes cantantes. Y mejores». Resucitas.",
- "«Tu karma no cuadra. Baja y enmienda tus errores». Firmas un formulario por triplicado y vuelves.",
- "«Has muerto de una forma ridícula hasta para mí». Te da otra oportunidad por pena.",
- "«Kira Star ya ha reservado tu nube. Vuelve antes de que se mude». Resucitas por puro orgullo."
-];
 const fmtP=p=>[p.d&&"−"+p.d+" 💰",p.h&&"−"+p.h+" 🔥",p.s&&"−"+p.s+" ❤️"].filter(Boolean).join(", ");
 const STATS=[["o","🗣️","Opinión"],["d","💰","Dinero"],["h","🔥","Hype"],["s","❤️","Salud"]];
 const NAMES={m:["Kiko Trueno","Rafa Neón","Dani Purpurina","Juanjo Maremoto","Rubén Ciclón"],f:["Lola Trueno","Vane Neón","Sheila Purpurina","Maite Huracán","Nerea Ciclón"]};
@@ -1431,7 +1488,7 @@ const snap=()=>JSON.stringify(Object.assign({},S,{used:[...S.used],cur:null}));
 function unsnap(j){const o=JSON.parse(j);o.used=new Set(o.used);return o;}
 function checkpoint(label){
  S.ckTurn=S.turn; S.ckLabel=label; CK=snap();
- store("cae_save",{ck:CK,revives:S.revives});
+ store("cae_save",{ck:CK,revives:S.revives,pSeen:S.pSeen||[],rSeen:S.rSeen||[]});
  toast("💾 Punto de control: "+label);
 }
 
@@ -1452,7 +1509,7 @@ function newGame(){
  const inp=$("#name");
  const name=(inp&&inp.value.trim())||(S&&S.name)||NAMES[pickG][Math.floor(Math.random()*5)];
  const r0=()=>38+Math.floor(Math.random()*18), mod=GEN[pickGen].mod;
- S={g:pickG,gen:pickGen,name:name.slice(0,28),st:{o:r0(),d:r0(),h:r0(),s:r0()},f:{},used:new Set(),turn:0,stage:1,t0:0,queue:[],next:null,recent:[],cur:null,revives:0,ckTurn:-1,ckLabel:"",ckPending:null,hoodAt:5+Math.floor(Math.random()*4)};
+ S={g:pickG,gen:pickGen,name:name.slice(0,28),st:{o:r0(),d:r0(),h:r0(),s:r0()},f:{},used:new Set(),turn:0,stage:1,t0:0,queue:[],next:null,recent:[],cur:null,revives:0,ckTurn:-1,ckLabel:"",ckPending:null,hoodAt:15};
  for(const k in mod) S.st[k]=clamp(S.st[k]+mod[k]);
  CK=null; store("cae_save",null);
  hudEl.hidden=false; metaEl.hidden=false;
@@ -1465,7 +1522,9 @@ function pick(){
  const qi=S.queue.findIndex(q=>q.at<=S.turn&&!S.used.has(q.id));
  if(qi>=0) return byId[S.queue.splice(qi,1)[0].id];
  const ok=e=>e.st.includes(S.stage)&&(!e.gen||e.gen===S.gen)&&(!e.nogen||!e.nogen.includes(S.gen))&&(!e.cond||e.cond());
- let pool=EV.filter(e=>!e.chain&&ok(e)&&(e.rep||!S.used.has(e.id))&&!S.recent.includes(e.id));
+ const fresh=e=>!(S.avoidN>0&&S.avoid&&S.avoid.includes(e.id)); /* tras resucitar, no repetir enseguida lo ya vivido */
+ let pool=EV.filter(e=>!e.chain&&ok(e)&&(e.rep||!S.used.has(e.id))&&!S.recent.includes(e.id)&&fresh(e));
+ if(!pool.length) pool=EV.filter(e=>!e.chain&&ok(e)&&(e.rep||!S.used.has(e.id))&&!S.recent.includes(e.id));
  if(!pool.length) pool=EV.filter(e=>e.rep&&ok(e));
  const wt=e=>e.w||(e.rep?1:3);
  let r=Math.random()*pool.reduce((a,e)=>a+wt(e),0);
@@ -1517,13 +1576,18 @@ function choose(i){
  if(o.set) Object.assign(S.f,o.set);
  if(o.later) S.queue.push({id:o.later[0],at:S.turn+o.later[1]});
  if(o.next) S.next=o.next;
+ if(e.id.startsWith("pedro_")&&S.revNext){S.next=S.revNext;S.revNext=null;} /* tras San Pedro, alguien te recibe en la Tierra */
  if(o.ck) S.ckPending=o.ck;
+ if(S.avoidN>0) S.avoidN--;
  let death=o.die||null;
  if(!death&&o.risk&&Math.random()<o.risk[0]){death=o.risk[1];rtext="Algo sale terriblemente mal…";for(const k in fx)delete fx[k];}
+ const enCielo=e.id.startsWith("pedro_")||e.id==="cielo"||e.id==="cielo2"; /* en el cielo no hay desgaste */
  if(!death){
-  if(F("drogas")>=2){fx.s=(fx.s||0)-5;notes.push("Tu cuerpo pasa factura: −5 ❤️ por el bajón.");}
-  const p=STG[S.stage].p; for(const k in p) fx[k]=(fx[k]||0)-p[k];
-  notes.push(STG[S.stage].msg+": "+fmtP(p)+".");
+  if(!enCielo){
+   if(F("drogas")>=2){fx.s=(fx.s||0)-5;notes.push("Tu cuerpo pasa factura: −5 ❤️ por el bajón.");}
+   const p=STG[S.stage].p; for(const k in p) fx[k]=(fx[k]||0)-p[k];
+   notes.push(STG[S.stage].msg+": "+fmtP(p)+".");
+  }
   for(const [k] of STATS) S.st[k]=clamp(S.st[k]+(fx[k]||0));
   if(o.heal){const hv=o.heal===1?95:o.heal;fx.s=(fx.s||0)+(hv-S.st.s);S.st.s=hv;notes.push(o.heal===1?"El pitillo te devuelve toda la salud.":"Recuperas casi toda la salud.");}
   if(o.safe) for(const [k] of STATS) S.st[k]=Math.max(5,Math.min(95,S.st[k])); /* premio que nunca mata */
@@ -1550,6 +1614,10 @@ function interlude(icon,title,text,label,next){
 function revive(){
  const r=S.revives+1, dead=S.lastDeath, ckT=S.ckTurn;
  const streak=(S.streakCk===ckT?S.streak||0:0)+1; // muertes seguidas desde el mismo punto de control
+ /* Lo que viviste entre el punto de control y la muerte: no se repite enseguida al volver */
+ const ckUsed=new Set(JSON.parse(CK).used);
+ const lived=[...S.used].filter(id=>!ckUsed.has(id)&&!byId[id].chain);
+ const pSeen=S.pSeen||[], rSeen=S.rSeen||[];
  S=unsnap(CK); S.revives=r; S.streak=streak; S.streakCk=S.ckTurn;
  const boost=Math.min(0.85,REVIVE_BOOST+0.15*(streak-1));
  for(const [k] of STATS) S.st[k]=Math.round(S.st[k]+(50-S.st[k])*boost);
@@ -1558,19 +1626,24 @@ function revive(){
  if(F("drogas")>=3) S.f.drogas=2;
  if(F("alcohol")>=3) S.f.alcohol=2;
  if(F("policia")>=2) S.f.policia=1;
+ if(F("hacienda")>=2) S.f.hacienda=1;
  if(F("mafia")>=1) S.f.mafia=0;
  if(F("secta")>=1) S.f.secta=0;
- S.next=rnd(REVIVE_EV);
- const why=(dead&&DEATHS[dead]?" Esta vez ya sabes lo que te mató: <b>"+tx(DEATHS[dead].t)+"</b>.":"")+(streak>1?" San Pedro, harto de verte, te devuelve en mejor forma.":"");
- let speech;
- if(!F("mision")){ /* primera vez en el cielo: San Pedro revela la misión */
-  S.f.mision=1;
-  speech=tx("«Así que tú eres {name}. Fumaste el pitillo equivocado, pero da igual: ya estás aquí. Escucha bien, porque solo lo diré una vez. El mundo va a ser destruido. No sé cuándo ni cómo; la profecía tiene una letra horrible. Solo sé que se salvará si tú llegas a ser una leyenda. Por eso no puedes morirte. Bueno, puedes, pero yo te devolveré. Una y otra vez. Y vigila al encapuchado».");
- } else speech=tx(rnd(PEDRO));
- {const o=JSON.parse(CK);o.f.mision=1;CK=JSON.stringify(o);} /* la misión ya revelada no se olvida al volver a este punto */
- store("cae_save",{ck:CK,revives:r});
+ /* Que la vuelta no sea siempre igual: aplazar lo pendiente y apartar lo ya vivido */
+ S.queue.forEach(q=>{q.at=Math.max(q.at,S.turn+3+Math.floor(Math.random()*5));});
+ S.avoid=lived; S.avoidN=8; S.recent=[];
+ /* Diálogo con San Pedro (sin repetir hasta agotar) y personaje que te recibe en la Tierra */
+ const first=!F("mision");
+ if(first){S.f.mision=1;const o=JSON.parse(CK);o.f.mision=1;CK=JSON.stringify(o);} /* la misión revelada no se olvida */
+ const pPool=PEDRO_EV.filter(id=>!pSeen.includes(id)), pid=first?"pedro_mision":rnd(pPool.length?pPool:PEDRO_EV);
+ const rPool=REVIVE_EV.filter(id=>!rSeen.includes(id)), rid=rnd(rPool.length?rPool:REVIVE_EV);
+ S.pSeen=first?pSeen:(pPool.length?pSeen:[]).concat(pid);
+ S.rSeen=(rPool.length?rSeen:[]).concat(rid);
+ S.next=pid; S.revNext=rid;
+ store("cae_save",{ck:CK,revives:r,pSeen:S.pSeen,rSeen:S.rSeen});
  hudEl.hidden=false; metaEl.hidden=false; drawHud();
- interlude(avatar("pedro"),"Resurrección nº "+r,"<b>San Pedro:</b> "+speech+" Vuelves a tu último punto de control ("+esc(S.ckLabel)+")."+why,"Volver a la Tierra",()=>advance());
+ const why=(dead&&DEATHS[dead]?"Te mató: <b>"+tx(DEATHS[dead].t)+"</b>. ":"")+(streak>1?"Llevas "+streak+" muertes seguidas en el mismo punto: San Pedro te devolverá en mejor forma. ":"");
+ interlude(avatar("pedro"),"Resurrección nº "+r,why+"Todo se vuelve blanco. Otra vez. Huele a nube y a papeleo. Alguien carraspea detrás de un mostrador.","Hablar con San Pedro",()=>advance());
 }
 
 function endGame(death){
@@ -1630,7 +1703,7 @@ function home(){
  scr.querySelectorAll(".genre").forEach(b=>b.onclick=()=>{pickGen=b.dataset.k;scr.querySelectorAll(".genre").forEach(x=>x.setAttribute("aria-pressed",x===b));});
  $("#start").onclick=newGame;
  $("#name").onkeydown=e=>{if(e.key==="Enter")newGame();};
- if($("#cont")) $("#cont").onclick=()=>{CK=sv.ck;S=unsnap(CK);if(!S.gen)S.gen="rock";if(S.hoodAt===undefined){S.hoodAt=S.turn;S.f.alma=1;}S.revives=sv.revives||0;hudEl.hidden=false;metaEl.hidden=false;drawHud();advance();};
+ if($("#cont")) $("#cont").onclick=()=>{CK=sv.ck;S=unsnap(CK);if(!S.gen)S.gen="rock";if(S.hoodAt===undefined){S.hoodAt=S.turn;S.f.alma=1;}S.revives=sv.revives||0;S.pSeen=sv.pSeen||[];S.rSeen=sv.rSeen||[];hudEl.hidden=false;metaEl.hidden=false;drawHud();advance();};
 }
 
 /* Teclado: 1-3 / A-C para elegir */
