@@ -1,0 +1,1463 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Carrera al Estrellato</title>
+<meta name="description" content="Juego de decisiones con humor negro: llega a la fama, sobrevive a ella y resucita cuando no lo consigas.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d0718;--panel:#221640;--ink:#f5f0ff;--mute:#a99cc7;--acc:#ff3cac;--acc2:#ffd23f;--good:#2ee59d;--bad:#ff4d6d;--r:18px}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%}
+body{background:var(--bg);background-image:radial-gradient(1200px 600px at 50% -10%,#3a1466 0%,var(--bg) 60%);background-attachment:fixed;color:var(--ink);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;-webkit-tap-highlight-color:transparent;overflow-x:hidden}
+#wrap{max-width:460px;margin:0 auto;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;padding:12px 16px 72px}
+button{font:inherit;color:inherit;cursor:pointer}
+/* HUD */
+#hud{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:10px 12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:var(--r)}
+#hud[hidden],.meta[hidden]{display:none}
+.st{display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11px;color:var(--mute)}
+.st .ic{font-size:22px;line-height:1;transition:transform .3s}
+.st .bar{width:100%;height:8px;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden}
+.st .fill{height:100%;background:linear-gradient(90deg,var(--acc),var(--acc2));border-radius:99px;transition:width .6s cubic-bezier(.2,.8,.2,1)}
+.st.danger .fill{background:var(--bad)}
+.st.danger .ic{animation:pulse 1s infinite}
+.st.up .ic{transform:scale(1.4) translateY(-3px)}
+.st.down .ic{transform:scale(.75)}
+@keyframes pulse{50%{transform:scale(1.2)}}
+.meta{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:var(--mute);margin:12px 4px 10px}
+#screen{flex:1;display:flex;flex-direction:column}
+/* Tarjeta */
+.card{background:linear-gradient(180deg,var(--panel),#170e2c);border:1px solid rgba(255,255,255,.08);border-radius:24px;padding:22px 18px 20px;display:flex;flex-direction:column;align-items:center;text-align:center;animation:in .35s ease-out;box-shadow:0 20px 50px rgba(0,0,0,.4)}
+@keyframes in{from{opacity:0;transform:translateY(14px) scale(.98)}}
+.avatar{position:relative;width:132px;height:132px;flex:none}
+.avatar .face{width:100%;height:100%;border-radius:50%;overflow:hidden;background:var(--c);background:radial-gradient(circle at 35% 30%,color-mix(in srgb,var(--c) 55%,white),var(--c));box-shadow:0 0 0 5px rgba(255,255,255,.1),0 10px 30px rgba(0,0,0,.35)}
+.avatar svg{width:100%;height:100%;display:block}
+.avatar .em{position:absolute;right:-2px;bottom:-2px;width:40px;height:40px;border-radius:50%;background:#fff;display:grid;place-items:center;font-size:21px;box-shadow:0 3px 10px rgba(0,0,0,.3)}
+.avatar.sm{width:76px;height:76px}
+.avatar.sm .em{width:28px;height:28px;font-size:15px}
+.who{margin-top:12px}
+.who b{display:block;font-size:18px;font-weight:800}
+.who span{font-size:13px;color:var(--mute)}
+.bubble{margin-top:16px;background:#fff;color:#1a1029;border-radius:18px;padding:16px;font-size:16px;line-height:1.45;position:relative;text-align:left;width:100%}
+.bubble:before{content:"";position:absolute;top:-9px;left:50%;margin-left:-9px;border:9px solid transparent;border-top:0;border-bottom-color:#fff}
+.bubble.narr{background:rgba(255,255,255,.07);color:var(--ink);text-align:center}
+.bubble.narr:before{display:none}
+.opts{display:flex;flex-direction:column;gap:10px;margin-top:16px}
+.opt{display:flex;gap:12px;align-items:flex-start;text-align:left;width:100%;padding:14px;border-radius:16px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);font-size:15px;font-weight:600;line-height:1.35;transition:transform .12s,background .2s,border-color .2s;animation:in .35s ease-out both}
+.opt:nth-child(2){animation-delay:.06s}.opt:nth-child(3){animation-delay:.12s}
+.opt:hover,.opt:focus-visible{background:rgba(255,60,172,.16);border-color:var(--acc);outline:none}
+.opt:active{transform:scale(.98)}
+.opt .k{flex:none;width:24px;height:24px;border-radius:8px;display:grid;place-items:center;background:var(--acc);color:#fff;font-size:12px;font-weight:800}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:16px}
+.chip{padding:6px 10px;border-radius:99px;font-weight:800;font-size:14px}
+.chip.pos{background:rgba(46,229,157,.15);color:var(--good)}
+.chip.neg{background:rgba(255,77,109,.15);color:var(--bad)}
+.note{margin-top:12px;font-size:13px;color:var(--mute)}
+.btn{margin-top:14px;width:100%;padding:15px;border-radius:16px;border:0;background:linear-gradient(90deg,var(--acc),#ff7a5c);color:#fff;font-weight:800;font-size:16px;letter-spacing:.02em;box-shadow:0 8px 24px rgba(255,60,172,.35)}
+.btn:active{transform:scale(.98)}
+.btn.gold{background:linear-gradient(90deg,#ffd23f,#ff9f1c);color:#1a1029;box-shadow:0 8px 24px rgba(255,190,11,.35)}
+.btn.ghost{background:transparent;border:1px solid rgba(255,255,255,.2);box-shadow:none;color:var(--mute)}
+/* Portada */
+.title{font-family:Bungee,Inter,sans-serif;font-size:40px;line-height:1;text-align:center;margin-top:28px;background:linear-gradient(90deg,var(--acc2),var(--acc));-webkit-background-clip:text;background-clip:text;color:transparent}
+.tag{text-align:center;color:var(--mute);margin:10px 0 24px;font-size:15px}
+.genders{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.gender{padding:18px 8px;border-radius:20px;background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.1);display:flex;flex-direction:column;align-items:center;gap:8px;font-weight:700}
+.gender .e{font-size:54px}
+.gender[aria-pressed="true"]{border-color:var(--acc);background:rgba(255,60,172,.15)}
+.genres{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.genre{padding:12px 10px;border-radius:16px;background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.1);display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left}
+.genre .ge{font-size:28px;line-height:1}
+.genre b{font-size:14px}
+.genre span:last-child{font-size:11.5px;color:var(--mute);line-height:1.35}
+.genre[aria-pressed="true"]{border-color:var(--acc);background:rgba(255,60,172,.15)}
+html[data-theme="light"] .genre{background:#fff;border-color:#d9d9e0;color:#111}
+html[data-theme="light"] .genre[aria-pressed="true"]{background:#fff0f7;border-color:var(--acc)}
+label.lb{display:block;font-size:13px;color:var(--mute);margin:18px 4px 6px}
+input.name{width:100%;padding:14px;border-radius:14px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:var(--ink);font:inherit;font-size:16px}
+input.name:focus{outline:none;border-color:var(--acc)}
+.small{font-size:13px;color:var(--mute);text-align:center;margin-top:14px;line-height:1.5}
+.rules{margin-top:18px;padding:14px;border-radius:14px;background:rgba(255,255,255,.04);font-size:13px;color:var(--mute);line-height:1.55}
+.rules b{color:var(--ink)}
+/* Fin */
+.big{font-size:72px;line-height:1;margin-top:6px}
+.fin{font-family:Bungee,Inter,sans-serif;font-size:14px;letter-spacing:.2em;color:var(--bad);margin-top:12px}
+.fin.win{color:var(--good)}
+.dt{font-size:24px;font-weight:800;margin-top:6px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;margin-top:16px}
+.stats div{background:rgba(255,255,255,.06);border-radius:14px;padding:10px 6px;font-size:11px;color:var(--mute)}
+.stats b{display:block;font-size:20px;color:var(--ink)}
+.badge{display:inline-block;margin-top:10px;padding:4px 10px;border-radius:99px;background:var(--acc2);color:#1a1029;font-weight:800;font-size:12px}
+.coll{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:8px;width:100%;margin-top:10px}
+.coll div{background:rgba(255,255,255,.06);border-radius:12px;padding:8px 4px;font-size:10px;color:var(--mute);text-align:center;line-height:1.2}
+.coll div span{display:block;font-size:24px;margin-bottom:4px}
+.coll div.lock{opacity:.35}
+h3{font-size:13px;color:var(--mute);margin-top:20px;align-self:flex-start;font-weight:600}
+/* Aviso de punto de control */
+#toast{position:fixed;left:50%;top:12px;transform:translate(-50%,-160%);background:var(--acc2);color:#1a1029;padding:9px 16px;border-radius:99px;font-weight:800;font-size:13px;transition:transform .35s;z-index:9;box-shadow:0 6px 20px rgba(0,0,0,.3);white-space:nowrap}
+#toast.on{transform:translate(-50%,0)}
+/* Botón de tema */
+#themeBtn{position:fixed;right:14px;bottom:14px;z-index:5;width:44px;height:44px;border-radius:50%;border:1px solid rgba(255,255,255,.2);background:rgba(20,10,40,.85);font-size:20px;display:grid;place-items:center;box-shadow:0 4px 14px rgba(0,0,0,.3)}
+/* Tema claro: fondo blanco y letra negra */
+html[data-theme="light"]{--bg:#fff;--ink:#111;--mute:#444;--good:#007a4d;--bad:#c1121f}
+html[data-theme="light"] body{background:#fff;background-image:none;color:#111}
+html[data-theme="light"] #hud{background:#fff;border-color:#d9d9e0}
+html[data-theme="light"] .st .bar{background:#e6e6eb}
+html[data-theme="light"] .card{background:#fff;border-color:#d9d9e0;box-shadow:0 6px 20px rgba(0,0,0,.07)}
+html[data-theme="light"] .bubble,html[data-theme="light"] .bubble.narr{background:#f2f2f5;color:#111}
+html[data-theme="light"] .bubble:before{border-bottom-color:#f2f2f5}
+html[data-theme="light"] .opt{background:#fff;border-color:#cfcfd8;color:#111}
+html[data-theme="light"] .opt:hover,html[data-theme="light"] .opt:focus-visible{background:#fff0f7;border-color:var(--acc)}
+html[data-theme="light"] .gender{background:#fff;border-color:#d9d9e0;color:#111}
+html[data-theme="light"] .gender[aria-pressed="true"]{background:#fff0f7;border-color:var(--acc)}
+html[data-theme="light"] input.name{background:#fff;border-color:#cfcfd8;color:#111}
+html[data-theme="light"] .rules,html[data-theme="light"] .stats div,html[data-theme="light"] .coll div{background:#f2f2f5}
+html[data-theme="light"] .rules b,html[data-theme="light"] .stats b{color:#111}
+html[data-theme="light"] .btn.ghost{border-color:#bbb;color:#333}
+html[data-theme="light"] .title{background:none;color:#111}
+html[data-theme="light"] .chip.pos{background:#e3f6ee}
+html[data-theme="light"] .chip.neg{background:#fde8ea}
+html[data-theme="light"] #themeBtn{background:#fff;border-color:#cfcfd8;box-shadow:0 4px 14px rgba(0,0,0,.12)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div id="hud" hidden></div>
+  <div class="meta" id="meta" hidden></div>
+  <main id="screen"></main>
+</div>
+<div id="toast" role="status" aria-live="polite"></div>
+<button id="themeBtn" type="button" aria-label="Cambiar a fondo blanco" title="Cambiar colores">☀️</button>
+<script>
+"use strict";
+/* ============ PERSONAJES ============
+ n: nombre · r: papel · e: emoji de la insignia · c: color de fondo
+ L: aspecto del retrato. sk piel (a-e) · h pelo · hc color de pelo · top ropa · cl color de ropa · gl gafas · hat sombrero
+    m boca (smile, grin, open, flat, frown, smirk) · mus bigote · beard barba · stubble · lips · lash · blush · ear pendientes · chain · scar · brow
+*/
+const C={
+ mama:{n:"Mamá",r:"Tu mayor fan (no por elección)",e:"👵",c:"#e07a5f",L:{sk:"a",h:"bun",hc:"#bdbdbd",gl:"round",cl:"#9b2226",ear:1,blush:1,m:"smile"}},
+ manolo:{n:"Manolo",r:"Dueño del Bar Pepe",e:"🍺",c:"#d4a373",L:{sk:"b",h:"bald",hc:"#3b2a20",mus:1,cl:"#f8f9fa",m:"grin",blush:1}},
+ kevin:{n:"Kevin",r:"Promotor de sótanos",e:"🕶️",c:"#6c757d",L:{sk:"b",h:"slick",hc:"#111",gl:"sun",top:"suit",cl:"#212529",tie:"#111",m:"smirk"}},
+ bruno:{n:"Bruno «El Calvo»",r:"Presidente de un club de «senderismo»",e:"🥾",c:"#7f1d1d",L:{sk:"a",h:"shaved",cl:"#2d3a2e",m:"frown",brow:"angry",scar:1}},
+ toni:{n:"Toni «El Rápido»",r:"Camello con tarjeta de visita",e:"💊",c:"#8338ec",L:{sk:"c",h:"short",hc:"#111",top:"hoodie",cl:"#3c096c",hat:"capb",hatc:"#111",stubble:1,m:"smirk"}},
+ jc:{n:"Juan Carlos Tele",r:"Presentador de «Tú Sí Que Vales Menos»",e:"📺",c:"#f4a261",L:{sk:"b",h:"slick",hc:"#6f4518",top:"suit",cl:"#1d3557",tie:"#e63946",m:"grin"}},
+ ricky:{n:"Ricky Platino",r:"Mánager con cadena de oro",e:"💼",c:"#e9c46a",L:{sk:"c",h:"slick",hc:"#111",gl:"sun",top:"open",cl:"#7b2cbf",chain:1,m:"grin",stubble:1}},
+ herrera:{n:"Abogada Herrera",r:"Cobra por minuto. Piensa despacio.",e:"⚖️",c:"#2a6f97",L:{sk:"b",h:"bun",hc:"#1b1b1b",gl:"round",top:"suit",cl:"#22223b",tie:"#111",m:"flat",lips:1}},
+ benito:{n:"Padre Benito",r:"Párroco y agente artístico",e:"⛪",c:"#a8dadc",L:{sk:"a",h:"bald",hc:"#ced4da",gl:"round",top:"priest",cl:"#212529",m:"smile",blush:1}},
+ cunado:{n:"Tu cuñado",r:"Experto en todo",e:"🍖",c:"#bc6c25",L:{sk:"b",h:"short",hc:"#4a3728",mus:1,cl:"#3a86ff",m:"smirk"}},
+ lucia:{n:"Lucía Viral",r:"Influencer, 3M de seguidores",e:"📱",c:"#ff70a6",L:{sk:"a",h:"long",hc:"#f2cc8f",lips:1,lash:1,ear:1,cl:"#ffafcc",m:"grin"}},
+ ex:{n:"Tu ex",r:"Inspiración y pesadilla",e:"💔",c:"#e63946",L:{sk:"b",h:"bob",hc:"#7f4f24",cl:"#6a040f",m:"frown",brow:"angry"}},
+ alcalde:{n:"El alcalde",r:"Villarriba de Abajo",e:"🎖️",c:"#2a9d8f",L:{sk:"a",h:"bald",hc:"#adb5bd",bc:"#adb5bd",mus:1,top:"suit",cl:"#1d3557",tie:"#e9c46a",sash:"#e9c46a",m:"smile"}},
+ salas:{n:"Dra. Salas",r:"Médica y profeta del desastre",e:"🩺",c:"#48cae4",L:{sk:"c",h:"bun",hc:"#2b2d42",gl:"round",top:"coat",cl:"#0077b6",m:"flat"}},
+ chema:{n:"Chema",r:"Tu batería",e:"🥁",c:"#ffb703",L:{sk:"b",h:"curly",hc:"#3b2a20",beard:1,cl:"#d00000",m:"grin"}},
+ kira:{n:"Kira Star",r:"Tu rival (y su bótox)",e:"⭐",c:"#e9b10a",L:{sk:"a",h:"long",hc:"#ff8fab",lips:1,lash:1,ear:1,cl:"#c9184a",m:"smirk"}},
+ jessica:{n:"Jessica",r:"Fan nº 1. Literalmente.",e:"😍",c:"#ff006e",L:{sk:"b",h:"ponytail",hc:"#6a040f",blush:1,lash:1,cl:"#ffccd5",m:"open"}},
+ cola:{n:"Borja, de Marketing",r:"Burbujas Cola",e:"🥤",c:"#ef233c",L:{sk:"a",h:"slick",hc:"#d4a373",top:"suit",cl:"#2b2d42",tie:"#ef233c",m:"grin"}},
+ vozai:{n:"VozAI",r:"Startup «disruptiva»",e:"🤖",c:"#4cc9f0",L:{head:"robot"}},
+ politico:{n:"El candidato",r:"Partido de centro… de algo",e:"🗳️",c:"#457b9d",L:{sk:"a",h:"slick",hc:"#adb5bd",top:"suit",cl:"#1d3557",tie:"#457b9d",m:"grin"}},
+ guru:{n:"Gurú Krishna-Paco",r:"Desbloqueador de auras",e:"🧘",c:"#fb8500",L:{sk:"c",h:"long",hc:"#6c584c",beard:1,top:"robe",cl:"#f77f00",m:"smile"}},
+ ruiz:{n:"Inspector Ruiz",r:"Agencia Tributaria",e:"🧾",c:"#6c757d",L:{sk:"a",h:"short",hc:"#495057",gl:"round",top:"suit",cl:"#495057",tie:"#212529",m:"flat"}},
+ montero:{n:"Sra. Montero",r:"Discográfica Megasound",e:"🏢",c:"#6d597a",L:{sk:"b",h:"bob",hc:"#111",gl:"round",top:"suit",cl:"#22223b",tie:"#6d597a",lips:1,m:"smirk"}},
+ melon:{n:"DJ Melón",r:"Productor. DJ Melón.",e:"🎧",c:"#52b788",L:{sk:"d",h:"short",hc:"#111",hat:"capb",hatc:"#2d6a4f",gl:"sun",cl:"#1b4332",chain:1,m:"grin"}},
+ paco:{n:"Paco Exclusiva",r:"Paparazzi",e:"📸",c:"#8d99ae",L:{sk:"b",h:"short",hc:"#343a40",hat:"cap",hatc:"#495057",stubble:1,cl:"#2b2d42",m:"smirk"}},
+ gala:{n:"Presentadora de gala",r:"Premios Pelícano",e:"🏆",c:"#ffd166",L:{sk:"c",h:"long",hc:"#111",lips:1,lash:1,ear:1,cl:"#7b2cbf",m:"grin"}},
+ vero:{n:"Vero",r:"Tour manager",e:"🚌",c:"#06d6a0",L:{sk:"b",h:"ponytail",hc:"#9c6644",hat:"mic",cl:"#073b4c",m:"flat"}},
+ desconocido:{n:"Un desconocido",r:"Dice ser familia tuya",e:"🧔",c:"#cdb4db",L:{sk:"b",h:"short",hc:"#6c584c",beard:1,cl:"#5e548e",m:"open"}},
+ ong:{n:"ONG Gotas Solidarias",r:"Salvan focas monje",e:"🦭",c:"#90e0ef",L:{sk:"a",h:"short",hc:"#9c6644",hat:"beanie",hatc:"#0077b6",cl:"#023e8a",m:"smile",blush:1}},
+ jeque:{n:"Un millonario sin apellido",r:"Tiene yate. Y amigos raros.",e:"🛥️",c:"#0077b6",L:{sk:"c",h:"slick",hc:"#111",gl:"sun",top:"suit",cl:"#f8f9fa",tie:"#ffd60a",chain:1,mus:1,m:"smirk"}},
+ bea:{n:"Bea",r:"Tu community manager",e:"💻",c:"#9d4edd",L:{sk:"b",h:"bun",hc:"#5a189a",gl:"round",top:"hoodie",cl:"#3c096c",m:"flat"}},
+ presi:{n:"Don Ramón",r:"Presidente del CD Chapapote",e:"🏟️",c:"#2b9348",L:{sk:"a",h:"bald",hc:"#adb5bd",bc:"#adb5bd",mus:1,top:"suit",cl:"#1b4332",tie:"#fff",m:"grin"}},
+ reality:{n:"Productora de TV",r:"«La Isla de la Vergüenza»",e:"🏝️",c:"#f77f00",L:{sk:"d",h:"short",hc:"#111",hat:"mic",cl:"#9d0208",m:"grin"}},
+ fausto:{n:"Don Fausto",r:"Productor «veterano»",e:"🎩",c:"#7f5539",L:{sk:"a",h:"bald",hc:"#6c584c",mus:1,top:"suit",cl:"#3d2b1f",tie:"#9d0208",m:"smirk",gl:"sun"}},
+ maripili:{n:"Mari Pili",r:"Presentadora matinal",e:"🎙️",c:"#ff99c8",L:{sk:"a",h:"big",hc:"#ffd166",lips:1,lash:1,ear:1,blush:1,cl:"#c9184a",m:"grin"}},
+ tecnico:{n:"Paco el técnico",r:"Electricista sin título",e:"🔌",c:"#c9a227",L:{sk:"b",h:"short",hc:"#6c584c",mus:1,hat:"cap",hatc:"#e85d04",cl:"#264653",m:"smile",stubble:1}},
+ piloto:{n:"Rodolfo",r:"Piloto con petaca",e:"🛩️",c:"#5fa8d3",L:{sk:"a",h:"short",hc:"#adb5bd",bc:"#adb5bd",mus:1,hat:"peaked",hatc:"#1d3557",gl:"sun",top:"uniform",cl:"#1d3557",m:"grin",blush:1}},
+ director:{n:"Álex Visión",r:"Director de videoclips «arriesgados»",e:"🎬",c:"#3a86ff",L:{sk:"b",h:"short",hc:"#111",hat:"beret",hatc:"#111",beard:1,gl:"round",cl:"#212529",m:"smirk"}},
+ cirujano:{n:"Dr. Bisturí",r:"Cirujano estético low cost",e:"💉",c:"#ffafcc",L:{sk:"c",h:"short",hc:"#111",hat:"surg",top:"coat",cl:"#74c69d",m:"grin",gl:"round"}},
+ mariano:{n:"Don Mariano",r:"Constructor. Y otras cosas.",e:"🏗️",c:"#5e503f",L:{sk:"b",h:"slick",hc:"#ced4da",bc:"#ced4da",mus:1,gl:"sun",hat:"hard",top:"suit",cl:"#2b2b2b",tie:"#9d0208",chain:1,m:"smirk"}},
+ hater:{n:"@Pepe_Odio_88",r:"Tu mayor hater",e:"🧟",c:"#386641",L:{sk:"a",h:"short",hc:"#386641",top:"hoodie",cl:"#283618",gl:"round",m:"frown",brow:"angry",stubble:1}},
+ forense:{n:"El forense",r:"Ya te conoce de vista",e:"🧪",c:"#495057",L:{sk:"a",h:"bald",hc:"#6c757d",gl:"round",top:"coat",cl:"#343a40",m:"flat"}},
+ dictador:{n:"Su Excelencia",r:"Presidente vitalicio de Bananistán",e:"🍌",c:"#9b2226",L:{sk:"c",h:"short",hc:"#111",hat:"peaked",hatc:"#3a5a40",mus:1,gl:"sun",top:"uniform",cl:"#3a5a40",m:"smirk"}},
+ pareja:{n:"Tu pareja",r:"El amor de tu vida (este mes)",e:"💍",c:"#f72585",L:{sk:"b",h:"long",hc:"#7f4f24",cl:"#b5179e",m:"smile",blush:1,lash:1}},
+ netflux:{n:"Netflux",r:"Plataforma de streaming",e:"📽️",c:"#d00000",L:{sk:"a",h:"slick",hc:"#111",top:"suit",cl:"#111",tie:"#d00000",gl:"round",m:"smirk"}},
+ ambrosio:{n:"Ambrosio",r:"Tu mayordomo",e:"🤵",c:"#343a40",L:{sk:"a",h:"bald",hc:"#dee2e6",bc:"#dee2e6",mus:1,top:"suit",cl:"#111",tie:"#111",m:"flat"}},
+ luz:{n:"Dra. Luz",r:"Tu terapeuta",e:"🛋️",c:"#b5838d",L:{sk:"b",h:"long",hc:"#d4a373",gl:"round",cl:"#6d597a",m:"smile"}},
+ zoraida:{n:"Madame Zoraida",r:"Vidente de las estrellas",e:"🔮",c:"#7209b7",L:{sk:"c",h:"long",hc:"#111",hat:"turban",hatc:"#560bad",lips:1,ear:1,lash:1,cl:"#3c096c",m:"smirk"}},
+ galactica:{n:"Galáctica Tours",r:"Turismo espacial low cost",e:"🚀",c:"#3f37c9",L:{sk:"b",h:"short",hc:"#6c584c",hat:"helmet",cl:"#e9ecef",m:"grin"}},
+ iker:{n:"Iker",r:"Tu guardaespaldas",e:"🛡️",c:"#6c757d",L:{sk:"b",h:"shaved",gl:"sun",cl:"#111",m:"flat",stubble:1}},
+ hijo:{n:"Tu hij[o|a]",r:"Adolescente. Trapero. Ofendid[o|a].",e:"🧢",c:"#4361ee",L:{sk:"b",h:"short",hc:"#111",hat:"capb",hatc:"#3a0ca3",top:"hoodie",cl:"#3a0ca3",m:"frown",chain:1}},
+ holo:{n:"Hologramas Eternos",r:"La inmortalidad, en cómodos plazos",e:"👻",c:"#48bfe3",L:{head:"ghost"}},
+ editorial:{n:"Editorial Morbo",r:"Libros que se leen en el baño",e:"📚",c:"#bc4749",L:{sk:"a",h:"curly",hc:"#adb5bd",gl:"round",top:"suit",cl:"#3d2b1f",tie:"#bc4749",m:"smirk"}},
+ pedro:{n:"San Pedro",r:"Portero del más allá",e:"🗝️",c:"#90caf9",L:{sk:"a",h:"bald",hc:"#f8f9fa",bc:"#f8f9fa",beard:1,hat:"halo",top:"robe",cl:"#f8f9fa",m:"smile",blush:1}},
+ encapuchado:{n:"El encapuchado",r:"Nadie sabe quién es",e:"🚬",c:"#2b2d42",L:{head:"hood"}},
+ comisario:{n:"Comisario Gómez",r:"Policía Nacional. Muy nacional.",e:"🚔",c:"#1d3557",L:{sk:"b",h:"short",hc:"#495057",mus:1,hat:"peaked",hatc:"#1d3557",top:"uniform",cl:"#14213d",m:"flat",brow:"angry"}},
+ motero:{n:"El Tanque",r:"Motero de 130 kilos",e:"🏍️",c:"#6c584c",L:{sk:"b",h:"long",hc:"#3b2a20",beard:1,gl:"sun",cl:"#111",chain:1,m:"frown",brow:"angry"}},
+ catedratica:{n:"Catedrática Rius",r:"Filología Hispánica",e:"📜",c:"#9c6644",L:{sk:"a",h:"bob",hc:"#adb5bd",gl:"round",top:"suit",cl:"#432818",tie:"#e9c46a",lips:1,m:"smirk"}},
+ monsenor:{n:"Monseñor Gil",r:"Obispo con buen ojo para los negocios",e:"🙏",c:"#7b2cbf",L:{sk:"a",h:"bald",hc:"#adb5bd",gl:"round",hat:"solideo",top:"priest",cl:"#3c096c",m:"smirk",blush:1}},
+ amor:{n:"[Gabriel|Valentina]",r:"Tu [compañero|compañera] de coro. Y algo más.",e:"🎶",c:"#e5989b",L:()=>S&&S.g==="f"?{sk:"c",h:"long",hc:"#5e3023",lash:1,blush:1,cl:"#264653",m:"smile",ear:1}:{sk:"b",h:"curly",hc:"#5e3023",blush:1,cl:"#264653",m:"smile"}},
+ barista:{n:"Iñaki",r:"Barista de especialidad",e:"☕",c:"#606c38",L:{sk:"a",h:"short",hc:"#6c584c",beard:1,hat:"beanie",hatc:"#bc6c25",gl:"round",cl:"#283618",m:"smirk"}},
+ brayan:{n:"Brayan Blockchain",r:"Gurú de las criptos, bro",e:"🪙",c:"#f4a261",L:{sk:"a",h:"slick",hc:"#ffd60a",gl:"sun",top:"hoodie",cl:"#111",chain:1,m:"grin"}}
+};
+
+/* ============ RETRATOS (SVG dibujado en el propio juego) ============ */
+const SKIN={a:"#f8dcc4",b:"#eabf9a",c:"#c98d62",d:"#8d5a3b",e:"#5c3a24"};
+function portrait(id){
+ let L=(C[id]&&C[id].L)||{}; if(typeof L==="function") L=L();
+ const P=[],add=x=>P.push(x),dk="rgba(0,0,0,.22)";
+ if(L.head==="hood"){
+  add(`<path d="M14 122 Q16 86 60 82 Q104 86 106 122Z" fill="#16161d"/><path d="M24 110 Q18 24 60 14 Q102 24 96 110 Q82 96 60 96 Q38 96 24 110Z" fill="#2b2b36"/><path d="M24 110 Q18 24 60 14 Q102 24 96 110" stroke="#000" stroke-width="2" fill="none" opacity=".4"/><ellipse cx="60" cy="58" rx="22" ry="26" fill="#0b0b10"/><ellipse cx="51" cy="55" rx="4" ry="2.2" fill="#ffd60a"/><ellipse cx="69" cy="55" rx="4" ry="2.2" fill="#ffd60a"/><rect x="60" y="70" width="18" height="3.4" rx="1.7" fill="#f8f9fa"/><rect x="76" y="70" width="3.4" height="3.4" fill="#e85d04"/><path d="M80 67 Q86 59 80 52 Q75 45 82 38" stroke="#ced4da" stroke-width="2" fill="none" opacity=".6"/>`);
+  return svg(P);
+ }
+ if(L.head==="robot"){
+  add(`<path d="M14 122 Q16 88 60 85 Q104 88 106 122Z" fill="#6c757d"/><rect x="52" y="70" width="16" height="16" fill="#868e96"/><line x1="60" y1="28" x2="60" y2="12" stroke="#adb5bd" stroke-width="3"/><circle cx="60" cy="10" r="5" fill="#ef233c"/><rect x="32" y="26" width="56" height="48" rx="12" fill="#ced4da"/><rect x="40" y="40" width="14" height="10" rx="3" fill="#4cc9f0"/><rect x="66" y="40" width="14" height="10" rx="3" fill="#4cc9f0"/><rect x="46" y="58" width="28" height="6" rx="3" fill="#495057"/><rect x="50" y="58" width="4" height="6" fill="#adb5bd"/><rect x="58" y="58" width="4" height="6" fill="#adb5bd"/><rect x="66" y="58" width="4" height="6" fill="#adb5bd"/>`);
+  return svg(P);
+ }
+ if(L.head==="ghost"){
+  add(`<path d="M28 116 L28 52 Q28 16 60 16 Q92 16 92 52 L92 116 L82 106 L71 116 L60 106 L49 116 L38 106Z" fill="rgba(255,255,255,.9)"/><ellipse cx="49" cy="50" rx="5" ry="7" fill="#1a1029"/><ellipse cx="71" cy="50" rx="5" ry="7" fill="#1a1029"/><ellipse cx="60" cy="72" rx="6" ry="7" fill="#1a1029"/>`);
+  return svg(P);
+ }
+ const s=SKIN[L.sk||"b"],hc=L.hc||"#3b2a20",cl=L.cl||"#444",H=L.h||"short";
+ /* pelo de detrás */
+ if(H==="long") add(`<path d="M35 48 Q33 18 60 18 Q87 18 85 48 L90 98 Q60 106 30 98Z" fill="${hc}"/>`);
+ if(H==="bob") add(`<path d="M35 48 Q34 19 60 19 Q86 19 85 48 L87 74 Q80 78 75 70 L45 70 Q40 78 33 74Z" fill="${hc}"/>`);
+ if(H==="big") add(`<circle cx="60" cy="46" r="38" fill="${hc}"/>`);
+ if(H==="ponytail") add(`<path d="M80 32 Q104 44 94 84 Q86 62 78 46Z" fill="${hc}"/>`);
+ if(H==="bun") add(`<circle cx="60" cy="19" r="10" fill="${hc}"/>`);
+ if(L.top==="hoodie") add(`<path d="M28 104 Q22 32 60 22 Q98 32 92 104Z" fill="${cl}"/><path d="M28 104 Q22 32 60 22 Q98 32 92 104Z" fill="#000" opacity=".15"/>`);
+ /* cuerpo y cuello */
+ add(`<path d="M14 122 Q16 88 60 85 Q104 88 106 122Z" fill="${L.top==="coat"?"#f1f3f5":cl}"/>`);
+ add(`<path d="M51 66 L51 86 Q60 92 69 86 L69 66Z" fill="${s}"/><path d="M51 72 Q60 80 69 72 L69 68 L51 68Z" fill="${dk}"/>`);
+ switch(L.top){
+  case "suit":add(`<path d="M49 86 L60 108 L71 86 Q60 92 49 86Z" fill="#fff"/><path d="M57.5 92 L62.5 92 L64 110 L60 116 L56 110Z" fill="${L.tie||"#9d0208"}"/><path d="M49 86 L60 108 L44 122 L24 122 Q24 96 49 86Z" fill="${dk}"/><path d="M71 86 L60 108 L76 122 L96 122 Q96 96 71 86Z" fill="${dk}"/>`);break;
+  case "coat":add(`<path d="M50 86 L60 104 L70 86Z" fill="${cl}"/><path d="M49 86 L60 104 L50 122 L30 122 Q28 96 49 86Z" fill="#dee2e6"/><path d="M71 86 L60 104 L70 122 L90 122 Q92 96 71 86Z" fill="#dee2e6"/>`);break;
+  case "priest":add(`<path d="M51 85 Q60 90 69 85 L69 93 L51 93Z" fill="#111"/><rect x="56.5" y="86" width="7" height="6" rx="1" fill="#fff"/><path d="M60 98 L60 116 M53 104 L67 104" stroke="#ffd60a" stroke-width="3"/>`);break;
+  case "open":add(`<path d="M50 86 L60 106 L70 86 Q60 90 50 86Z" fill="${s}"/>`);break;
+  case "uniform":add(`<circle cx="42" cy="104" r="3.4" fill="#ffd60a"/><circle cx="50" cy="106" r="3.4" fill="#e63946"/><circle cx="46" cy="113" r="3.4" fill="#4cc9f0"/><rect x="28" y="92" width="16" height="4" rx="2" fill="#ffd60a"/><rect x="76" y="92" width="16" height="4" rx="2" fill="#ffd60a"/>`);break;
+  case "robe":add(`<path d="M42 86 L90 122 L74 122 L34 92Z" fill="${dk}"/>`);break;
+  case "hoodie":add(`<path d="M50 86 Q60 96 70 86" stroke="${dk}" stroke-width="3" fill="none"/><line x1="55" y1="92" x2="54" y2="108" stroke="#fff" stroke-width="2"/><line x1="65" y1="92" x2="66" y2="108" stroke="#fff" stroke-width="2"/>`);break;
+  default:add(`<path d="M49 86 Q60 96 71 86" stroke="${dk}" stroke-width="3" fill="none"/>`);
+ }
+ if(L.sash) add(`<path d="M30 96 L86 122 L74 122 L28 102Z" fill="${L.sash}"/>`);
+ if(L.chain) add(`<path d="M47 88 Q60 110 73 88" stroke="#f5c518" stroke-width="3.2" fill="none"/>`);
+ /* cabeza */
+ add(`<ellipse cx="38" cy="52" rx="4.5" ry="7" fill="${s}"/><ellipse cx="82" cy="52" rx="4.5" ry="7" fill="${s}"/><ellipse cx="60" cy="49" rx="22.5" ry="26" fill="${s}"/>`);
+ if(L.ear) add(`<circle cx="38" cy="61" r="2.6" fill="#ffd60a"/><circle cx="82" cy="61" r="2.6" fill="#ffd60a"/>`);
+ if(L.beard) add(`<path d="M38 50 Q38 82 60 82 Q82 82 82 50 Q80 66 70 68 Q60 64 50 68 Q40 66 38 50Z" fill="${L.bc||hc}"/>`);
+ if(L.stubble) add(`<path d="M40 56 Q42 76 60 76 Q78 76 80 56 Q74 68 60 69 Q46 68 40 56Z" fill="#000" opacity=".13"/>`);
+ const ang=L.brow==="angry", bcol=L.bc||hc;
+ add(`<path d="${ang?"M46 43 L55 47":"M46 44 Q50.5 41 55 44"}" stroke="${bcol}" stroke-width="2.6" fill="none" stroke-linecap="round"/><path d="${ang?"M74 43 L65 47":"M65 44 Q69.5 41 74 44"}" stroke="${bcol}" stroke-width="2.6" fill="none" stroke-linecap="round"/>`);
+ add(`<circle cx="51" cy="51" r="2.7" fill="#1a1029"/><circle cx="69" cy="51" r="2.7" fill="#1a1029"/><circle cx="52" cy="50" r=".9" fill="#fff"/><circle cx="70" cy="50" r=".9" fill="#fff"/>`);
+ if(L.lash) add(`<path d="M46.5 48.5 L48.5 49.6 M73.5 48.5 L71.5 49.6" stroke="#1a1029" stroke-width="1.6" stroke-linecap="round"/>`);
+ add(`<path d="M60 52 Q57 60 60 61 Q62 61 63 60" stroke="${dk}" stroke-width="1.6" fill="none" stroke-linecap="round"/>`);
+ if(L.blush) add(`<ellipse cx="46" cy="60" rx="4" ry="2.4" fill="#ff8fab" opacity=".55"/><ellipse cx="74" cy="60" rx="4" ry="2.4" fill="#ff8fab" opacity=".55"/>`);
+ const mc=L.lips?"#c9184a":"#6b2d1f",mw=L.lips?3.4:2.4,m=L.m||"smile";
+ if(m==="grin") add(`<path d="M51 64 Q60 76 69 64Z" fill="#6b1d1d"/><path d="M52.5 64.5 L67.5 64.5 L66.5 67 L53.5 67Z" fill="#fff"/>`);
+ else if(m==="open") add(`<ellipse cx="60" cy="67" rx="4.5" ry="5" fill="#6b1d1d"/>`);
+ else add(`<path d="${{smile:"M52 65 Q60 71 68 65",flat:"M53 67 L67 67",frown:"M52 69 Q60 63 68 69",smirk:"M52 67 Q61 69 68 63"}[m]}" stroke="${mc}" stroke-width="${mw}" fill="none" stroke-linecap="round"/>`);
+ if(L.mus) add(`<path d="M48 62 Q54 56 60 60 Q66 56 72 62 Q66 65 60 63 Q54 65 48 62Z" fill="${bcol}"/>`);
+ if(L.scar) add(`<path d="M72 40 L78 58" stroke="#9d0208" stroke-width="1.6"/><path d="M72.5 46 L77 45 M74 51 L78.5 50" stroke="#9d0208" stroke-width="1.2"/>`);
+ /* pelo de delante */
+ switch(H){
+  case "short":case "long":case "ponytail":add(`<path d="M37 46 Q35 20 60 20 Q85 20 83 46 Q80 32 66 30 Q58 36 46 33 Q39 38 37 46Z" fill="${hc}"/>`);break;
+  case "slick":add(`<path d="M37 45 Q37 19 62 20 Q85 22 83 44 Q78 30 58 30 Q44 32 37 45Z" fill="${hc}"/>`);break;
+  case "bob":add(`<path d="M36 50 Q34 20 60 20 Q86 20 84 50 Q82 36 72 32 L48 32 Q38 36 36 50Z" fill="${hc}"/>`);break;
+  case "bun":case "big":add(`<path d="M37 44 Q38 22 60 22 Q82 22 83 44 Q74 30 60 30 Q46 30 37 44Z" fill="${hc}"/>`);break;
+  case "curly":add([[42,32],[50,25],[60,23],[70,25],[78,32],[38,42],[82,42]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="8" fill="${hc}"/>`).join(""));break;
+  case "bald":add(`<path d="M37 56 Q36 42 41 38 L43 56Z" fill="${hc}"/><path d="M83 56 Q84 42 79 38 L77 56Z" fill="${hc}"/><path d="M50 30 Q56 27 62 28" stroke="#fff" stroke-width="2.4" opacity=".45" fill="none" stroke-linecap="round"/>`);break;
+  case "shaved":add(`<path d="M38 40 Q40 22 60 22 Q80 22 82 40 Q72 30 60 30 Q48 30 38 40Z" fill="#000" opacity=".15"/>`);break;
+ }
+ if(L.gl==="round") add(`<circle cx="51" cy="51" r="6.5" stroke="#222" stroke-width="2" fill="rgba(255,255,255,.15)"/><circle cx="69" cy="51" r="6.5" stroke="#222" stroke-width="2" fill="rgba(255,255,255,.15)"/><path d="M57.5 51 L62.5 51" stroke="#222" stroke-width="2"/>`);
+ if(L.gl==="sun") add(`<rect x="42" y="45" width="16" height="11" rx="4" fill="#111"/><rect x="62" y="45" width="16" height="11" rx="4" fill="#111"/><path d="M58 49 L62 49" stroke="#111" stroke-width="2.5"/><path d="M45 48 L50 48 M65 48 L70 48" stroke="#fff" stroke-width="1.5" opacity=".5"/>`);
+ const hh=L.hatc||"#222";
+ switch(L.hat){
+  case "cap":add(`<path d="M36 40 Q37 16 60 16 Q83 16 84 40Z" fill="${hh}"/><path d="M60 36 Q84 34 98 41 Q84 45 60 41Z" fill="${hh}"/><path d="M60 36 Q84 34 98 41 Q84 45 60 41Z" fill="#000" opacity=".2"/>`);break;
+  case "capb":add(`<path d="M36 40 Q37 16 60 16 Q83 16 84 40Z" fill="${hh}"/><path d="M42 36 Q28 33 18 40 Q30 44 42 41Z" fill="${hh}"/><path d="M42 36 Q28 33 18 40 Q30 44 42 41Z" fill="#000" opacity=".2"/>`);break;
+  case "beanie":add(`<path d="M35 42 Q35 12 60 12 Q85 12 85 42Z" fill="${hh}"/><rect x="34" y="36" width="52" height="9" rx="4" fill="${hh}"/><rect x="34" y="36" width="52" height="9" rx="4" fill="#000" opacity=".2"/><circle cx="60" cy="11" r="5" fill="#fff"/>`);break;
+  case "peaked":add(`<path d="M34 34 Q36 13 60 12 Q84 13 86 34Z" fill="${hh}"/><rect x="34" y="31" width="52" height="7" rx="2" fill="#111"/><path d="M38 38 Q60 46 82 38 L80 42 Q60 50 40 42Z" fill="#111"/><circle cx="60" cy="24" r="4.5" fill="#ffd60a"/>`);break;
+  case "beret":add(`<ellipse cx="54" cy="25" rx="27" ry="9" fill="${hh}"/><circle cx="54" cy="15" r="2.4" fill="${hh}"/>`);break;
+  case "turban":add(`<path d="M33 42 Q30 8 60 8 Q90 8 87 42 Q74 30 60 32 Q46 30 33 42Z" fill="${hh}"/><path d="M40 30 Q60 18 80 30" stroke="#000" stroke-width="2" opacity=".2" fill="none"/><circle cx="60" cy="25" r="4.5" fill="#ffd60a"/>`);break;
+  case "surg":add(`<path d="M36 40 Q36 15 60 15 Q84 15 84 40Z" fill="#74c69d"/>`);break;
+  case "hard":add(`<path d="M35 38 Q35 12 60 12 Q85 12 85 38Z" fill="#ffd60a"/><rect x="30" y="34" width="60" height="7" rx="3" fill="#ffc300"/><path d="M60 12 L60 34" stroke="#e0a800" stroke-width="3"/>`);break;
+  case "helmet":add(`<circle cx="60" cy="50" r="35" fill="rgba(180,220,255,.25)" stroke="#e9ecef" stroke-width="4"/><path d="M40 30 Q48 22 58 21" stroke="#fff" stroke-width="3" opacity=".7" fill="none" stroke-linecap="round"/>`);break;
+  case "solideo":add(`<path d="M45 28 Q60 16 75 28 Q60 24 45 28Z" fill="#7b2cbf"/>`);break;
+  case "halo":add(`<ellipse cx="60" cy="13" rx="20" ry="5" fill="none" stroke="#ffd60a" stroke-width="3.5"/>`);break;
+  case "mic":add(`<path d="M36 50 Q36 18 60 18 Q84 18 84 50" stroke="#222" stroke-width="4" fill="none"/><rect x="31" y="44" width="9" height="14" rx="3" fill="#222"/><rect x="80" y="44" width="9" height="14" rx="3" fill="#222"/><path d="M35 57 Q38 70 52 68" stroke="#222" stroke-width="2.5" fill="none"/><circle cx="53" cy="68" r="2.5" fill="#222"/>`);break;
+ }
+ return svg(P);
+}
+const svg=P=>`<svg viewBox="0 0 120 120" aria-hidden="true">${P.join("")}</svg>`;
+const avatar=(id,sm)=>`<div class="avatar${sm?" sm":""}" style="--c:${C[id].c}"><div class="face">${portrait(id)}</div><span class="em">${C[id].e}</span></div>`;
+
+/* ============ EVENTOS ============
+ fx: o=opinión, d=dinero, h=hype, s=salud
+ f: suma a contadores ocultos · set: fija valores · later:[id,turnos] · next: id inmediato · die: muerte · risk:[probabilidad, muerte]
+ [masculino|femenino] según el personaje elegido · {name} = nombre artístico
+*/
+const F=k=>(S&&S.f[k])||0;
+const EV=[
+/* ---------- ETAPA 1 · Los garitos ---------- */
+{id:"intro",st:[1],c:"mama",q:"Hij[o|a], ¿de verdad vas a dejar ADE para cantar? Tu primo Iván ya es interventor en un banco. IN-TER-VEN-TOR.",opts:[
+ {t:"Mamá, voy a ser una estrella.",fx:{h:5,d:5},r:"Suspira y te da 50 € «para el autobús». Es el único patrocinio que tendrás en meses."},
+ {t:"Lo hago para pagarte una buena residencia.",fx:{o:5,s:5},set:{mama_residencia:1},r:"Llora de emoción. Luego te recuerda que aún no le has devuelto el táper. Y apunta lo de la residencia."},
+ {t:"Iván es un muermo con corbata.",fx:{h:10,s:-5},r:"Tu madre te retira la palabra dos semanas. Aprovechas el silencio para ensayar."}]},
+
+{id:"bar_manolo",st:[1],c:"manolo",q:"Puedes cantar los viernes en el Bar Pepe. No pago, pero el bocadillo de calamares es gratis. Bueno, a mitad de precio.",opts:[
+ {t:"Acepto. Por los calamares.",fx:{h:5,s:5,d:-3},set:{manolo_amigo:1},r:"Cantas ante cuatro jubilados y una tragaperras. La tragaperras es la que más aplaude."},
+ {t:"Quiero cobrar, Manolo. Esto es arte.",fx:{d:10,h:-5,o:-3},r:"Te paga 20 € y te mira como a un cobrador del frac."},
+ {t:"Solo si canto mis temas propios.",fx:{h:10,o:-5},r:"Tocas «Balada para un radiador». Se van tres clientes. Uno vuelve a por la chaqueta."}]},
+
+{id:"kevin_nazis",st:[1,2],c:"kevin",q:"Bolo el sábado. Pagan 3.000 pavos en efectivo. El público es… muy de cabeza rapada. Pero aplauden con un ritmo marcial precioso.",opts:[
+ {t:"Pago es pago.",fx:{d:25,o:-20},set:{nazifan:1},later:["video_nazi",5],r:"Cantas «Que viva España» doce veces. Alguien lo graba con el móvil. Ese vídeo existirá para siempre."},
+ {t:"Paso. Tengo dignidad. Y alergia al cuero.",fx:{o:10,d:-10},r:"Kevin se encoge de hombros: «Tú te lo pierdes, artista». Te lo pierdes, sí. Y lo celebras."},
+ {t:"Voy… y les suelto un alegato antifascista.",fx:{o:25,h:15,s:-30},f:{neonazis:1},r:"Les hablas de tolerancia. Te responden con una silla plegable. Sales en las noticias con un ojo morado y mucha dignidad."}]},
+
+{id:"video_nazi",chain:1,st:[1,2],c:"paco",q:"Tengo un vídeo tuyo cantando ante doscientos cabezas rapadas haciendo… gestos. ¿Algún comentario antes de publicarlo?",opts:[
+ {t:"Te pago para que lo borres.",fx:{d:-25},r:"Lo borra. Tiene copia. Siempre tienen copia."},
+ {t:"Era una performance irónica.",fx:{o:-10,h:10},r:"No se lo cree nadie, pero tres críticos de arte contemporáneo te defienden en Twitter."},
+ {t:"Pido perdón y dono el caché a una ONG antirracista.",fx:{d:-20,o:15},f:{neonazis:1},set:{nazifan:0},r:"La gente te perdona. Los del concierto no: aparece «TRAIDOR» pintado en tu portal. Con faltas de ortografía."}]},
+
+{id:"toni_1",st:[1,2],c:"toni",cond:()=>F("drogas")===0,q:"Esto es para aguantar los bolos de cuatro horas. La primera va de regalo, como el pan en los restaurantes.",opts:[
+ {t:"Venga, una y ya.",fx:{h:10,s:-10},f:{drogas:1},r:"Cantas como nunca. Luego hablas con una farola tres horas. Muy buena conversación, la verdad."},
+ {t:"No, gracias. Yo vivo de café.",fx:{s:5},r:"Toni sonríe: «Ya volverás». Lo dice con la calma de un funcionario el viernes a las tres."},
+ {t:"¿Me haces precio de amig[o|a]?",fx:{d:-5,h:5,s:-5},f:{drogas:1},r:"Te hace un 2x1. El marketing de Toni es mejor que el de cualquier discográfica."}]},
+
+{id:"toni_rep",rep:1,w:2,st:[1,2],c:"toni",cond:()=>F("drogas")>=1,q:"¿Lo de siempre, artista? Hoy tengo oferta: llévate tres y te regalo un llavero.",opts:[
+ {t:"Lo de siempre.",fx:{h:10,s:-12,d:-5},f:{drogas:1},r:"La noche es increíble. No recuerdas ni un segundo, pero hay fotos. Muchas fotos."},
+ {t:"Hoy no, Toni.",fx:{s:5,h:-5},r:"Toni te mira decepcionado, como un padre cuyo hijo ha elegido Derecho."},
+ {t:"Solo vengo a charlar.",fx:{h:-5,o:2},r:"Toni te cuenta su vida. Tiene un máster en Filosofía. Sales más deprimid[o|a] que con cualquier droga."}]},
+
+{id:"talent",st:[1],c:"jc",q:"¡Bienvenid[o|a] a «Tú Sí Que Vales Menos»! Cuéntanos tu historia triste. Si no tienes, te la inventamos en guion.",opts:[
+ {t:"Mi abuela murió… de risa al oírme cantar.",fx:{h:20,o:5},set:{abuela:1},later:["abuela",4],r:"El plató llora. Tu abuela, que está vivísima, lo ve desde el sofá. También llora, pero de rabia."},
+ {t:"No tengo historia triste. Solo talento.",fx:{h:-5,o:10},r:"Te eliminan en el primer corte. Un productor anota tu nombre. En la lista de «no llamar»."},
+ {t:"Lloro en directo si me pagáis el taxi.",fx:{d:10,h:10,o:-5},r:"Lloras como en una telenovela. El taxi es un patinete compartido."}]},
+
+{id:"abuela",chain:1,st:[1,2],c:"mama",q:"Tu abuela dice que la has matado en televisión. Está furiosa. Y quiere salir en la próxima gala.",opts:[
+ {t:"Llevarla a la gala.",fx:{h:15,o:10,s:-5},r:"La abuela se hace viral. Ahora es más famosa que tú y tiene mánager propio."},
+ {t:"Confesar que mentiste.",fx:{o:-10,h:5},r:"El programa te demanda por «romper la magia de la televisión». La magia de la televisión tiene buenos abogados."},
+ {t:"Decir que ha resucitado. Es un milagro.",fx:{h:20,o:-15},r:"Un canal de misterio os dedica un especial. La abuela cobra 300 € por entrevista y se compra un patinete eléctrico."}]},
+
+{id:"ricky",st:[1],c:"ricky",q:"Te voy a llevar a lo más alto. Firma aquí, aquí y aquí. No leas la letra pequeña, que cansa la vista.",opts:[
+ {t:"Firmar sin leer.",fx:{h:15,d:-5},set:{ricky:1},later:["ricky_huye",7],r:"Ricky te consigue tres bolos en una semana. Y se queda el 60 %. «Gastos de gestión», dice, mientras se compra otra cadena."},
+ {t:"Leer el contrato entero.",fx:{d:5,h:-5},r:"Página 14: «El artista cede su alma, su perro y el 80 % de los royalties». Declinas. Ricky dice que el perro era negociable."},
+ {t:"Firmo si el primer mes trabajas gratis.",fx:{h:8},set:{ricky:1},later:["ricky_huye",9],r:"Acepta. Sospechosamente rápido."}]},
+
+{id:"ricky_huye",chain:1,st:[1,2],c:"herrera",q:"Malas noticias: Ricky Platino ha desaparecido con toda tu recaudación. Ha subido una foto en Punta Cana. Con tu toalla.",opts:[
+ {t:"Denunciarle.",fx:{d:-10,s:-5,o:5},r:"El juicio durará siete años. La abogada ya ha cobrado."},
+ {t:"Escribir una canción sobre ello.",fx:{h:20,d:-15},r:"«Ricky, devuélveme la toalla» es tu primer éxito moderado. Ricky la comparte en Instagram."},
+ {t:"Ir a Punta Cana a buscarle.",fx:{d:-25,s:10,h:5},r:"No le encuentras, pero te pones moren[o|a]. Vuelves sin dinero y con la toalla de otro."}]},
+
+{id:"benito",st:[1],c:"benito",q:"Necesito a alguien que cante en una boda el sábado. Y en un funeral el domingo. Paquete fin de semana, hij[o|a] mí[o|a].",opts:[
+ {t:"Las dos cosas.",fx:{d:15,s:-10},set:{benito:1},r:"Te equivocas de repertorio y cantas «Highway to Hell» en el funeral. La viuda aplaude: era la canción favorita del difunto."},
+ {t:"Solo la boda.",fx:{d:8,h:5},set:{benito:1},r:"La novia se escapa con el padrino durante tu solo. Te pagan igual. Y te piden el número para el divorcio."},
+ {t:"¿Bautizos también? Tengo alquiler.",fx:{d:20,s:-15,o:5},set:{benito:1},r:"Te especializas en sacramentos. Ganas dinero. Pierdes un poco el alma. El padre Benito se lleva un 15 %."}]},
+
+{id:"cunado",st:[1],c:"cunado",q:"Oye, ¿tú me puedes conseguir entradas para algún concierto bueno? Ah, que tú cantas. Ya. ¿Y eso da dinero o es como lo de tu prima con las velas?",opts:[
+ {t:"Le regalo un CD firmado.",fx:{o:5,d:-2},r:"Lo usa de posavasos. En la siguiente comida familiar lo verás debajo de su copa de Ribera."},
+ {t:"«Más que tu negocio de criptomonedas».",fx:{o:-5,h:5,s:5},r:"Silencio sepulcral en la mesa. Tu madre te da un codazo. Tu suegra te sonríe por primera vez en años."},
+ {t:"Le pido que invierta en mi disco.",fx:{d:15},set:{cunado_socio:1},later:["cunado_2",6],r:"Te da 2.000 €. Desde ese momento se presenta como «productor ejecutivo» en todas partes."}]},
+
+{id:"cunado_2",chain:1,st:[1,2],c:"cunado",q:"¿Cuándo veo el retorno de mis 2.000 €? Ya he dicho en el grupo de la familia que soy tu productor ejecutivo.",opts:[
+ {t:"Devolverle el dinero.",fx:{d:-20,o:5},r:"Te lo agradece contándole a todo el mundo que «te salvó la carrera»."},
+ {t:"Le pongo en los créditos del disco.",fx:{h:5,o:-5},r:"Sale en los créditos como «Asesor Espiritual». Ahora firma autógrafos en el bar del barrio."},
+ {t:"Bloquearle en todo.",fx:{s:10,o:-5},r:"La paz mental no tiene precio. Las Navidades sí: no te invitan."}]},
+
+{id:"lucia_baile",st:[1],c:"lucia",q:"Si haces un baile ridículo con mi canción, te subo a mis tres millones de seguidores. Tiene que ser MUY ridículo.",opts:[
+ {t:"Bailar como si no hubiera mañana.",fx:{h:20,o:-5,s:-8},r:"Te rompes el menisco, pero el vídeo tiene dos millones de visitas. «Le duele de verdad», comenta la gente, encantada."},
+ {t:"Soy artista, no un monito de feria.",fx:{o:5,h:-10},r:"Lucía te bloquea. Tres puristas del indie te escriben «respect». Uno te pide dinero."},
+ {t:"Mejor baila tú con MI canción.",fx:{h:12},r:"Lo hace a desgana. Tu canción acaba sonando en cuarenta mil vídeos de gatos. Los gatos no pagan royalties."}]},
+
+{id:"ex",st:[1],c:"ex",nogen:["laura"],q:"Me han dicho que ahora cantas. Espero que no hayas escrito canciones sobre mí… porque me las quedo, por derechos de imagen.",opts:[
+ {t:"Todas son sobre ti.",fx:{h:15,o:-5,s:-5},later:["ex_demanda",5],r:"Tu ex lo publica en Instagram. Ahora eres «la persona tóxica» para un millón de desconocidos."},
+ {t:"Perdona, ¿quién eres?",fx:{o:5,s:5},r:"Doloroso. Elegante. Tu ex se va dando un portazo a una puerta giratoria."},
+ {t:"Volver con tu ex.",fx:{s:-10,h:10,o:5},r:"Las revistas os llaman «la pareja del momento». El momento dura tres semanas y una discusión en un burger."}]},
+
+{id:"ex_demanda",chain:1,st:[1,2],c:"herrera",q:"Tu ex te demanda por usar su nombre en la canción «Ojalá te pise un tranvía».",opts:[
+ {t:"Pagar y que se acabe.",fx:{d:-20},r:"Paz. Cara, pero paz."},
+ {t:"Ir a juicio.",fx:{d:-10,h:15,o:-5},r:"El juicio se retransmite en un programa de la tarde. Lo ve más gente que tus conciertos."},
+ {t:"Cambiar el título: «Ojalá te pise un autobús».",fx:{h:5,s:5},r:"Legalmente impecable. Artísticamente, también."}]},
+
+{id:"alcalde",st:[1],c:"alcalde",q:"Para las fiestas de Villarriba de Abajo pagamos bien. Pero tienes que cantar subid[o|a] al remolque de un tractor.",opts:[
+ {t:"Aceptar.",fx:{d:15,h:5,s:-5},r:"El tractor arranca en el estribillo. Recorres tres pueblos cantando. Récord de asistencia itinerante."},
+ {t:"Exijo un escenario de verdad.",fx:{o:-5,d:-5},r:"Te ponen un palé. Técnicamente, es un escenario."},
+ {t:"Solo si me nombras hij[o|a] predilect[o|a].",fx:{o:10,d:5,h:5},r:"Te dan una placa. Tu nombre está mal escrito, pero es tuya."}]},
+
+{id:"nodulos",st:[1,2],c:"salas",q:"Tienes nódulos. Reposo vocal un mes: ni hablar, ni cantar, ni discutir en Twitter. Sobre todo eso último.",opts:[
+ {t:"Hacer reposo.",fx:{s:20,h:-15,d:-10},r:"Un mes en silencio. Descubres que tu familia es más agradable cuando no puedes contestar."},
+ {t:"Seguir cantando.",fx:{s:-20,d:10,h:5},r:"Tu voz suena ahora como un trombón con gripe. A los fans del rock les encanta."},
+ {t:"¿Y si tiro de autotune?",fx:{s:5,h:5,o:-10},r:"Suenas a robot con mal de amores. Arrasas entre los menores de catorce."}]},
+
+{id:"chema",st:[1],c:"chema",q:"Te cuento: me ha salido curro en una gestoría. Fijo. Con tickets restaurante. Pero si me pides que me quede…",opts:[
+ {t:"Quédate. Vamos a ser grandes.",fx:{d:-10,h:5},set:{chema:1},r:"Chema se queda. Te lo recordará en cada discusión durante los próximos diez años."},
+ {t:"Vete, Chema. Persigue tus sueños… de gestoría.",fx:{o:5,h:-5,s:5},set:{chema_fuera:1},r:"Llora. Tú también. Un año después te hace la declaración de la renta gratis."},
+ {t:"Te cambio por una caja de ritmos.",fx:{h:5,o:-5,d:5},set:{chema_fuera:1},r:"La caja de ritmos no bebe, no llega tarde y no se lía con tu ex."}]},
+
+{id:"kira_feat",st:[1,2],c:"kira",q:"Me encanta tu música. Bueno, me encantaría si fuera buena. ¿Hacemos un dueto? Tú pones el talento y yo los seguidores.",opts:[
+ {t:"Aceptar el dueto.",fx:{h:20,d:5,o:-3},r:"Funciona. En los créditos pone «Kira Star ft. Otra Persona»."},
+ {t:"Mejor una batalla de gallos.",fx:{h:15,s:-5,o:5},set:{kira_enemiga:1},r:"La humillas con una rima sobre su bótox. Te odia, pero te sigue en todas las redes."},
+ {t:"Ignorarla.",fx:{s:5,h:-5},r:"Kira sube una indirecta. La lees catorce veces. Ignorarla no ha salido como esperabas."}]},
+
+{id:"jessica",st:[1,2],c:"jessica",q:"Te he hecho un altar. Con velas. Y un pelo tuyo que cogí del lavabo del Bar Pepe. ¿Me firmas el brazo? Me lo voy a tatuar.",opts:[
+ {t:"Firmar el brazo.",fx:{o:10,h:5},set:{jessica:1},later:["jessica_2",5],r:"Al día siguiente lo lleva tatuado. Con una falta de ortografía que no es tuya."},
+ {t:"Salir corriendo.",fx:{s:5,o:-5},r:"Jessica corre más que tú. Pero solo quería devolverte la cartera."},
+ {t:"Te firmo si me llevas las redes gratis.",fx:{h:10,d:5},set:{jessica:1},later:["jessica_2",5],r:"Resulta ser la mejor community manager que has tenido. También sabe dónde vives."}]},
+
+{id:"jessica_2",chain:1,st:[1,2],c:"jessica",q:"Te sigo hasta casa cada noche para asegurarme de que llegas bien. Desde hace un mes. ¿A que es bonito?",opts:[
+ {t:"Pedir una orden de alejamiento.",fx:{s:10,o:-10,d:-5},r:"Jessica te escribe una canción de desamor. Es mejor que todas las tuyas."},
+ {t:"Contratarla de guardaespaldas.",fx:{s:5,d:-10,h:5},r:"Nadie se acerca a ti. Literalmente nadie. Ni tu madre."},
+ {t:"Hablar con ella con cariño.",fx:{o:10,s:-5},r:"Lo entiende. Ahora sigue a Kira Star. Sientes celos, y eso te preocupa bastante."}]},
+
+{id:"guru",st:[1,2],c:"guru",q:"Tu aura está bloqueada. Con un retiro de quince días en Lanzarote te la desbloqueo. 3.000 €, y te traes tu propio colchón.",opts:[
+ {t:"Ir al retiro.",fx:{s:15,d:-25},f:{secta:1},r:"Vuelves con paz interior, una túnica naranja y sin cejas."},
+ {t:"Mi aura está bien bloqueada, gracias.",fx:{o:2},r:"El gurú te desea «luz». Y te bloquea en WhatsApp."},
+ {t:"¿Me lo dejas a mitad si canto en el retiro?",fx:{d:-10,s:10,h:5},f:{secta:1},r:"Cantas mantras con ritmo de bachata. El gurú te mira con ojos de inversor."}]},
+
+{id:"guru_2",st:[1,2],c:"guru",cond:()=>F("secta")===1,q:"Herman[o|a], la Comunidad te echa de menos. Tenemos un retiro avanzado: nivel «Ya no necesitas tu DNI».",opts:[
+ {t:"Volver. Allí estaba en paz.",fx:{s:10,d:-15,h:-5},f:{secta:1},r:"Te dan un nombre nuevo y una escoba. La escoba también tiene nombre."},
+ {t:"Rechazarlo con educación.",fx:{o:3},r:"Te mandan un audio de catorce minutos. Es un mantra. Sigue sonando en tu cabeza."},
+ {t:"Contarlo todo en un pódcast.",fx:{h:15,o:5,s:-5},set:{secta:0},r:"El episodio se titula «Me quitaron las cejas y la dignidad». Récord de escuchas."}]},
+
+{id:"ruiz",st:[1,2],c:"ruiz",q:"Me consta que cobra usted en negro en el Bar Pepe. En calamares. Los calamares también tributan.",opts:[
+ {t:"Pagar lo que toca.",fx:{d:-15},r:"Ruiz sonríe por primera vez en su carrera. Da un poco de miedo."},
+ {t:"Negarlo todo.",fx:{s:-5},f:{hacienda:1},r:"Ruiz apunta algo en una libreta muy pequeña. Las libretas pequeñas son las peores."},
+ {t:"Le invito a un bocadillo y lo hablamos.",fx:{d:5,o:-5},f:{hacienda:1},r:"Acepta el bocadillo. Lo anota como intento de soborno. En especie."}]},
+
+{id:"politico",st:[1,2],c:"politico",q:"Queremos tu canción para nuestro mitin. Somos un partido moderado. Moderadamente de todo.",opts:[
+ {t:"Cedérsela. Que paguen bien.",fx:{d:20,o:-20,h:10},r:"Tu canción suena mientras el candidato besa a un bebé. El bebé llora. Los memes te persiguen meses."},
+ {t:"No mezclo música y política.",fx:{o:5},r:"El candidato usa una de Kira Star. Pierde igual."},
+ {t:"Os la cedo si la cantáis en directo.",fx:{h:15,o:10,d:-5},r:"El candidato desafina en prime time. Pierde las elecciones. Te culpan. Lo bordas."}]},
+
+{id:"mama_rep",rep:1,st:[1,2],c:"mama",q:"Te llamo para nada. ¿Comes bien? ¿Te abrigas? ¿Por qué sales en internet con esa ropa?",opts:[
+ {t:"Sí, mamá. Todo bien.",fx:{s:5,d:-3},r:"Te manda un táper de lentejas por mensajería urgente. El envío cuesta más que las lentejas."},
+ {t:"Ahora no puedo, estoy en un bolo.",fx:{h:3,o:-2},r:"No estás en un bolo. Estás en el sofá. Ella lo sabe. Siempre lo sabe."},
+ {t:"Mamá, ¿me haces una transferencia?",fx:{d:10,o:-3},r:"Te la hace. Concepto: «PARA QUE COMAS»."}]},
+
+{id:"ensayo_rep",rep:1,st:[1,2],c:"chema",cond:()=>!F("chema_fuera"),q:"¿Ensayamos hoy o nos vamos de cañas? Te aviso de que la última vez que ensayamos fue en marzo.",opts:[
+ {t:"Ensayamos.",fx:{h:5,s:-3},r:"Sale una canción nueva. Se llama «Ensayo». Muy meta."},
+ {t:"Cañas.",fx:{o:5,d:-5,s:-5},r:"Acabáis cantando en el bar. Os invitan a dos rondas. Es casi un bolo."},
+ {t:"Ni una cosa ni otra: siesta.",fx:{s:10,h:-5},r:"Dormir es el único lujo de estrella que te puedes permitir."}]},
+
+{id:"bolo_rep",rep:1,st:[1,2],c:"manolo",q:"Bolo de última hora: una despedida de soltero. El novio va por la sexta copa y lleva un disfraz de pollo.",opts:[
+ {t:"Aceptar.",fx:{d:12,s:-8,o:-3},r:"Acabas tú también disfrazad[o|a] de pollo. Nadie sabe cómo. Nadie quiere saberlo."},
+ {t:"Rechazar.",fx:{s:5,d:-5},r:"Te quedas en casa. Ves las fotos al día siguiente. Has hecho bien."},
+ {t:"Acepto, pero solo canto baladas tristes.",fx:{d:8,h:-5,o:5},r:"El novio llora y cancela la boda. Te contrata para el divorcio."}]},
+
+{id:"cola",st:[1,2],c:"cola",q:"Queremos que seas imagen de Burbujas Cola Zero Zero. Cero azúcar, cero calorías, cero sabor.",opts:[
+ {t:"Aceptar.",fx:{d:25,o:-10,s:-5},r:"En el rodaje bebes 47 latas con cara de felicidad. Llevas tres días sin dormir."},
+ {t:"Solo si es la versión con azúcar.",fx:{d:15,s:-10,o:5},r:"Te pagan en producto. Tu dentista se compra un barco."},
+ {t:"Rechazarlo por principios.",fx:{o:10,d:-5,h:-5},r:"Kira Star acepta la campaña. Sale fatal en el anuncio. Pequeñas victorias."}]},
+
+{id:"fausto",st:[1,2],c:"fausto",cond:()=>S.g==="f",q:"Tienes talento, bonita. Podemos hablar de tu disco… mejor en mi suite del hotel, que hay más intimidad.",opts:[
+ {t:"Denunciarlo públicamente.",fx:{o:25,h:15,d:-15},r:"Cinco artistas más se suman a la denuncia. A Don Fausto lo jubilan. A ti te vetan dos radios… y te fichan tres."},
+ {t:"Ir con mi abogada y una grabadora.",fx:{d:15,o:10,s:-5},r:"La grabación vale un acuerdo extrajudicial jugoso. Don Fausto se marcha a «descansar» a Marbella."},
+ {t:"Mandarle a mi madre.",fx:{s:5,h:5},r:"Tu madre vuelve en veinte minutos. Don Fausto no vuelve a llamar a nadie nunca más."}]},
+
+{id:"maripili",st:[1,2],c:"maripili",cond:()=>S.g==="m",q:"¡Qué guapo has venido! Para la audiencia… ¿te quitas la camiseta? Como en los 2000. Es para un rótulo.",opts:[
+ {t:"Quitármela.",fx:{h:15,o:-5,s:-3},r:"Hace un frío horrible en el plató. Se nota. Mucho. Es trending topic."},
+ {t:"No, gracias. Vengo a cantar.",fx:{o:10,h:-3},r:"Mari Pili te corta en la segunda estrofa para dar paso a una receta de croquetas."},
+ {t:"Solo si te quitas tú la americana.",fx:{h:10,o:5},r:"Se la quita. Lleva otra debajo. Es una profesional."}]},
+
+/* ---------- Neonazis ---------- */
+{id:"bruno_dm",st:[1,2],c:"bruno",w:4,cond:()=>F("nazifan")||F("neonazis")>=1,q:"Los chicos del club quieren que compongas nuestro himno. Pagamos en efectivo. Y en antorchas.",opts:[
+ {t:"Aceptar.",fx:{d:30,o:-30},set:{nazifan:1},r:"El himno es pegadizo. Demasiado pegadizo. Lo tarareas en la ducha y te odias un poco."},
+ {t:"Rechazarlo educadamente.",fx:{o:5},f:{neonazis:1},r:"Bruno te manda un emoji de calavera. Sin texto. Sin contexto. Preocupante."},
+ {t:"Publicar el mensaje en redes.",fx:{o:25,h:15,s:-5},f:{neonazis:1},r:"Medio país te aplaude. Otro tercio te insulta. Bruno te deja de seguir. No es buena señal."}]},
+
+{id:"gasolinera",st:[1,2],c:"bruno",w:4,cond:()=>F("neonazis")>=1,q:"Mira quién está aquí. La estrellita antifascista. ¿Has venido sol[o|a] a la gasolinera?",opts:[
+ {t:"Correr.",fx:{s:-10,o:-3},r:"Corres tres kilómetros. Récord personal. Pierdes una zapatilla y un poco de dignidad."},
+ {t:"Plantarle cara.",fx:{s:-25,o:15,h:10},f:{neonazis:1},r:"Le dices cuatro verdades. Te devuelve ocho golpes. Un vídeo vecinal te convierte en héroe con collarín."},
+ {t:"Fingir que soy mi gemel[o|a].",fx:{h:5,s:-5},set:{gemelo:1},r:"Funciona. No son muy listos. Ahora tienes que inventarte un gemel[o|a] para el resto de tu vida."}]},
+
+{id:"nazi_gira",st:[2],c:"bruno",w:4,cond:()=>F("neonazis")>=1,q:"Tu gira pasa por nuestro barrio. Sería una pena que pasara algo. Ya me entiendes.",opts:[
+ {t:"Cancelar esa fecha.",fx:{d:-15,o:-5},r:"Lo justificas con «problemas técnicos». El problema técnico mide 1,90 y no tiene pelo."},
+ {t:"Contratar seguridad privada.",fx:{d:-20,s:5},r:"Contratas a Iker, dos metros de guardaespaldas. El concierto sale bien. Iker llora con tus baladas."},
+ {t:"Dedicarles una canción: «Calvos de corazón».",fx:{h:20,o:10},f:{neonazis:1},r:"Lo grabas en directo. Es el vídeo más visto de la gira. Bruno lo ha visto. Varias veces."}]},
+
+{id:"nazi_ruedas",st:[1,2],c:"bruno",w:5,cond:()=>F("neonazis")>=2,q:"(Te han rajado las cuatro ruedas. En el parabrisas, una nota con dibujo incluido): «La próxima vez no serán las ruedas».",opts:[
+ {t:"Mudarme a otra ciudad.",fx:{d:-25,s:-5,h:-10},r:"Te mudas a Soria. Allí no te encuentra nadie. Ni siquiera tu público."},
+ {t:"Contratar escolta.",fx:{d:-30,s:5},r:"Tu escolta se llama Iker, mide dos metros y llora con tus baladas."},
+ {t:"Subir la foto con el lema «No me callaréis».",fx:{h:25,o:15},f:{neonazis:1},r:"Medio millón de compartidos. Bruno también la comparte, con un comentario: «Ya veremos»."}]},
+
+{id:"nazi_final",chain:1,st:[1,2],c:"bruno",q:"Hemos leído tu último tuit. Y el anterior. Y el de antes. Hemos venido a comentarlos… en persona.",opts:[
+ {t:"¿Lo hablamos con un café?",die:"nazi",r:"Bruno no toma café. Toma represalias."},
+ {t:"Saltar por la ventana.",die:"nazi",r:"Es un quinto. Tu dignidad queda intacta. Tu columna, no."},
+ {t:"Llamar a la policía.",die:"nazi",r:"La policía llega puntualísima. Para el atestado."}]},
+
+/* ---------- Drogas, secta y Hacienda ---------- */
+{id:"drogas_aviso",chain:1,st:[1,2],c:"salas",q:"Tu analítica parece la carta de un cóctel. O paras ya, o tu próxima canción la cantas en el más allá. Y allí no hay buena acústica.",opts:[
+ {t:"Ingresar en desintoxicación.",fx:{d:-25,h:-10,s:25},set:{drogas:1},r:"Tres meses de terapia grupal. Escribes tu mejor disco. Se llama «Batido verde»."},
+ {t:"Lo tengo controlado.",fx:{s:-10,h:5},f:{drogas:1},r:"La doctora te mira como se mira a un piloto que pregunta dónde está el freno."},
+ {t:"¿Y si solo los fines de semana?",fx:{s:-5},r:"«Tu semana empieza el jueves y acaba el martes», responde la doctora. Tiene razón."}]},
+
+{id:"drogas_final",chain:1,st:[1,2],c:"toni",q:"Te traigo lo último. Se llama «Despedida». Es el nombre comercial… creo.",opts:[
+ {t:"Venga, la última.",die:"drogas",r:"Lo era."},
+ {t:"No, Toni. Lo dejo.",die:"drogas",r:"Demasiado tarde: tu corazón iba en reserva desde hace meses y hoy se ha quedado sin gasolina."},
+ {t:"Llamar a la Dra. Salas.",die:"drogas",r:"La ambulancia llega rapidísimo. Justo a tiempo para la autopsia."}]},
+
+{id:"secta_final",chain:1,st:[1,2],c:"guru",q:"Herman[o|a], la Comunidad ha decidido que tus royalties, tu casa y tu nombre artístico nos pertenecen. Es por tu aura.",opts:[
+ {t:"Escapar de noche.",fx:{d:-20,s:-10},set:{secta:0},r:"Huyes en una furgoneta de reparto de hummus. Pierdes dinero, pero recuperas las cejas."},
+ {t:"Me quedo. Aquí soy feliz.",die:"secta",r:"Firmas todo con una sonrisa beatífica. Esa noche empieza el ayuno de luz."},
+ {t:"Grabarlo todo para un documental.",fx:{h:25,o:10,s:-10,d:10},set:{secta:0},r:"«Krishna-Paco: el gurú de las chanclas» es lo más visto en streaming. El gurú te demanda. Tú facturas."}]},
+
+{id:"hacienda_final",chain:1,st:[1,2],c:"ruiz",q:"Tras revisar sus calamares, sus bolos en negro y su intento de soborno con bocadillo, le comunico una sanción de… bastante.",opts:[
+ {t:"Pagar.",fx:{d:-35},set:{hacienda:0},r:"Te quedas temblando, pero en paz con el Estado. Ruiz te desea «buena gira». Suena a amenaza."},
+ {t:"Irme a vivir a Andorra.",fx:{o:-25,d:10,h:-10},set:{hacienda:0},r:"Te hacen un meme por cada día que pasas allí. Vuelves a los tres meses porque echas de menos el mar."},
+ {t:"Componer «Inspector Ruiz, déjame vivir».",fx:{h:20,d:-20,o:5},set:{hacienda:0},r:"Ruiz la escucha. Le gusta. Te rebaja el recargo un 5 %."}]},
+
+/* ---------- Crueldades (riesgo de muerte en el acto) ---------- */
+{id:"stage_diving",st:[1,2],c:"tecnico",q:"¡El público está entregado! Bueno, son nueve personas, pero muy entregadas. ¿Te tiras de cabeza?",opts:[
+ {t:"¡Me tiro!",fx:{h:15},risk:[.3,"diving"],r:"Te recogen nueve pares de brazos. Momento mágico. Uno aprovecha para robarte la cartera."},
+ {t:"De espaldas y con los ojos cerrados.",fx:{h:25,o:5},risk:[.5,"diving"],r:"Pura fe. Te recogen. Lloras. Lloran. Alguien te ha mordido."},
+ {t:"No, que tengo cervicales.",fx:{h:-10,s:5},r:"El público corea «¡ABU-RRI-D[O|A]!». Son nueve, pero se oye mucho."}]},
+
+{id:"lluvia",st:[1,2],c:"tecnico",q:"Está diluviando, el escenario tiene charcos y los cables son de 1987. Pero oye, el público sigue ahí. ¿Enchufo?",opts:[
+ {t:"Enchufa. El rock no se cancela.",fx:{h:20,d:15},risk:[.35,"electro"],r:"Chispas, humo y un solo de guitarra brutal. El pelo te tarda una semana en bajar."},
+ {t:"Versión acústica bajo la lluvia.",fx:{h:10,s:-20,d:5},r:"Precioso. Romántico. Pillas una neumonía de las que salen en los libros de historia."},
+ {t:"Cancelar.",fx:{o:-15,d:-15},r:"El público te tira lo que tiene a mano. Lo que tiene a mano es barro. Y un perro."}]},
+
+{id:"mejillones",st:[1,2],c:"manolo",q:"Te he guardado una ración de mejillones de la semana pasada. Están casi buenos. Si no te los comes, me ofendo.",opts:[
+ {t:"Comérmelos. No quiero ofender a Manolo.",fx:{s:-15,o:5},risk:[.2,"mejillones"],r:"Pasas dos días abrazad[o|a] al váter. Sale un disco conceptual: «Retortijones»."},
+ {t:"Dárselos a Chema a escondidas.",fx:{o:-10},r:"Chema pasa tres días en urgencias. Nunca sabrá que fuiste tú. Tú sí. Duermes como un bebé."},
+ {t:"No, gracias.",fx:{o:-5,d:-10},r:"Manolo se ofende y te cobra todos los calamares del año. Con IVA."}]},
+
+{id:"selfie",st:[1,2],c:"lucia",q:"¡Selfie al borde del acantilado al atardecer! Da un pasito atrás… otro… un poquito más…",opts:[
+ {t:"Un pasito más.",fx:{h:20},risk:[.3,"selfie"],r:"La foto es espectacular. A ti aún te tiemblan las piernas. Lucía dice que la próxima, más al borde."},
+ {t:"Lo hacemos lejos del borde.",fx:{h:3},r:"«Pues vaya mierda de foto», dice Lucía, y la borra delante de ti."},
+ {t:"Ponte tú en el borde, Lucía.",fx:{h:15,o:-10},r:"Lucía resbala, pero cae en un arbusto. Sube un vídeo llorando: cuatro millones de visitas. Te bloquea."}]},
+
+{id:"toni_moldavia",st:[1,2],c:"toni",w:4,cond:()=>F("drogas")>=2,q:"Tengo algo nuevo de un laboratorio de Moldavia. No tiene nombre, solo número de serie. El último que lo probó vio a Dios. Y Dios le pidió un autógrafo.",opts:[
+ {t:"Probarlo.",fx:{h:20,s:-20},f:{drogas:2},risk:[.2,"drogas"],r:"Compones un disco entero en una noche. Al despertar, está escrito en sánscrito."},
+ {t:"Venderlo yo en el próximo bolo.",fx:{d:30,o:-20},f:{hacienda:1},r:"Ganas una pasta. Hacienda pregunta de dónde sale. «Merchandising», contestas."},
+ {t:"Tirarlo al váter.",fx:{s:5,d:-15},r:"Toni te lo cobra igual. «Política de devoluciones», dice."}]},
+
+{id:"forense",st:[1,2],c:"forense",w:2,cond:()=>F("drogas")>=2||S.st.s<=30,q:"Hola. No te asustes. Solo vengo a tomarte medidas. Por si acaso. Me gusta tener el trabajo adelantado.",opts:[
+ {t:"Dejarme medir.",fx:{s:-10,h:5},r:"1,72 de largo. Te dice que hay ataúdes en oferta. Te guarda uno."},
+ {t:"Cambiar de vida ahora mismo.",fx:{s:15,h:-15,d:-10},set:{drogas:0},r:"Te apuntas a pilates. El forense se va decepcionado, pero te deja su tarjeta."},
+ {t:"Pedirle que me patrocine.",fx:{d:15,o:-15},r:"Funeraria La Última Nota patrocina tu gira. El logo es un ataúd con guitarra. Da muy mal rollo."}]},
+
+/* ---------- ETAPA 2 · Primer éxito ---------- */
+{id:"megasound",st:[2],c:"montero",w:5,q:"Te ofrecemos un contrato de cinco discos. Nosotros elegimos las canciones, la ropa, el peinado y tu pareja de cara a la prensa.",opts:[
+ {t:"Firmar.",fx:{d:30,h:20,o:-5},set:{megasound:1},r:"Te tiñen de un color que no existe en la naturaleza. Te queda bien. Lo odias."},
+ {t:"Negociar libertad creativa.",fx:{d:10,h:10,o:10},r:"Consigues elegir el peinado. Lo demás, no. Algo es algo."},
+ {t:"Seguir indie.",fx:{o:15,h:-5,d:-10},set:{indie:1},r:"La revista de culto te llama «auténtic[o|a]». La revista de culto tiene 800 lectores."}]},
+
+{id:"pareja_prensa",st:[2],c:"montero",w:6,nogen:["laura"],cond:()=>F("megasound"),q:"Te hemos asignado pareja mediática: un futbolista de Segunda B. Sonríe en las fotos y no hables de política.",opts:[
+ {t:"Aceptar y sonreír.",fx:{h:20,s:-5},r:"Os pillan «por sorpresa» en una playa. La sorpresa estaba en el contrato, cláusula 7."},
+ {t:"Negarme.",fx:{o:5,d:-15},r:"Te multan por incumplimiento. El futbolista, aliviado, te manda flores."},
+ {t:"Prefiero al portero.",fx:{h:15,o:10},r:"El portero resulta ser majo. Es lo único auténtico que hay en tu vida."}]},
+
+{id:"melon",st:[2],c:"melon",q:"Tu canción está bien, pero le falta perreo. Y un sample de un ascensor. Y gritar «DJ Melón» cada veinte segundos.",opts:[
+ {t:"Aceptarlo todo.",fx:{h:20,o:-5},set:{melon:1},r:"La canción es un pelotazo. Nadie recuerda tu nombre, pero todo el mundo grita «DJ Melón»."},
+ {t:"Solo el perreo.",fx:{h:10,o:3},set:{melon:1},r:"Equilibrio perfecto entre arte y caderas."},
+ {t:"Echarle del estudio.",fx:{o:5,h:-5,s:5},r:"DJ Melón se va gritando «DJ Melón». Es su firma también al salir."}]},
+
+{id:"paparazzi",st:[2],c:"paco",q:"Te he pillado sacando la basura en pijama de unicornio. ¿Exclusiva pagada o lo publico gratis con un titular cruel?",opts:[
+ {t:"Pagarle.",fx:{d:-15},r:"Lo publica igual tres meses después, en la sección «Así eran antes de ser nadie»."},
+ {t:"Posar con orgullo.",fx:{h:15,o:5},r:"El pijama se agota en internet. No cobras ni un euro."},
+ {t:"Tirarle la bolsa de basura.",fx:{h:10,o:-10},r:"Foto aún mejor. Titular: «[El cantante|La cantante] se recicla»."}]},
+
+{id:"gala",st:[2],c:"gala",q:"¡Estás nominad[o|a] a Artista Revelación! Si no ganas, la cámara te enfocará igualmente. Practica tu cara de «me alegro por los demás».",opts:[
+ {t:"Ir vestid[o|a] de jamón ibérico.",fx:{h:25,o:-10,s:-5},r:"El jamón huele. El jamón suda. El jamón es portada de todo."},
+ {t:"Ir elegante y aplaudir a los ganadores.",fx:{o:10},r:"No ganas. Tu cara de alegría falsa se hace viral como «la persona más educada de España»."},
+ {t:"Subir al escenario aunque no gane.",fx:{h:20,o:-15},r:"Le quitas el micro a la ganadora. Kira Star. Merecía la pena."}]},
+
+{id:"afterparty",st:[2],c:"lucia",cond:()=>F("drogas")>=1,q:"Afterparty en mi casa. Habrá polvos mágicos. No, no son de hadas.",opts:[
+ {t:"Ir a por todas.",fx:{h:15,s:-15},f:{drogas:1},r:"Te despiertas en una bañera vacía con un flamenco hinchable. No sabes de quién es el flamenco."},
+ {t:"Ir, pero solo agua.",fx:{h:5,o:5},r:"Eres la única persona sobria. Ves cosas. Las apuntas para tu próximo disco."},
+ {t:"Quedarme en casa.",fx:{s:10,h:-8},r:"Ves una serie de cocina. Descubres que te gusta el risotto. Peligroso."}]},
+
+{id:"gira",st:[2],c:"vero",w:4,q:"La gira: cuarenta fechas en cuarenta y cinco días. El autobús no tiene ducha, pero tiene un ambientador de pino precioso.",opts:[
+ {t:"Hacer las cuarenta.",fx:{d:30,s:-25,h:15},r:"En la fecha 31 ya no sabes en qué ciudad estás. Saludas a «Cuenca» en Badajoz."},
+ {t:"Recortar a veinte.",fx:{d:15,s:-10,h:5},r:"Equilibrio sensato. Los fans de las otras veinte ciudades te queman la camiseta en efigie."},
+ {t:"Gira acústica por residencias de ancianos.",fx:{o:20,d:5,s:5,h:-5},r:"Los abuelos te adoran. Uno te deja en herencia una caravana y dos canarios."}]},
+
+{id:"kira_plagio",st:[2],c:"kira",q:"Tu nuevo single suena igual que el mío. Te voy a denunciar. O… fingimos una pelea en redes y ganamos los dos.",opts:[
+ {t:"Pelea falsa.",fx:{h:25,o:-5},r:"Os insultáis con un guion escrito por la misma agencia. Las dos canciones suben al top 10."},
+ {t:"Juicio.",fx:{d:-15,o:5,h:10},r:"El juez escucha las dos canciones y declara que ambas son «igual de malas»."},
+ {t:"Admitir que me inspiré.",fx:{o:10,h:-5},r:"La honestidad te sienta bien. Kira, confundida, no sabe cómo reaccionar ante algo sincero."}]},
+
+{id:"hijo",st:[2],c:"desconocido",q:"Hola. Según una página web, soy tu hij[o|a] secret[o|a]. Tengo 34 años.",opts:[
+ {t:"Pedir una prueba de ADN.",fx:{d:-5,s:-5,h:5},r:"No es tu hijo. Es tu primo Iván, el interventor. Quería salir en la tele."},
+ {t:"Abrazarle en directo en un programa.",fx:{h:20,o:10,d:-10},r:"Lágrimas, música de piano, cuatro millones de espectadores. Nadie te pregunta por las matemáticas."},
+ {t:"Ignorarle.",fx:{o:-10},r:"Va a todos los platós contando que le abandonaste. Cobra más que tú por entrevista."}]},
+
+{id:"focas",st:[2],c:"ong",q:"Concierto benéfico para salvar a la foca monje. No cobras, pero sales en la tele al lado de gente mucho más famosa que tú.",opts:[
+ {t:"Ir.",fx:{o:20,d:-10,h:10},r:"Cantas bien, sonríes mejor y una foca te salpica en directo. Imagen del año."},
+ {t:"Pedir caché.",fx:{d:10,o:-20},r:"Se filtra tu factura. «¿Cobrar a las focas?», titula todo el mundo."},
+ {t:"Ir y adoptar dos focas.",fx:{o:10,h:15,s:-10},r:"Las focas viven ahora en tu bañera. La comunidad de vecinos te denuncia. Las focas, encantadas."}]},
+
+{id:"yate",st:[2],c:"jeque",q:"Fiesta en mi yate. Champán, influencers y… ingredientes recreativos. No hagas preguntas, que es lo elegante.",opts:[
+ {t:"Ir y probar de todo.",fx:{h:15,s:-15},f:{drogas:1},r:"Te despiertas en Mónaco. No sabes cómo has llegado. Tampoco tienes pasaporte."},
+ {t:"Ir, pero sin probar nada.",fx:{h:5,o:5},r:"Haces amistad con el capitán. Es el único que sabe dónde estáis."},
+ {t:"No ir.",fx:{s:10,h:-10},r:"Al día siguiente el yate sale en las noticias. No por nada bueno."}]},
+
+{id:"tuit",st:[2],c:"bea",q:"Alguien ha desenterrado un tuit tuyo de 2014: «las pasas son el ébola de la fruta». Hay una cancelación en marcha.",opts:[
+ {t:"Pedir perdón con fondo blanco y piano.",fx:{o:10,h:-5},r:"El vídeo es tan triste que la gente te perdona por pena."},
+ {t:"Redoblar: «Y las ciruelas, el cólera».",fx:{h:20,o:-15},r:"Los productores de ciruelas se manifiestan delante de tu casa. Te tiran ciruelas. Están ricas."},
+ {t:"Borrar todas las redes.",fx:{s:15,h:-15},r:"Por primera vez en años, duermes ocho horas seguidas."}]},
+
+{id:"mama_bingo",st:[2],c:"mama",q:"Hij[o|a], ahora que eres famos[o|a], mis amigas quieren entradas. Les he prometido cuarenta. Y una foto contigo en el bingo.",opts:[
+ {t:"Ir al bingo.",fx:{o:15,s:-5,h:5},r:"Acabas cantando los números. Literalmente. Es tu mejor actuación del año."},
+ {t:"Darle las cuarenta entradas.",fx:{d:-10,o:5},r:"Cuarenta señoras en primera fila con abanicos. La crítica lo llama «el público más leal de España»."},
+ {t:"«Mamá, tengo una carrera».",fx:{o:-10},set:{mama_dolida:1},r:"Te recuerda las treinta y seis horas de parto. Pierdes la discusión en cuatro segundos."}]},
+
+{id:"himno",st:[2],c:"presi",q:"Queremos que cantes el himno en la final de copa. Ojo: el último que desafinó salió del estadio en camilla.",opts:[
+ {t:"Cantar en directo.",fx:{h:15,o:10,s:-5},r:"Lo clavas. Cuarenta mil personas te corean. Por un momento, eres invencible."},
+ {t:"Hacer playback.",fx:{h:5,o:-10},r:"Se va la luz a mitad del himno. Tu voz sigue sonando. Silencio de cuarenta mil personas."},
+ {t:"Cantar el himno del rival por error.",fx:{h:25,o:-20,s:-15},r:"Sales del estadio en helicóptero. Literalmente."}]},
+
+{id:"isla",st:[2],c:"reality",q:"Concurso en una isla desierta. Pagamos muy bien y prometemos no ponerte en peligro. (No prometemos nada).",opts:[
+ {t:"Ir.",fx:{d:25,h:20,s:-20},r:"Pierdes ocho kilos, dos amistades y la fe en la humanidad. Ganas seguidores."},
+ {t:"Rechazarlo.",fx:{o:5,h:-5},r:"Va Kira Star. Se come una medusa. Audiencia récord."},
+ {t:"Ir y comerme un cangrejo vivo en directo.",fx:{h:30,o:-15,s:-15,d:15},r:"El cangrejo se defiende. El vídeo da la vuelta al mundo. El cangrejo tiene ahora club de fans."}]},
+
+{id:"vozai",st:[2],c:"vozai",q:"Clonamos tu voz con IA y sacamos trescientas canciones al mes. Tú no haces nada. Cobras un 2 %.",opts:[
+ {t:"Firmar.",fx:{d:20,h:10,o:-15},set:{clon:1},r:"Tu clon saca un disco de reguetón navideño. Es tu mayor éxito. Nunca lo has cantado."},
+ {t:"Rechazar.",fx:{o:10,h:-5},r:"Te clonan igual. Ahora tienes que demandar a una voz que es tuya."},
+ {t:"Clonad a mi cuñado y que deje de llamarme.",fx:{s:10,d:-5},r:"El cuñado artificial te llama igual, pero al menos te da la razón."}]},
+
+{id:"avioneta",st:[2],c:"piloto",q:"Para llegar a tiempo al festival tengo esta avioneta de 1964. Tranquil[o|a], que solo me he tomado dos carajillos.",opts:[
+ {t:"Subirme. El show debe continuar.",fx:{h:15,d:20},risk:[.3,"avion"],r:"Aterrizáis en un campo de girasoles a 40 km del festival. Llegas en tractor. Eres leyenda."},
+ {t:"Ir en coche toda la noche.",fx:{s:-20,h:5,d:5},r:"Conduces nueve horas a base de café. Tocas como un zombi. La crítica lo llama «emocionalmente desnudo»."},
+ {t:"No ir.",fx:{o:-15,h:-15,d:-20},r:"Penalización de contrato, fans indignados y un hilo de Twitter que te llama «diva de mercadillo»."}]},
+
+{id:"tigre",st:[2],c:"director",q:"Para el videoclip tengo un tigre de verdad. Está casi domesticado. Solo se ha comido a un ayudante, y era el de prácticas.",opts:[
+ {t:"Rodar con el tigre.",fx:{h:25,d:-5},risk:[.25,"tigre"],r:"El tigre te lame la cara. Lo tomas por cariño. Estaba comprobando si estabas en su punto."},
+ {t:"Tigre por ordenador.",fx:{d:-20,h:5},r:"El tigre digital parece un peluche con hipo. Los memes te persiguen un mes."},
+ {t:"Un gato maquillado de tigre.",fx:{h:10,o:5,s:-5},r:"El gato te destroza la cara igualmente. El videoclip gana un premio de cine independiente."}]},
+
+{id:"cirugia",st:[2],c:"cirujano",q:"Retoque de cara a precio de saldo en mi clínica (un bajo con cortinas). Labios, pómulos y, de regalo, te quito una costilla. Para la cintura.",opts:[
+ {t:"Ir. Es una ganga.",fx:{h:15,s:-20},risk:[.25,"cirugia"],r:"Vuelves con la cara de otra persona. Más guapa, eso sí. Tu madre no te reconoce en el aeropuerto."},
+ {t:"Ir a un cirujano caro.",fx:{d:-30,h:10},r:"Quedas estupend[o|a]. Nadie lo nota. Has pagado 20.000 € para que nadie lo note."},
+ {t:"Me acepto tal como soy.",fx:{o:10,h:-10},r:"Mensaje precioso. Las revistas titulan: «[Él|Ella] se ha dejado»."}]},
+
+{id:"firma_discos",st:[2],c:"vero",q:"Firma de discos en un centro comercial: hay sitio para doscientas personas y han venido cinco mil. Hay una sola puerta.",opts:[
+ {t:"Salir a saludar.",fx:{o:15,h:15},risk:[.3,"fans"],r:"Te arrancan media camiseta y un mechón. Sales viv[o|a] y en topless parcial. Portada."},
+ {t:"Escapar por la puerta de atrás.",fx:{o:-20,h:-5},r:"Te pillan escapando dentro de un contenedor. Titular: «La basura reconoce a la basura»."},
+ {t:"Cantar desde el balcón.",fx:{h:10,s:-5},r:"Momento épico. Alguien te tira un sujetador. Luego una botella. Luego una silla."}]},
+
+{id:"mariano",st:[2],c:"mariano",w:4,q:"Canta en la comunión de mi nieta. Si le gusta, te pago cincuenta mil. Si no le gusta… también te pago, pero de otra forma.",opts:[
+ {t:"Ir y darlo todo.",fx:{d:35},set:{mariano_amigo:1},risk:[.25,"mafia"],r:"A la niña le encanta. Don Mariano te abraza. Notas algo duro bajo su chaqueta. No es la cartera."},
+ {t:"Rechazarlo con educación.",fx:{o:5},f:{mafia:1},r:"«Qué pena», dice. Al día siguiente hay un ladrillo en el asiento de tu coche. Dentro. Con el coche cerrado."},
+ {t:"Pedir el doble.",fx:{d:45},f:{mafia:1},r:"Te paga sonriendo. Esa sonrisa la vas a ver en tus pesadillas."}]},
+
+{id:"mariano_2",st:[2],c:"mariano",w:5,cond:()=>F("mafia")===1,q:"Mi sobrino quiere ser cantante. Canta fatal. Le vas a hacer un dueto. Y le vas a dar las gracias en los premios.",opts:[
+ {t:"Hacer el dueto.",fx:{o:-15,h:-10,d:10},set:{mafia:0,mariano_amigo:1},r:"El sobrino desafina como una gaviota atropellada. Don Mariano llora de orgullo. Estás a salvo. Por ahora."},
+ {t:"Decirle la verdad: canta fatal.",fx:{o:10},f:{mafia:1},r:"El silencio dura once segundos. Nunca once segundos fueron tan largos."},
+ {t:"Huir del país una temporada.",fx:{d:-30,h:-15},set:{mafia:0},r:"Seis meses en un pueblo de Laos. Vuelves cuando Don Mariano entra en prisión por otra cosa. Sale a los tres días."}]},
+
+{id:"mariano_final",chain:1,st:[1,2],c:"mariano",q:"Ya te dije que no me gusta que me hagan feos. Vamos a dar un paseo en barco. Te he comprado unos zapatos nuevos.",opts:[
+ {t:"Qué zapatos más pesados…",die:"mafia",r:"Son de cemento. Del 42."},
+ {t:"Huir a Portugal.",die:"mafia",r:"Don Mariano tiene primos en Portugal. Y en todas partes."},
+ {t:"Ofrecerle todos mis royalties.",die:"mafia",r:"Los acepta, muy agradecido. Y luego, el paseo en barco. Por si acaso."}]},
+
+{id:"hater",st:[2],c:"hater",q:"Te espero a la salida del concierto. Tengo tu dirección, tu horario y un cuchillo jamonero. Con cariño, tu mayor hater.",opts:[
+ {t:"Denunciarle a la policía.",fx:{d:-5,s:-10},r:"La policía te recomienda «no salir de casa». Un mes encerrad[o|a] componiendo canciones sobre pánico."},
+ {t:"Contestarle con un zasca en redes.",fx:{h:20,o:5},risk:[.25,"hater"],r:"El zasca es viral. El hater no aparece. Por ahora."},
+ {t:"Invitarle al camerino a hablar.",fx:{o:15,h:10},risk:[.4,"hater"],r:"Viene. Habláis. Llora. Solo quería que le firmaras el cuchillo."}]},
+
+{id:"mama_medico",st:[2],c:"mama",q:"Hij[o|a], el médico dice que me quedan seis meses. ¿Me escribirías una canción?",opts:[
+ {t:"Escribirle la canción más bonita del mundo.",fx:{h:20,o:15,s:-10},r:"Es número 1. Tu madre se recupera milagrosamente y te reclama el 50 % de los royalties."},
+ {t:"Usarlo para la promoción del disco.",fx:{h:30,o:-25,d:15},set:{mama_dolida:1},r:"«Mi madre se muere, compra mi disco». Vendes muchísimo. Tu madre se entera por la tele."},
+ {t:"«Mamá, eso mismo dijiste en 2019».",fx:{s:5,o:-5},r:"Tiene razón. Es el mismo médico. Es su amigo del bingo."}]},
+
+{id:"muerte_falsa",st:[2],c:"montero",q:"Idea de marketing: fingimos tu muerte. Los artistas muertos venden diez veces más. Resucitas en tres meses con disco nuevo.",opts:[
+ {t:"Fingir mi muerte.",fx:{d:30,h:25,o:-25},r:"Vas a tu propio funeral disfrazad[o|a]. Lloran cuatro personas. Tu ex aplaude. Tu cuñado pregunta por la herencia."},
+ {t:"Ni de broma.",fx:{o:5,d:-10},r:"La discográfica te mira como se mira una inversión que no rinde. Te cambian el camerino por un baño."},
+ {t:"Fingir la muerte de Kira Star.",fx:{h:20,o:-20},set:{kira_enemiga:1},r:"Kira se entera por un tuit de pésame. Te declara la guerra. Y gana 300.000 seguidores. Con su propia muerte."}]},
+
+{id:"kira_venganza",st:[2],c:"kira",w:4,cond:()=>F("kira_enemiga"),q:"He contratado a un detective. Tengo tus fotos del instituto, tus tuits borrados y a tu ex. ¿Negociamos o lo suelto todo?",opts:[
+ {t:"Negociar: le cedo mi mejor canción.",fx:{h:-20,d:-10},set:{kira_enemiga:0},r:"Kira la canta. Es número 1. Cada vez que suena en la radio, una parte de ti muere."},
+ {t:"Que lo suelte. No tengo vergüenza.",fx:{o:-25,h:20},r:"Tu foto con aparato, flequillo y camiseta de un grupo de ska se convierte en el meme del año."},
+ {t:"Contratar yo a otro detective.",fx:{d:-20,h:15},r:"Descubre que Kira se llama Encarni y es de Albacete. Guerra fría. Destrucción mutua asegurada."}]},
+
+/* --- Arcos de personajes en la etapa 2 --- */
+{id:"benito_satan",st:[2],c:"benito",w:4,q:"Hij[o|a] mí[o|a], el obispo dice que tu disco, escuchado al revés, dice «Satanás mola». ¿Es verdad?",opts:[
+ {t:"Es verdad. Y suena genial.",fx:{h:25,o:-20},r:"Los metaleros te adoran. Tu madre reza por ti en tres parroquias a la vez."},
+ {t:"Grabar un disco de canto gregoriano.",fx:{o:15,h:-10},set:{benito_amigo:1},r:"El Vaticano lo pone en la sala de espera. Ventas: discretas. Indulgencias: muchas."},
+ {t:"Donar a la parroquia para que se calle.",fx:{d:-15,o:5},set:{benito_amigo:1},r:"El obispo se compra un coche. Tu disco al revés ahora dice «Dios mola». Milagro."}]},
+
+{id:"manolo_cierra",st:[2],c:"manolo",w:4,q:"El Bar Pepe cierra. Me han triplicado el alquiler para hacer pisos turísticos. Aquí empezaste tú…",opts:[
+ {t:"Concierto benéfico en el bar.",fx:{o:15,h:10,s:-5,d:-5},set:{manolo_amigo:1},r:"Lleno hasta la bandera. Recaudáis lo justo para seis meses más y para tirar los mejillones. No los tira."},
+ {t:"Comprar el bar.",fx:{d:-25,o:10},set:{bar:1,manolo_amigo:1},r:"Ahora eres dueñ[o|a] de un bar con una tragaperras y un camarero llorando de alegría."},
+ {t:"Ya no me acuerdo de ese bar.",fx:{o:-20,s:5},set:{manolo_dolido:1},r:"Manolo te cuelga. Al día siguiente, tu foto del bar acaba en el baño. Encima del urinario."}]},
+
+{id:"chema_solo",st:[2,3],c:"chema",w:3,cond:()=>!F("chema_fuera"),q:"He grabado un disco en solitario. Se llama «Yo también existo». ¿Me haces de telonero?",opts:[
+ {t:"Hacerle de telonero.",fx:{o:15,h:-10},r:"El público viene por ti y se queda por Chema. Te odias un poquito."},
+ {t:"Que me haga él de telonero a mí.",fx:{h:5,o:-5},r:"Chema acepta con una sonrisa que da miedo. Toca el bombo un pelín más fuerte de lo normal."},
+ {t:"Escuchar el disco con sinceridad.",fx:{s:-5,o:5},r:"Es bueno. Muy bueno. Mejor que lo tuyo. Le dices que «tiene cosas». Se le nota la herida."}]},
+
+/* ---------- ETAPA 3 · Estrellato ---------- */
+{id:"dictador",st:[3],c:"dictador",q:"Concierto privado por mi cumpleaños. Pago dos millones. Tranquil[o|a]: en mi país solo encarcelamos a los que cantan mal.",opts:[
+ {t:"Ir y cantarle «Cumpleaños feliz» con sentimiento.",fx:{d:35,o:-25},r:"Su Excelencia llora de emoción. Tú también, pero por otros motivos. Una ONG de derechos humanos te dedica un comunicado."},
+ {t:"Rechazarlo.",fx:{o:10,d:-5},r:"Contrata a Kira Star. Ella canta, él aplaude y ella vuelve con un palacio."},
+ {t:"Ir, cobrar y criticarle desde el escenario.",fx:{o:30,h:25,d:20},risk:[.4,"dictador"],r:"Le llamas tirano en su propia fiesta y huyes en un avión de carga, escondid[o|a] entre plátanos. Heroicidad internacional."}]},
+
+{id:"boda",st:[3],c:"pareja",nogen:["laura"],q:"Casémonos. Ya he vendido la exclusiva de la boda a una revista por 300.000 €. El vestido lo eligen ellos.",opts:[
+ {t:"Boda con exclusiva y drones.",fx:{d:25,h:20,o:-10},set:{casad:1},later:["divorcio",6],r:"Un dron se estrella contra la tarta. Es la foto del año. Tu suegra sale en todas con cara de funeral."},
+ {t:"Boda íntima, sin cámaras.",fx:{o:10,s:10,d:-10},set:{casad:1},later:["divorcio",9],r:"Cuarenta invitados. Uno vende fotos con el móvil. Tu cuñado, claro."},
+ {t:"No me caso ni loc[o|a].",fx:{s:5,h:-10,o:-5},r:"Tu pareja te deja por SMS. Con faltas de ortografía. Te duele más lo de las faltas."}]},
+
+{id:"divorcio",chain:1,st:[3,4],c:"herrera",q:"Tu pareja pide el divorcio. Quiere la casa, la mitad de tus canciones y al perro. El perro ha testificado en tu contra.",opts:[
+ {t:"Dárselo todo y empezar de cero.",fx:{d:-25,s:10},r:"Te quedas con una guitarra, un colchón y la custodia compartida del perro. El perro no te mira."},
+ {t:"Juicio televisado.",fx:{h:25,o:-20,d:-10},r:"Tres meses de audiencias récord. Tu ex llora en directo. Tú también. Ganan los abogados."},
+ {t:"Disco de despecho.",fx:{h:30,o:-10,s:-15},r:"«Ojalá te muerda el perro» es número uno en once países. El perro tampoco te habla."}]},
+
+{id:"documental",st:[3],c:"netflux",q:"Hacemos un documental sobre tu vida. Pero necesitamos drama: ¿alguna adicción, trauma o pariente muerto que podamos aprovechar?",opts:[
+ {t:"Contarlo todo, sin filtros.",fx:{h:25,o:5,s:-15},r:"Lloras en cada episodio. La gente te quiere más. Tu terapeuta te manda la factura del rodaje."},
+ {t:"Inventarme un trauma.",fx:{h:30,o:-25},r:"Un periodista descubre que el «orfanato rumano» era un campamento de verano en Cuenca."},
+ {t:"Que el documental sea sobre mi madre.",fx:{o:15,h:-10},r:"Tu madre es lo más visto del año. Le ofrecen spin-off, libro y perfume. Tú sales en los créditos."}]},
+
+{id:"gnomo",st:[3],c:"ambrosio",q:"Señor[|a], hay a la venta un gnomo de jardín de oro macizo. Solo 400.000 €. Todas las estrellas de verdad tienen uno.",opts:[
+ {t:"Comprarlo.",fx:{d:-20,h:10},r:"Lo pones en la entrada. Lo roban a la semana. El ladrón sube fotos con él desde Ibiza."},
+ {t:"Comprar dos. Uno con mi cara.",fx:{d:-30,h:20,o:-10},r:"El gnomo con tu cara es más expresivo que tú. Las revistas lo prefieren."},
+ {t:"Despedir a Ambrosio por sugerirlo.",fx:{d:10,o:-10,s:-5},r:"Ambrosio vende tus secretos a Paco Exclusiva. Tenías muchos. Algunos ni los recordabas."}]},
+
+{id:"gira_mundial",st:[3],c:"vero",w:4,q:"Gira mundial: 120 fechas, 40 países, 3 continentes y cero días libres. ¿Firmamos?",opts:[
+ {t:"Firmar entera.",fx:{d:35,h:20,s:-25},r:"En Tokio saludas en alemán. En Berlín, en japonés. Nadie se da cuenta."},
+ {t:"Firmar, con «ayuda química».",fx:{d:30,h:25,s:-10},f:{drogas:2},r:"Haces la gira entera sin dormir. Recuerdas tres conciertos. Uno era de otra persona."},
+ {t:"Solo Europa.",fx:{d:15,h:5,s:-10},r:"Los fans del resto del mundo te queman en efigie. Muy bien hecha la efigie, por cierto."}]},
+
+{id:"terapia",st:[3,4],c:"luz",q:"Tu ego ocupa ya dos habitaciones de tu mansión y paga menos impuestos que tú. ¿Lo trabajamos?",opts:[
+ {t:"Hacer terapia en serio.",fx:{s:15,d:-15,h:-5},r:"Descubres que todo es culpa de tu madre. Se lo dices. Te deshereda. Avanzas."},
+ {t:"Mi ego está perfecto.",fx:{h:10,o:-15},r:"Lo dices en tercera persona. La doctora lo apunta en rojo."},
+ {t:"Hacer un disco sobre mi terapia.",fx:{h:20,o:5,s:-5},r:"La terapeuta te demanda por usar sus frases. Las frases eran muy buenas."}]},
+
+{id:"jurado",st:[3],c:"jc",q:"¡Vuelves a «Tú Sí Que Vales Menos»! Pero ahora como jurado. Tienes que destrozar sueños con gracia.",opts:[
+ {t:"Ser cruel. Muy cruel.",fx:{h:20,o:-15},r:"Le dices a una señora de 70 años que canta como un fax. Se hace viral. Ahora tiene más contratos que tú."},
+ {t:"Ser amable con todos.",fx:{o:10,h:-10},r:"Aburres a España entera. Te sustituyen por un loro que dice «NO»."},
+ {t:"Llorar con cada concursante.",fx:{o:15,h:10,s:-10},r:"Lloras catorce veces por programa. Te deshidratas. Te ponen un suero en directo."}]},
+
+{id:"zoraida",st:[3,4],c:"zoraida",q:"Las cartas dicen que morirás joven. Por 5.000 € les pido que cambien de opinión.",opts:[
+ {t:"Pagar. Por si acaso.",fx:{d:-10,s:5},r:"Las cartas cambian de opinión: ahora dicen que morirás arruinad[o|a]. Zoraida te ofrece otra tirada."},
+ {t:"«Ya no soy tan joven».",fx:{o:3,h:-3},r:"Zoraida te mira de arriba abajo: «Pues también es verdad»."},
+ {t:"Encargarle una maldición contra Kira Star.",fx:{h:10,d:-10},r:"Kira se tuerce un tobillo en directo. Te sientes poderos[o|a]. Y un poco mala persona. Sobre todo poderos[o|a]."}]},
+
+{id:"espacio",st:[3],c:"galactica",q:"Primer concierto de la historia en el espacio. La nave está casi probada. Lo de «casi» es importante.",opts:[
+ {t:"Despegar.",fx:{h:35,d:20},risk:[.3,"espacio"],r:"Cantas en gravedad cero. El micro sale flotando. Ocho mil millones de personas te ven vomitar en directo. Histórico."},
+ {t:"Mandar un holograma.",fx:{h:10,d:-10},r:"Tu holograma canta en el espacio. Se le olvida la letra. Igual que a ti."},
+ {t:"No, gracias. Me mareo en el ascensor.",fx:{o:5,h:-10},r:"Va Kira Star. Vuelve. Por desgracia."}]},
+
+{id:"placaje",st:[3,4],c:"iker",q:"Jef[e|a], un fan ha saltado la valla. Lleva un cuchillo… o un ramo de flores. Desde aquí no se distingue bien.",opts:[
+ {t:"¡Placaje!",fx:{o:-20,h:15},r:"Era un ramo de flores. Y un niño de nueve años. El vídeo se titula «El placaje de la vergüenza»."},
+ {t:"Déjale pasar.",fx:{o:15},risk:[.2,"hater"],r:"Era un ramo de flores. Te abraza llorando y te pringa de mocos. Sonríes para la foto."},
+ {t:"Esconderme detrás de Iker.",fx:{h:5,o:-5,s:5},r:"Iker es grande, pero no tanto. Sale media cara tuya en todas las fotos, con cara de pánico."}]},
+
+{id:"premio_robado",st:[3],c:"kira",q:"(Kira Star se ha llevado TU estatuilla de los Premios Pelícano al baño y no piensa salir).",opts:[
+ {t:"Echar la puerta abajo.",fx:{h:20,o:-10,s:-10},r:"La puerta era de cristal. La estatuilla, de plástico. Tus puntos de sutura, de verdad."},
+ {t:"Aplaudir con dignidad.",fx:{o:15,h:-5},r:"Todo el mundo comenta tu elegancia. Kira usa tu estatuilla de pisapapeles."},
+ {t:"Ligar con su pareja en la fiesta.",fx:{h:25,o:-20},set:{kira_enemiga:1},r:"Funciona. Demasiado bien. Ahora tienes una pareja que no querías y una enemiga mortal."}]},
+
+{id:"bebe",st:[3],c:"montero",q:"Las estrellas con bebé venden un 40 % más. ¿Tienes previsto tener uno? Podemos alquilar uno para la portada.",opts:[
+ {t:"Bebé de alquiler para la foto.",fx:{h:20,o:-30},r:"El bebé llora en todas las fotos. Su madre real lo reconoce en el quiosco. Demanda."},
+ {t:"Adoptar de verdad.",fx:{o:15,d:-15,s:-10},r:"No duermes desde hace meses. Tu nueva canción se llama «3:47 AM». Es preciosa y trágica."},
+ {t:"Mejor un perro.",fx:{o:5,h:5},r:"El perro tiene más seguidores que tú en un mes. Firma con Megasound."}]},
+
+{id:"arnes",st:[3],c:"tecnico",q:"Para la entrada en el estadio te bajamos del techo con un arnés. Lo he montado yo. Con bridas. Bastantes bridas.",opts:[
+ {t:"Bajar volando.",fx:{h:25},risk:[.3,"arnes"],r:"Bajas como un ángel. Un ángel que grita. Sesenta mil personas lo graban."},
+ {t:"Entrar andando como una persona normal.",fx:{h:3,o:5},r:"Tu entrada es tan normal que la gente sigue en la cola del baño."},
+ {t:"Salir de un ataúd que se abre.",fx:{h:20,o:-10},r:"El ataúd no se abre. Cantas medio concierto desde dentro. La crítica dice que es tu mejor directo."}]},
+
+{id:"nazi_estadio",st:[3,4],c:"bruno",w:4,cond:()=>F("neonazis")>=1,q:"Mis chicos y yo hemos comprado entradas de primera fila para tu concierto. Llevaremos antorchas. Para iluminar.",opts:[
+ {t:"Cancelar el concierto.",fx:{d:-20,o:-10},r:"Pérdidas millonarias. Bruno sube una foto sonriendo delante del estadio vacío."},
+ {t:"Gritar «¡Fuera nazis!» desde el escenario.",fx:{o:25,h:20},f:{neonazis:1},r:"Sesenta mil personas los echan cantando. Momento histórico. Bruno apunta algo en su libreta."},
+ {t:"Hacer como que no les veo.",fx:{o:-20},r:"Salen en todas las fotos, en primera fila, haciendo cosas con el brazo."}]},
+
+{id:"fiesta_rep",rep:1,st:[3,4],c:"lucia",q:"Otra fiesta de famosos. Habrá canapés de oro, un mago y alguien de un reality vomitando en la piscina.",opts:[
+ {t:"Ir.",fx:{h:8,s:-8},r:"Te haces fotos con gente cuyo nombre no recuerdas. Ellos tampoco recuerdan el tuyo."},
+ {t:"Quedarme en casa.",fx:{h:-5,s:5},r:"Ves la fiesta por Instagram. Parece aburrida. Te sientes superior y sol[o|a]."},
+ {t:"Ir con mi madre.",fx:{o:5,h:3,s:-3},r:"Tu madre se hace amiga del mago. Te vas sin ella."}]},
+
+{id:"post_rep",rep:1,st:[3,4],c:"bea",q:"Toca post. Llevas 48 horas sin publicar y el algoritmo te castiga. ¿Qué subo?",opts:[
+ {t:"Foto en bañador.",fx:{h:8,o:-3},r:"200.000 likes. Y un comentario de tu madre: «Abrígate»."},
+ {t:"Foto apoyando una causa social.",fx:{o:6,h:-3},r:"Te acusan de postureo. Tienen razón, pero aun así."},
+ {t:"Un meme sobre Kira Star.",fx:{h:6,o:-5},r:"Kira responde con un meme sobre tu frente. Es mejor que el tuyo."}]},
+
+/* --- Arcos de personajes en la etapa 3 --- */
+{id:"mama_novio",st:[3],c:"mama",w:4,q:"Hij[o|a], tengo novio. Tiene 34 años, se llama Jonathan y es tu bailarín principal.",opts:[
+ {t:"Bendecirlo. Mamá merece ser feliz.",fx:{o:10,s:-5},set:{jonathan:1},r:"Jonathan te llama «hij[o|a]» en los ensayos. Es más joven que tú."},
+ {t:"Despedir a Jonathan.",fx:{o:-10,h:5},set:{mama_dolida:1},r:"Tu madre te deja de hablar y se va de crucero con él. Te manda postales. Sin texto."},
+ {t:"Hacer un dueto madre-hij[o|a] en la gira.",fx:{h:20,o:5,s:-5},r:"Tu madre desafina con una seguridad que tú nunca tuviste. El público la prefiere."}]},
+
+{id:"benito_boda",st:[3],c:"benito",w:5,cond:()=>F("casad"),q:"Me han dicho que te casaste por lo civil. Dios lo ha visto todo. Y yo también: en la revista. ¿Repetimos por la Iglesia?",opts:[
+ {t:"Repetir la boda en la parroquia.",fx:{d:-15,o:10},set:{benito_amigo:1},r:"Segunda boda en un año. Los invitados ya ni traen regalo. Benito cobra doble."},
+ {t:"Dios no lee revistas.",fx:{o:-5,h:5},r:"Benito te mira con una pena infinita. «Lee el Hola, hij[o|a]. Todos los martes»."},
+ {t:"Invitarle a pasar unos días en el yate.",fx:{d:-10,s:5},set:{benito_amigo:1},r:"Benito se marea y bendice a un pez espada. El pez espada se vuelve viral."}]},
+
+{id:"manolo_bar",st:[3],c:"manolo",w:5,cond:()=>F("bar"),q:"Desde que compraste el bar viene gente de todo el mundo a cantar donde tú empezaste. Y a robar los posavasos.",opts:[
+ {t:"Convertirlo en museo.",fx:{d:15,h:10},r:"«Museo del Calamar y del Arte». Entrada: 12 €. Los mejillones, en una vitrina. Siguen vivos."},
+ {t:"Dejarlo como bar de toda la vida.",fx:{o:10,s:5},r:"Vas los viernes a cantar gratis. Es lo único de tu vida que no te cansa."},
+ {t:"Vendérselo a una cadena de brunch.",fx:{d:30,o:-25},set:{manolo_dolido:1},r:"Ahora sirven tostadas de aguacate a 14 €. Manolo pasa por delante y escupe. Con razón."}]},
+
+{id:"chema_gestor",st:[3],c:"chema",w:4,cond:()=>F("chema_fuera"),q:"Soy tu gestor desde que me fui a la gestoría, ¿te acuerdas? Tengo dos noticias: una mala y otra peor.",opts:[
+ {t:"Primero la mala.",fx:{d:-15},r:"Debes 200.000 € a Hacienda. Chema te lo dice con una calma de funcionario que da escalofríos."},
+ {t:"Primero la peor.",fx:{o:-10,h:-5},r:"Kira Star también es clienta suya. Y gana más que tú. Y le da propina."},
+ {t:"Despedirle y llevar yo las cuentas.",fx:{s:-5,d:5},f:{hacienda:1},r:"Tu método contable es una caja de zapatos. El inspector Ruiz huele algo desde su despacho."}]},
+
+{id:"mariano_estadio",st:[3],c:"mariano",w:4,q:"Te construyo un estadio con tu nombre. Con materiales de mi confianza. No preguntes qué hay en los cimientos.",opts:[
+ {t:"Aceptar el estadio.",fx:{h:25,d:-10,o:-10},risk:[.2,"estadio"],r:"El estadio es precioso. Cruje un poco cuando el público salta. «Es que respira», dice Don Mariano."},
+ {t:"Rechazarlo amablemente.",fx:{o:5},f:{mafia:1},r:"Don Mariano sonríe. «Otra vez será». Esa misma noche aparece un saco de cemento en tu jardín."},
+ {t:"Pedir que los cimientos lleven mi cara.",fx:{h:15,d:-5},set:{mariano_amigo:1},r:"Tu cara, en hormigón armado, sosteniendo 60.000 personas. Literalmente, cargas con tu público."}]},
+
+{id:"ricky_vuelve",st:[3],c:"ricky",w:5,cond:()=>F("ricky"),q:"¡Artista! He vuelto de Punta Cana. Arruinado, pero con ideas. Dame otra oportunidad. Mira: te traigo tu toalla.",opts:[
+ {t:"Perdonarle y contratarle otra vez.",fx:{h:15,d:-15},set:{ricky2:1},r:"Te consigue tres portadas en una semana. Y vuelve a quedarse el 60 %. Al menos esta vez te lo avisa."},
+ {t:"Denunciarle.",fx:{o:5,d:10},r:"El juez le obliga a devolverte la toalla y 10.000 €. La toalla huele a coco."},
+ {t:"Contratarle de chófer.",fx:{o:10,s:5},r:"Conduce fatal, pero cuenta los mejores chistes de la industria. Ninguno se puede publicar."}]},
+
+{id:"cunado_mansion",st:[3],c:"cunado",w:4,q:"Me vengo a vivir a tu mansión una temporadita. Tres o cuatro años. Traigo a mi suegra y la barbacoa.",opts:[
+ {t:"Aceptar. Es familia.",fx:{s:-15,o:10},r:"A la semana ha cambiado el wifi a «CUÑAO_ZONE» y da tours guiados de tu casa a 20 €."},
+ {t:"Rechazarlo.",fx:{o:-10,s:5},r:"Publica en Facebook que le has dejado en la calle. Lo comparten 40.000 cuñados en solidaridad."},
+ {t:"Darle la casa de invitados… en otra provincia.",fx:{d:-15,s:10},r:"Le compras un piso en Teruel. Te llama cada día para decirte que existe."}]},
+
+{id:"jessica_clon",st:[3],c:"jessica",w:5,cond:()=>F("jessica"),q:"¡Sorpresa! Me he operado para parecerme a ti. ¿A que soy más tú que tú?",opts:[
+ {t:"Contratarla como doble.",fx:{d:10,s:10,h:-5},set:{doble:1},r:"Va a las entrevistas aburridas por ti. Lo hace mejor. Responde con más carisma."},
+ {t:"Denunciarla por usurpación.",fx:{o:-10,d:-5},r:"El juez no sabe cuál de las dos personas es la demandante. Os manda a casa a las dos."},
+ {t:"Hacernos fotos juntas.",fx:{h:20,o:-5},r:"Nadie sabe quién es quién. Tu madre tampoco. Le da igual."}]},
+
+{id:"toni_kombucha",st:[3,4],c:"toni",w:3,q:"Me he rehabilitado. Ahora vendo kombucha. Es lo mismo que antes, pero más caro y en botella de cristal.",opts:[
+ {t:"Comprarle una caja.",fx:{d:-5,s:5,o:3},r:"Sabe a vinagre y arrepentimiento. Te sientes muy sano. Y muy pobre."},
+ {t:"Invertir en su marca.",fx:{d:-15,h:10},r:"«Kombucha Toni: lo de antes, pero legal». Se vende en gasolineras. Te da para pipas."},
+ {t:"Echar de menos al Toni de antes.",fx:{s:-5,h:5},f:{drogas:1},r:"Toni suspira, abre un cajón y saca «algo para los viejos tiempos». Lo coges. Claro que lo coges."}]},
+
+{id:"ruiz_mansion",st:[3],c:"ruiz",w:4,q:"Su mansión tiene catorce baños y declara usted dos. ¿Los otros doce son de adorno?",opts:[
+ {t:"Pagar la diferencia.",fx:{d:-20},r:"Ruiz se va contento. Usa uno de los baños antes de irse. Sin preguntar."},
+ {t:"«Son baños emocionales».",fx:{h:5},f:{hacienda:1},r:"Ruiz apunta «baños emocionales» en su libreta pequeña. Subraya dos veces."},
+ {t:"Tirar paredes y dejarlo en un baño gigante.",fx:{d:-10,h:10},r:"Tienes un baño de 300 m². Sale en una revista de interiorismo. Nadie entiende nada."}]},
+
+{id:"salas_chequeo",st:[3],c:"salas",w:3,q:"Chequeo anual. Tu hígado ha pedido asilo político en otro cuerpo.",opts:[
+ {t:"Dejar el alcohol.",fx:{s:20,h:-10},r:"Las fiestas sin alcohol son un documental de naturaleza: gente rara haciendo ruidos."},
+ {t:"Brindar por mi hígado.",fx:{s:-15,h:5,o:5},r:"El brindis se hace viral. Tu hígado lo ve y redacta su dimisión."},
+ {t:"Comprar un hígado de repuesto.",fx:{d:-20,s:15},r:"Te lo traen en una nevera de playa. Funciona. Pero te dan ganas de comer pienso."}]},
+
+{id:"paco_muerte",st:[3,4],c:"paco",w:6,cond:()=>S.revives>0,q:"Tengo fotos tuyas en el ataúd. Y fotos de ayer tomándote un café. ¿Cómo lo explicas?",opts:[
+ {t:"Era un efecto especial.",fx:{o:-10,h:10},r:"Nadie se lo cree, pero un canal de conspiraciones te dedica tres horas. Sube tu hype."},
+ {t:"Pagarle por las fotos.",fx:{d:-15},r:"Te vende las fotos. Y los negativos. Y una copia de seguridad «por si vuelves a morirte»."},
+ {t:"Exclusiva: «Volví del más allá».",fx:{h:25,o:-5},r:"Portada en todas partes. San Pedro, en algún sitio, se lleva las manos a la cabeza."}]},
+
+/* ---------- ETAPA 4 · Decadencia o leyenda ---------- */
+{id:"villancicos",st:[4],c:"montero",q:"Las ventas caen. Solución infalible: disco de villancicos. Con DJ Melón.",opts:[
+ {t:"Hacerlo.",fx:{d:25,h:10,o:-10},r:"«Los peces en el río (Melón Remix)» suena en todos los centros comerciales. Los dependientes te odian."},
+ {t:"Villancicos en versión heavy.",fx:{h:20,o:-5},r:"«Noche de paz… y de muerte» se vuelve de culto. Te invitan a un festival en Noruega."},
+ {t:"Negarme. Tengo dignidad.",fx:{o:10,d:-15},r:"Megasound saca uno con tu holograma. Sin preguntarte."}]},
+
+{id:"reality_olvido",st:[4],c:"reality",q:"Nuevo reality: «Supervivientes del Olvido». Famosos venidos a menos en una casa con cámaras hasta en el váter.",opts:[
+ {t:"Entrar.",fx:{d:25,h:20,o:-15,s:-10},r:"Te peleas con un exconcursante de 1998 por un yogur. Escena del año."},
+ {t:"Rechazarlo.",fx:{h:-10,o:5},r:"Entra tu ex. Habla de ti en cada gala. Cobra más por hablar de ti que tú por cantar."},
+ {t:"Entrar y liarme con alguien en directo.",fx:{h:30,o:-20,s:-5},r:"Lo ve tu madre. Lo ve tu suegra. Lo ve España entera. Audiencia histórica."}]},
+
+{id:"reunion",st:[4],c:"chema",q:"(Chema, ya con barriga) Gira de reunión. Tú, yo y la caja de ritmos. Por los viejos tiempos… y por mi hipoteca.",opts:[
+ {t:"Gira de reunión completa.",fx:{d:25,h:15,s:-15},r:"En la tercera fecha a Chema le da lumbago tocando el bombo. Tocáis sentados. La llamáis «Unplugged por prescripción médica»."},
+ {t:"Un solo concierto especial.",fx:{h:10,o:10},r:"Emoción, lágrimas, nostalgia. Chema llora más que el público. Y desafina."},
+ {t:"No vuelvo a los garitos.",fx:{o:-10,s:5},r:"Chema hace la gira con un imitador tuyo. Le va mejor."}]},
+
+{id:"biopic",st:[4],c:"netflux",q:"Película sobre tu vida. Te interpretará alguien veinte años más joven y bastante más guap[o|a].",opts:[
+ {t:"Aceptar.",fx:{d:25,h:15,o:-5},r:"La gente cree que eres como en la película. Te piden que hagas cosas que nunca hiciste."},
+ {t:"Exigir hacer de mí mism[o|a].",fx:{h:10,o:-15},r:"La crítica dice que no resultas creíble haciendo de ti."},
+ {t:"Que me interprete Kira Star.",fx:{h:25,o:5},r:"Kira te borda. Gana un premio y lo dedica «a la persona real, que también existe»."}]},
+
+{id:"hijo_trap",st:[4],c:"hijo",q:"Me da vergüenza ser tu hij[o|a]. Voy a sacar un disco de trap contra ti: «[Papá|Mamá] Boomer».",opts:[
+ {t:"Hacer un dueto.",fx:{h:20,o:5,s:-5},r:"El dueto es número uno. Te llama «boomer» en el estribillo. Lo cantas igual."},
+ {t:"Demandarle.",fx:{o:-20,d:-5},r:"El juez le da la razón. Dice que tu último disco es, efectivamente, de boomer."},
+ {t:"Producírselo.",fx:{d:-15,h:10,o:10},r:"Su disco vende más que todos los tuyos. Te sientes orgullos[o|a] y humillad[o|a] a la vez."}]},
+
+{id:"holograma",st:[4],c:"holo",q:"Firma hoy y, cuando mueras, tu holograma seguirá haciendo giras. Si quieres, podemos adelantar lo de morirte.",opts:[
+ {t:"Firmar.",fx:{d:30,o:-10},r:"Te escanean de pies a cabeza. El holograma te mira con desprecio."},
+ {t:"Que el holograma haga la gira y yo me quedo en casa.",fx:{d:20,h:-10,s:15},r:"El holograma recibe mejores críticas que tú. Y no se queja del catering."},
+ {t:"Rechazarlo.",fx:{o:5},r:"Te clonan igual a partir de una foto de 2009. Tu holograma lleva flequillo emo."}]},
+
+{id:"lifting",st:[4],c:"cirujano",q:"Para la gira de despedida: lifting completo. Quedarás como hace veinte años. O como un pez globo. Cincuenta, cincuenta.",opts:[
+ {t:"Lifting barato.",fx:{h:15,s:-10},risk:[.25,"cirugia"],r:"Quedas estupend[o|a]. No puedes cerrar los ojos, pero estupend[o|a]."},
+ {t:"Envejecer con dignidad.",fx:{o:10,h:-10},r:"Te llaman «valiente». Es la palabra que usan para no decirte «viej[o|a]»."},
+ {t:"Filtro de Instagram para siempre.",fx:{h:10,o:-10},r:"En persona no te reconoce nadie. Te piden el DNI en tu propio concierto."}]},
+
+{id:"despedida",st:[4],c:"vero",q:"Gira de despedida. La quinta. La gente empieza a sospechar.",opts:[
+ {t:"Hacer la sexta.",fx:{d:25,o:-20},r:"El cartel dice «LA ÚLTIMA (de verdad) (ahora sí)». Se agotan las entradas. España no aprende."},
+ {t:"Retirarme de verdad.",fx:{o:15,h:-15,d:-10},r:"Durante una semana eres un mito. A la segunda, te aburres."},
+ {t:"Fingir una retirada y volver al mes.",fx:{h:20,o:-15},r:"Vuelves con un disco llamado «He vuelto». Pésimo título. Buenas ventas."}]},
+
+{id:"memorias",st:[4],c:"editorial",q:"Tus memorias. Cuanta más mierda cuentes, más adelanto. ¿Cuánta mierda tienes?",opts:[
+ {t:"Contarlo todo. Nombres incluidos.",fx:{d:25,h:20,o:-15},f:{mafia:1},r:"El capítulo 7 habla de Don Mariano. El libro es un éxito. Don Mariano lo ha leído."},
+ {t:"Memorias blanquitas.",fx:{o:5,d:5,h:-5},r:"Se venden en gasolineras, junto a las cintas de chistes. Las firma tu madre."},
+ {t:"Inventármelo todo.",fx:{h:25,o:-20},r:"Dices que estuviste con tres presidentes y un astronauta. El astronauta lo confirma. Te preocupa."}]},
+
+{id:"alcaldia",st:[4],c:"politico",q:"Queremos que seas candidat[o|a] a la alcaldía de tu pueblo. No hace falta saber nada: lo hemos comprobado con los anteriores.",opts:[
+ {t:"Presentarme.",fx:{o:15,h:15,s:-10,d:-10},r:"Ganas. Tu primera medida es que el reloj del ayuntamiento toque tu canción cada hora. El pueblo entero te odia."},
+ {t:"Crear mi propio partido: Partido Estrella.",fx:{h:25,o:-10},r:"Sacas un concejal. Es Chema. No sabe qué es un pleno."},
+ {t:"No.",fx:{o:5},r:"Se presenta tu cuñado. Gana. Ahora es tu alcalde."}]},
+
+{id:"corazon",st:[4],c:"salas",q:"Tienes el corazón de una persona de noventa años. Y no en el sentido bonito.",opts:[
+ {t:"Retirarme a un balneario.",fx:{s:20,h:-15,d:-15},r:"Tres meses de barro, masajes y caldo. Vuelves con la piel de un bebé y el hype de un muerto."},
+ {t:"Un último concierto y luego paro.",fx:{h:20},risk:[.25,"infarto"],r:"Sobrevives. Te tiembla todo. El público lo interpreta como baile."},
+ {t:"Comprar un corazón en el mercado negro.",fx:{s:15,d:-30,o:-15},r:"Te implantan el corazón de un jabalí. Funciona perfectamente, pero a veces te dan ganas de hozar."}]},
+
+{id:"tributo",st:[4],c:"kira",q:"Voy a hacer un concierto homenaje a ti. Aunque sigas viv[o|a]. Es más rentable antes de que te mueras.",opts:[
+ {t:"Ir y cantar con ella.",fx:{o:15,h:15},r:"Abrazo en directo. Las dos sonrisas son falsas. España llora de emoción."},
+ {t:"Ir de público y abuchearla.",fx:{h:20,o:-15},r:"Te pillan las cámaras. Titular: «Ni en su propio homenaje se aguanta»."},
+ {t:"No ir.",fx:{h:-10},r:"Kira dice que estás «muy enferm[o|a]». Te llegan flores. Y una corona fúnebre, por si acaso."}]},
+
+{id:"reto",st:[4],c:"lucia",q:"Reto viral: «La abuela del rock». Los jóvenes se ríen de ti. Con cariño. Bueno, sin cariño.",opts:[
+ {t:"Seguirles el juego.",fx:{h:25,o:-5},r:"Haces el baile. Te crujen las rodillas en el audio. Es lo que más gusta."},
+ {t:"Enfadarme en directo.",fx:{o:-15,h:10},r:"«Boomer enfadad[o|a]» es el nuevo meme. Estás en todas partes. Furios[o|a]."},
+ {t:"Superarles con un reto aún más loco.",fx:{h:20},risk:[.25,"reto"],r:"Saltas del balcón a la piscina. Aciertas. Los chavales te respetan durante 48 horas."}]},
+
+{id:"cunado_final",st:[4],c:"cunado",q:"Ahora que estás en declive: ¿me devuelves lo mío? Con intereses son 47.000 €. Los he calculado yo.",opts:[
+ {t:"Pagarle.",fx:{d:-25},r:"Te da las gracias diciendo que «en el fondo, ya sabía que eras de fiar»."},
+ {t:"«Cuñado, eres familia».",fx:{o:-5,d:-5},r:"Te demanda. El juez es su compañero de pádel."},
+ {t:"Invertirlo juntos en criptomonedas.",fx:{d:-20,o:5},r:"Lo perdéis todo en 48 horas. Por primera vez estáis en igualdad de condiciones. Os abrazáis."}]},
+
+{id:"honor",st:[4],c:"gala",q:"Premio Pelícano de Honor a toda una carrera. Normalmente se lo damos a gente casi muerta, pero hemos hecho una excepción.",opts:[
+ {t:"Discurso emotivo.",fx:{o:20,h:10},r:"Das las gracias a tu madre, a Chema y a Manolo. Manolo se pone de pie. Era el camarero."},
+ {t:"Discurso ajustando cuentas.",fx:{h:25,o:-15},r:"Nombras a Ricky Platino, a tu ex y a Kira. Cortan a publicidad en el minuto cuatro."},
+ {t:"No ir: «aún no estoy muert[o|a]».",fx:{h:10,o:-5},r:"Le dan el premio a Kira «en tu nombre». Lo acepta. Lo pone en su baño."}]},
+
+{id:"bolo_super_rep",rep:1,st:[4],c:"vero",q:"Bolo: inauguración de un supermercado de barrio. Pagan bien y regalan un jamón.",opts:[
+ {t:"Aceptar.",fx:{d:10,o:-3,h:-2},r:"Cantas entre los yogures. Una señora te pide que te apartes del pasillo."},
+ {t:"Rechazar.",fx:{d:-5,s:5},r:"Va Chema. Se lleva el jamón."},
+ {t:"Aceptar y cantar desde los congelados.",fx:{h:8,s:-5},r:"Pillas un catarro, pero el vídeo es de culto: «Concierto bajo cero»."}]},
+
+/* --- Arcos de personajes en la etapa 4 --- */
+{id:"mama_residencia",st:[4],c:"mama",w:5,q:"Hij[o|a], quiero ir a una residencia de lujo… o vivir contigo. Tú eliges. Pero piensa en las treinta y seis horas de parto.",opts:[
+ {t:"La mejor residencia del país.",fx:{d:-20,o:10},r:"Se hace la reina del bingo de la residencia. Organiza un motín por el flan. Lo gana."},
+ {t:"Que se venga a vivir conmigo.",fx:{s:-15,o:15},r:"Reorganiza tu mansión, tira tus vinilos y cuenta a la prensa todas tus manías. Te quiere mucho."},
+ {t:"Mandarla a vivir con el cuñado.",fx:{s:10,o:-15},set:{mama_dolida:1},r:"El cuñado y tu madre fundan un pódcast sobre ti: «Lo que no cuenta». Va por la temporada tres."}]},
+
+{id:"mama_perdon",st:[4],c:"mama",w:6,cond:()=>F("mama_dolida"),q:"Me hiciste daño, hij[o|a]. Pero soy tu madre. ¿Tienes algo que decirme antes de que sea tarde?",opts:[
+ {t:"Pedirle perdón de verdad.",fx:{o:15,s:10},set:{mama_dolida:0},r:"Lloráis las dos personas. Luego te da un táper. Es el mismo de hace treinta años. Lo ha guardado."},
+ {t:"Hacerle una canción de perdón.",fx:{h:20,o:5},r:"La canta en el bingo con su versión de la letra. Es mejor que la tuya."},
+ {t:"«Tú también me hiciste daño».",fx:{o:-15,s:-10},r:"Te recita, en orden cronológico, todos los regalos que te hizo desde 1990. Te rindes."}]},
+
+{id:"benito_funeral",st:[4],c:"benito",w:5,q:"Te tengo preparado el funeral, por si acaso. ¿Qué canción quieres? Si eliges hoy tengo descuento.",opts:[
+ {t:"Una mía, claro.",fx:{h:10,o:-5},r:"Benito se queda callado. «¿Cuál? Es que el coro no se sabe ninguna»."},
+ {t:"«Highway to Hell», como aquel funeral.",fx:{h:15,o:5},r:"Benito sonríe. Lo apunta. Lleva años esperando que alguien se lo pida."},
+ {t:"No pienso morirme.",fx:{s:5},r:"Benito asiente con ternura. «Eso dicen todos, hij[o|a]. Eso dicen todos»."}]},
+
+{id:"manolo_jubila",st:[4],c:"manolo",w:5,cond:()=>!F("manolo_dolido"),q:"Me jubilo. Te dejo en herencia la receta de los calamares. Y los mejillones, que siguen ahí, en su sitio.",opts:[
+ {t:"Comerme los mejillones en su honor.",fx:{o:15,h:5},risk:[.3,"mejillones"],r:"Sobrevives. Manolo llora. Es lo más bonito que ha hecho nadie por él."},
+ {t:"Cantar en su fiesta de jubilación.",fx:{h:10,o:10},r:"Cantas «Balada para un radiador». Los cuatro jubilados del principio siguen vivos. Y aplauden."},
+ {t:"Llorar abrazad[o|a] a la tragaperras.",fx:{s:-5,o:5},r:"La tragaperras te da tres cerezas. Es la primera vez que te premia en treinta años."}]},
+
+{id:"ricky_libro",st:[4],c:"ricky",w:5,cond:()=>F("ricky"),q:"Voy a publicar mis memorias: «Cómo hice famos[o|a] a {name}». Spoiler: salgo yo de héroe.",opts:[
+ {t:"Pagarle para que no lo publique.",fx:{d:-20},r:"Coge el dinero y lo publica igual. Con un capítulo nuevo: «Cómo me pagó para no publicarlo»."},
+ {t:"Escribir yo el prólogo.",fx:{h:15,o:5},r:"El prólogo es lo mejor del libro. Ricky se lleva el 60 % de los derechos. Como siempre."},
+ {t:"Demandarle.",fx:{d:-10,o:-5},r:"Ricky lo usa como promoción. Se agota la primera edición. Te manda una copia dedicada."}]},
+
+{id:"jessica_doble",st:[4],c:"jessica",w:6,cond:()=>F("doble"),q:"Llevo tres meses haciendo tus conciertos y nadie se ha dado cuenta. Las críticas dicen que estás mejor que nunca.",opts:[
+ {t:"Retirarme y que siga ella.",fx:{d:20,h:-15,s:15},r:"Te vas a vivir al campo. Jessica gana un Pelícano en tu nombre. Lo recoges tú, por las fotos."},
+ {t:"Recuperar mi puesto.",fx:{h:10,o:-5},r:"La crítica dice que «has empeorado mucho en una semana». Duele."},
+ {t:"Gira conjunta: «{name} x2».",fx:{h:20,s:-10},r:"Dos personas idénticas cantando lo mismo a la vez. Nadie entiende el concepto. Se agota."}]},
+
+{id:"mariano_viejo",st:[4],c:"mariano",w:4,cond:()=>F("mariano_amigo"),q:"Me estoy haciendo mayor. Quiero que cantes en mi funeral. Si desafinas, mis nietos ya saben lo que tienen que hacer.",opts:[
+ {t:"Prometérselo solemnemente.",fx:{o:5,s:-5},r:"Te da un sobre con una dirección y una pala. «Por si acaso», dice. No preguntas."},
+ {t:"Pedirle que me deje en paz para siempre.",fx:{o:10},f:{mafia:1},r:"Don Mariano no responde. Solo toca el ala del casco. Mal asunto."},
+ {t:"Grabarle un disco de despedida.",fx:{h:15,d:15},r:"«Don Mariano canta coplas». Lo compran todas sus empresas. Obligatoriamente."}]},
+
+/* ---------- El encapuchado y la misión ---------- */
+{id:"encapuchado",chain:1,st:[1,2],c:"encapuchado",q:"(Un desconocido con capucha te para a la salida del bolo. No se le ve la cara. Huele a incienso y a gasolina). Tengo dos pitillos para ti. Uno te cura el cuerpo. El otro… te enseña la verdad. Solo puedes fumar uno.",opts:[
+ {t:"Fumar el pitillo que cura.",heal:1,set:{alma:1},ck:"El encapuchado",r:"Das una calada. Se te van la resaca, la tos y una verruga que tenías desde 2009. Cuando te giras para darle las gracias, ya no está. En el suelo hay una pluma blanca."},
+ {t:"Fumar el pitillo misterioso.",set:{alma:1},next:"cielo",r:"Das una calada. Todo se vuelve blanco. Oyes un coro que desafina. Huele a nube."}]},
+
+{id:"cielo",chain:1,st:[1,2],c:"pedro",q:"Bienvenid[o|a] al cielo. Tranquil[o|a]: no estás muert[o|a], estás de visita. Te lo digo sin rodeos: el mundo va a ser destruido. No puedo decirte cuándo ni cómo. Solo sé que la única forma de evitarlo es que tú, {name}, llegues a ser una leyenda.",opts:[
+ {t:"¿Yo? ¿Por qué yo?",next:"cielo2",r:"San Pedro suspira. «Eso mismo pregunté yo cuando me dieron tu expediente»."},
+ {t:"¿Y si me niego?",next:"cielo2",r:"San Pedro señala hacia abajo. Muy abajo. Da calor solo de mirar."},
+ {t:"¿Hay catering?",fx:{h:5},next:"cielo2",r:"Lo hay. Todo es nube. Sabe a algodón de azúcar sin azúcar."}]},
+
+{id:"cielo2",chain:1,st:[1,2],c:"pedro",q:"No puedo contarte más. Está escrito en una profecía que nadie sabe leer porque tiene una letra horrible. Solo esto: cuando mueras, y morirás, te devolveré abajo. Una y otra vez. Hasta que lo consigas. Ah, y vigila al encapuchado.",opts:[
+ {t:"¿Quién es el encapuchado?",fx:{o:5,s:10},set:{mision:1},ck:"El encapuchado",r:"San Pedro sonríe y no contesta. Parpadeas y estás otra vez en la puerta del bar, con el pitillo apagado en la mano. Te sientes ligero. Y vigilad[o|a]."},
+ {t:"Lo haré. Por el mundo. Y por la fama.",fx:{h:10,s:10},set:{mision:1},ck:"El encapuchado",r:"«Sobre todo por la fama, ya», murmura San Pedro. Un empujón suave y caes de vuelta en la acera. Nadie te ha echado de menos."},
+ {t:"¿Me puedo llevar una nube de recuerdo?",fx:{s:10,o:3},set:{mision:1},ck:"El encapuchado",r:"Te da una nube pequeña en un tarro. Al llegar abajo, el tarro está vacío. Pero huele a lluvia."}]},
+
+{id:"hood2",st:[3],c:"encapuchado",w:5,cond:()=>F("alma"),q:"(El encapuchado aparece en tu camerino. Ni Iker le ha visto entrar). Vas bien. Pero no te fíes de quien más te aplaude. Y no te comas nada que te ofrezca un amigo.",opts:[
+ {t:"¿Quién eres?",fx:{h:5},r:"Se ríe. Es una risa que te suena muchísimo. Desaparece dejando olor a incienso y gasolina."},
+ {t:"¿Me das otro pitillo?",fx:{s:15},r:"Te da uno. No es mágico: es de liar. Pero te sienta de maravilla."},
+ {t:"Contratarle como asesor.",fx:{d:-10,h:10},r:"Acepta. Cobra en monedas antiguas que nadie reconoce. Nunca vuelve a aparecer por la oficina."}]},
+
+{id:"hood3",st:[4],c:"encapuchado",w:8,cond:()=>F("alma"),q:"(El encapuchado se baja por fin la capucha. Debajo estás tú. Treinta años más viej[o|a]). Yo ya fallé una vez. El mundo se acabó. Por eso he vuelto. No dejes que pase otra vez.",opts:[
+ {t:"¿Qué hice mal?",fx:{o:5,s:5},r:"«Firmé con quien no debía, me fié de quien no debía y me comí los mejillones». Te pone una mano en el hombro y se desvanece."},
+ {t:"Abrazarme.",fx:{s:10,o:5},r:"Es un abrazo raro. Hueles a ti mism[o|a], pero con más tabaco. Lloras. Tu yo viej[o|a] también."},
+ {t:"Por lo menos, ¿ganamos a Kira?",fx:{h:10},r:"«Eso sí. Eso siempre», dice, y sonríe con tus mismos dientes torcidos."}]},
+
+/* ---------- Exclusivos: Rockero desfasado ---------- */
+{id:"rock_whisky",gen:"rock",st:[1,2,3],c:"manolo",q:"Te he puesto el whisky de garrafa de siempre. ¿Tercera botella o ya sales a cantar?",opts:[
+ {t:"Tercera botella. El rock no se toca sobrio.",fx:{h:15,s:-12},f:{alcohol:1},r:"Cantas «Highway to Hell» tres veces seguidas convencid[o|a] de que son canciones distintas. El público no lo nota. Tampoco va sobrio."},
+ {t:"Cantar sobri[o|a] por una vez.",fx:{o:5,h:-8},r:"Descubres que tus canciones son más largas de lo que recordabas. Y peores."},
+ {t:"Una botella para el público. Invito yo.",fx:{o:15,d:-15},f:{alcohol:1},r:"Primera fila entregada. Segunda fila vomitando. Tercera fila, desaparecida."}]},
+{id:"rock_pelea",gen:"rock",st:[1,2,3],c:"motero",q:"Has tocado mal la de los Eagles. Esa canción sonó en mi boda. Sal fuera.",opts:[
+ {t:"Salir fuera.",fx:{h:15,s:-20},risk:[.15,"pelea"],r:"Pierdes un diente y ganas un amigo. Te tatúa tu nombre en el brazo con un boli Bic."},
+ {t:"Invitarle a una ronda.",fx:{d:-10,o:5},f:{alcohol:1},r:"Tres rondas después lloráis abrazados cantando la de los Eagles. Bien, esta vez."},
+ {t:"Romperle la guitarra en la cabeza.",fx:{h:25,o:-15,s:-10},r:"La guitarra era tuya. La cabeza, de hormigón. Pierdes la guitarra. Ganas leyenda."}]},
+{id:"rock_solo",gen:"rock",st:[1,2,3,4],c:"chema",q:"Tu solo de guitarra dura veintitrés minutos. El público se ha ido a casa, ha cenado y ha vuelto.",opts:[
+ {t:"Alargarlo a cuarenta.",fx:{h:10,o:-15},r:"Un crítico lo describe como «un viaje». Otro, como «un secuestro»."},
+ {t:"Recortarlo a cuatro minutos.",fx:{o:5,h:-5},r:"Te sientes un traidor al rock. El público se siente gente que llega pronto a casa."},
+ {t:"Tocarlo con los dientes.",fx:{h:20,s:-15},r:"Muy de los 70. Tu dentista te manda una postal de Navidad desde las Maldivas."}]},
+{id:"rock_hotel",gen:"rock",st:[2,3],c:"vero",q:"Has tirado la tele por la ventana del hotel. Como en los 70. Pero esto es un hotel de carretera y era una tele de 85 pulgadas.",opts:[
+ {t:"Pagar los daños.",fx:{d:-20},r:"Te cobran la tele, la ventana y el coche del recepcionista, que estaba aparcado debajo."},
+ {t:"Tirar también la nevera.",fx:{h:20,o:-10,d:-15},f:{alcohol:1},r:"Antes te bebes lo que había dentro. Es lo único sensato que haces hoy."},
+ {t:"Echarle la culpa a Chema.",fx:{o:-5,s:5},r:"Chema lo niega. Pero tiene antecedentes con teles. Le creen a medias."}]},
+{id:"rock_resaca",gen:"rock",st:[2,3,4],c:"salas",q:"Tu resaca ya tiene nacionalidad propia y pide pasaporte. ¿Hablamos de tu relación con el alcohol?",opts:[
+ {t:"Dejarlo una temporada.",fx:{s:20,h:-10},set:{alcohol:0},r:"Tres meses sin beber. Descubres que los conciertos tienen principio y final. Te parece fascinante."},
+ {t:"«Es una relación sana».",fx:{s:-10,h:5},f:{alcohol:1},r:"La doctora apunta «negación» en tu historial. En mayúsculas."},
+ {t:"Pasarme a la cerveza sin alcohol.",fx:{o:5,s:5,h:-5},r:"Te bebes treinta y cuatro en un concierto. Te emborrachas por sugestión."}]},
+{id:"rock_poli",gen:"rock",st:[2,3],c:"comisario",w:5,q:"Necesitamos infiltrar a alguien en una banda heavy que trafica con púas de guitarra falsificadas. Nadie sospechará de un rockero acabado. Serán solo unos días.",opts:[
+ {t:"Aceptar. Siempre quise una placa.",fx:{o:10,h:5},set:{poli:1},next:"rock_poli2",r:"Te dan una placa de plástico, un micro escondido en el pedal de distorsión y una consigna: «Actúa normal». Para ti, imposible."},
+ {t:"Solo si me dejáis llevar pistola.",fx:{h:10,o:-5},set:{poli:1},next:"rock_poli2",r:"Te dan una pistola de agua. «Para que te sientas parte del equipo», dice el comisario."},
+ {t:"Rechazarlo. Yo no soy un chivato.",fx:{o:-5,h:5},r:"El comisario se encoge de hombros. Al día siguiente te multan por ruido. Casualidad."}]},
+{id:"rock_poli2",chain:1,st:[2,3],c:"motero",q:"(El jefe de la banda te mira fijamente). Toca en mi boda el sábado. Y hazme un favor: deja de hablarle a tu pedal de distorsión.",opts:[
+ {t:"Tocar en la boda y grabarlo todo.",fx:{o:20,h:15},risk:[.2,"poli"],next:"rock_poli3",r:"Grabas al novio confesando en su discurso. La novia se entera de cosas peores. La boda acaba con detenciones y divorcio a la vez."},
+ {t:"Confesar que soy policía.",fx:{o:10,s:-25},next:"rock_poli3",r:"Te dan la paliza de tu vida. Luego te piden un autógrafo «para el hijo». El hijo tiene cincuenta años."},
+ {t:"Pasarme al lado oscuro.",fx:{d:30,o:-20},next:"rock_poli3",r:"Las púas falsificadas dan muchísimo dinero. El comisario te mira desde el coche patrulla. Ahora tú también llevas chaleco de cuero."}]},
+{id:"rock_poli3",chain:1,st:[2,3],c:"comisario",q:"Caso cerrado. Te vamos a dar una medalla… y una multa por el whisky que había en la furgoneta de vigilancia.",opts:[
+ {t:"Aceptar las dos cosas.",fx:{o:10,d:-10},r:"Cuelgas la medalla junto a tus discos de oro. Es lo único de la pared que te has ganado."},
+ {t:"Pedir que me fichen para siempre.",fx:{h:10,s:-5},r:"«Ni de broma», dice el comisario. Pero te da su número. Por si vuelven las púas."},
+ {t:"Hacer un disco: «Agente Distorsión».",fx:{h:20,o:5},r:"Disco conceptual sobre tu vida de policía. Tres días de vida de policía. Doble álbum."}]},
+{id:"alcohol_final",chain:1,st:[1,2,3,4],c:"manolo",q:"Esta noche invita la casa. Es la última botella de garrafa que me queda. Y tu hígado lo sabe.",opts:[
+ {t:"Brindar por el rock.",die:"cirrosis",r:"Fue un brindis precioso. El último."},
+ {t:"No, Manolo. Hoy no.",die:"cirrosis",r:"Tu hígado dimite igualmente. Por despecho."},
+ {t:"Guardármela para luego.",die:"cirrosis",r:"No hubo luego."}]},
+
+/* ---------- Exclusivos: Punki del palo ---------- */
+{id:"punk_poli",gen:"punk",st:[1,2,3],c:"comisario",q:"Otra vez tú. Te lo repito: escupir a un antidisturbios no es una performance.",opts:[
+ {t:"Escupirle otra vez. Por el arte.",fx:{h:20,s:-10},f:{policia:1},r:"Te arrastran hasta la furgoneta. Desde dentro sigues cantando. El vídeo tiene más visitas que tu disco."},
+ {t:"Pedir perdón.",fx:{o:5,h:-10},r:"Tus fans te acusan de «vendid[o|a] al sistema». Vendes tres camisetas menos."},
+ {t:"Cantarle una canción sobre su madre.",fx:{h:15,o:-5},f:{policia:1},r:"La canción es pegadiza. El antidisturbios la tararea mientras te pone las esposas."}]},
+{id:"punk_okupa",gen:"punk",st:[1,2,3],c:"toni",q:"Concierto en el okupa. No hay escenario, no hay luz y hay barra libre de… cosas.",opts:[
+ {t:"Ir a por todas.",fx:{h:15,s:-15},f:{drogas:1},r:"Tocas en un sofá, rodead[o|a] de perros, con una sola cuerda en la guitarra. Tu mejor concierto."},
+ {t:"Ir y solo tocar.",fx:{h:8,o:5},r:"Eres la persona más sobria del edificio. Te nombran portavoz de la asamblea. No sabes qué es eso."},
+ {t:"Okupar yo el okupa.",fx:{h:20,o:-10},f:{policia:1},r:"Te atrincheras en el baño. La policía, los okupas y Toni te piden que salgas. A la vez."}]},
+{id:"punk_furgo",gen:"punk",st:[2,3],c:"comisario",q:"Hemos requisado tu furgoneta de gira. En la guantera había «algo». ¿Algo que declarar?",opts:[
+ {t:"«Eso no es mío».",fx:{o:-5},f:{policia:1},r:"Es tuyo. Lleva tu nombre escrito. Con faltas, pero tu nombre."},
+ {t:"Pagar la fianza.",fx:{d:-20},r:"Recuperas la furgoneta. Sin guantera. Y sin el «algo»."},
+ {t:"«Era de Chema».",fx:{o:-10,s:5},r:"Chema pasa una noche en el calabozo. Sale con un disco en la cabeza: «Mi colega es un chivato»."}]},
+{id:"punk_tele",gen:"punk",st:[2,3],c:"maripili",q:"¡Bienvenid[o|a] al matinal! ¿Te podrías bajar la cresta? Es que tapa el rótulo.",opts:[
+ {t:"Raparme en directo.",fx:{h:20,o:5},r:"Momento televisivo del año. Mari Pili guarda un mechón y lo subasta para una ONG."},
+ {t:"Escupir al rótulo.",fx:{h:15,o:-15},f:{policia:1},r:"El rótulo era una pantalla de 40.000 €. La factura llega a tu casa antes que tú."},
+ {t:"Cantar en susurros para no molestar.",fx:{o:10,h:-10},r:"Tu primera canción tranquila. Los punkis te repudian. Las abuelas te adoran."}]},
+{id:"punk_cuerdas",gen:"punk",st:[1,2,3,4],c:"salas",q:"Tus cuerdas vocales están más deshilachadas que tus vaqueros. ¿Has probado a cantar sin gritar?",opts:[
+ {t:"¿Cantar sin gritar? ¿Eso existe?",fx:{h:5,s:-15},r:"Sigues gritando. Ahora suenas como una puerta oxidada. Tus fans dicen que estás en tu mejor momento."},
+ {t:"Reposo y caramelos de miel.",fx:{s:15,h:-10},r:"Durante un mes te comunicas con pancartas. Muy punk, en el fondo."},
+ {t:"Grabar un disco solo de silencio.",fx:{h:15,o:-5},r:"«Cuatro minutos de nada» es número uno en las listas independientes. Nadie lo ha escuchado entero."}]},
+{id:"punk_carcel",chain:1,st:[1,2,3,4],c:"comisario",q:"Se acabó. Tres altercados con la autoridad. Te vienes a comisaría. Y esta vez no te soltamos por ser gracios[o|a].",opts:[
+ {t:"Entrar en la cárcel con la cabeza alta.",fx:{h:15,s:-20,d:-15},set:{policia:0},r:"Seis meses. Sales con un disco grabado en la celda: «Barrotes». Número uno. Tu compañero de celda hace los coros."},
+ {t:"Escapar por la ventana de comisaría.",fx:{h:25},set:{policia:0},risk:[.4,"fuga"],r:"Escapas corriendo por los tejados, como en las películas. Las películas no enseñaban cuánto duelen las rodillas."},
+ {t:"Sobornar al comisario.",fx:{d:-25,o:-15},set:{policia:0},r:"Acepta. Con el dinero se compra entradas para tu próximo concierto. En primera fila."}]},
+{id:"punk_filo",gen:"punk",st:[2,3],c:"catedratica",w:5,q:"He leído tus letras. Usas la misma palabrota como sustantivo, adjetivo, verbo y signo de puntuación. Tienes un talento lingüístico… salvaje. ¿Te matriculas en Filología?",opts:[
+ {t:"Matricularme.",fx:{o:10,d:-10,s:-5},set:{filo:1},later:["punk_filo2",5],r:"Vas a clase con la cresta, en primera fila. Sacas un 10 en Fonética: nadie pronuncia una «erre» como tú."},
+ {t:"Solo si la tesis va sobre insultos.",fx:{h:10,o:5},set:{filo:1},later:["punk_filo2",5],r:"La catedrática acepta encantada. Lleva cuarenta años queriendo dirigir esa tesis."},
+ {t:"La universidad es el sistema.",fx:{h:5,o:-5},r:"Lo dices en un tuit con cuatro faltas de ortografía. La catedrática te las corrige en rojo. En público."}]},
+{id:"punk_filo2",chain:1,st:[2,3,4],c:"catedratica",q:"Defensa de tu tesis: «El insulto como unidad de significado en el punk español». Tribunal: tres catedráticos y tu madre.",opts:[
+ {t:"Defenderla gritando.",fx:{h:20,o:10},r:"Cum laude. Tu madre llora. El tribunal también, pero de miedo."},
+ {t:"Defenderla con corbata.",fx:{o:15,h:-10},r:"Los catedráticos aplauden. Tus fans te dan por muert[o|a] para el punk."},
+ {t:"Copiar media tesis de internet.",fx:{o:-20,h:10},r:"Copiaste un foro de 2003. El foro era tuyo. Técnicamente no es plagio. Aprobado raspado."}]},
+
+/* ---------- Exclusivos: Amo a Laura ---------- */
+{id:"laura_obispo",gen:"laura",st:[1,2,3],c:"monsenor",q:"Tu disco «Laura, no te toco hasta el matrimonio» se vende muy bien en las parroquias. La diócesis querría un 30 %. Por el amor de Dios.",opts:[
+ {t:"Ceder el 30 %.",fx:{d:-15,o:10},r:"Monseñor te bendice. Luego se compra un coche. Luego bendice el coche."},
+ {t:"Ni un euro.",fx:{d:5,o:-10},r:"Tus discos desaparecen de las parroquias. Aparecen los de un monaguillo de doce años con autotune."},
+ {t:"El 40 %, si me hacéis santo en vida.",fx:{d:-20,h:15},r:"No te hacen santo, pero sales en una estampita. Edición limitada. En los patios se cambian como cromos."}]},
+{id:"laura_favor",gen:"laura",st:[1,2,3],c:"benito",q:"Una señora ofrece 5.000 € si cantas en la comunión de su nieto y le haces creer que va a venir el Papa en persona.",opts:[
+ {t:"Disfrazarme de Papa.",fx:{d:20,h:10,o:-10},r:"Bendices a doscientos invitados. Una abuela se desmaya. El nieto pide una foto. Monseñor no se entera. Todavía."},
+ {t:"Negarme. Eso es pecado.",fx:{o:5,d:-5},r:"Benito asiente, orgulloso. Luego va él, disfrazado. Cobra 6.000 €."},
+ {t:"Cobrar el doble y que vaya Benito disfrazado.",fx:{d:15,o:-5},r:"Benito hace un Papa espectacular. Tres familias más le contratan para bautizos."}]},
+{id:"laura_campamento",gen:"laura",st:[1,2],c:"benito",q:"Campamento de verano: trescientos adolescentes, una guitarra acústica y tú cantando sobre la castidad durante dos semanas.",opts:[
+ {t:"Ir con toda la ilusión.",fx:{o:15,s:-10,d:5},r:"Al tercer día te roban la guitarra. Al quinto, la cuerda de repuesto. Al décimo, la fe."},
+ {t:"Ir, pero con rock cristiano.",fx:{h:15,o:-5},r:"Los adolescentes hacen pogo con «Pescador de hombres». Benito se rompe la clavícula en el pogo."},
+ {t:"No ir.",fx:{s:5,o:-5},r:"Va Kira Star, que se ha hecho católica esta semana por marketing. Arrasa."}]},
+{id:"laura_milagro",gen:"laura",st:[2,3],c:"monsenor",q:"Una fan asegura que tu canción le curó una verruga. El Vaticano quiere investigar el milagro. Y cobrar por él.",opts:[
+ {t:"Aceptar el milagro.",fx:{h:25,o:-5},r:"Te llegan diez mil cartas con fotos de verrugas. Con detalle. Tienes pesadillas."},
+ {t:"Negarlo con humildad.",fx:{o:15,h:-5},r:"La humildad te hace aún más famos[o|a]. Las monjas te piden autógrafos. Discretamente."},
+ {t:"Vender agua bendita con mi cara en la etiqueta.",fx:{d:25,o:-15},r:"«Agua de {name}: cura verrugas, juanetes y desamores». Sanidad te abre un expediente."}]},
+{id:"laura_tentacion",gen:"laura",st:[2,3],c:"lucia",q:"Ven a mi fiesta. Habrá gente guapísima y un vino que, te lo aseguro, no es de misa.",opts:[
+ {t:"Ir y resistir la tentación.",fx:{o:10,s:-5,h:5},r:"Te pasas la fiesta rezando el rosario en un rincón. Es tendencia: #RosarioChallenge."},
+ {t:"Ir y no resistirla.",fx:{h:20,o:-20},r:"Las fotos llegan a Monseñor antes que tú a casa. Tres avemarías. Y una multa."},
+ {t:"No ir.",fx:{s:5,h:-5},r:"Te quedas viendo misa por la tele. Te duermes en la homilía. Como siempre."}]},
+{id:"laura_amor",gen:"laura",st:[2,3],c:"amor",w:5,q:"Llevamos dos años cantando en misa codo con codo. Tengo que decirte algo y no sé cómo… Creo que no te miro solo como [compañero|compañera] de coro.",opts:[
+ {t:"«Yo tampoco».",fx:{s:10,h:5},set:{amor:1},later:["laura_amor2",4],r:"Os dais la mano detrás del órgano. Por primera vez en años, cantas sin pensar en las ventas."},
+ {t:"«No puede ser. Por el disco».",fx:{s:-15,o:5},r:"[Gabriel|Valentina] asiente en silencio. Esa tarde los dos desafináis en «Alma mía». No es casualidad."},
+ {t:"Escribir juntos una canción a escondidas.",fx:{h:10,s:5},set:{amor:1},later:["laura_amor2",4],r:"Se llama «Lo que no se dice en la sacristía». Es lo mejor que has escrito nunca."}]},
+{id:"laura_amor2",chain:1,st:[2,3,4],c:"monsenor",q:"Me han llegado fotos tuyas con [Gabriel|Valentina] en la sacristía. Y no estabais rezando. En mi diócesis, esto no.",opts:[
+ {t:"Contarlo en directo, con orgullo.",fx:{o:20,h:25,d:-20},r:"Pierdes las parroquias y ganas el mundo. «Amo a [Gabriel|Valentina]» se convierte en himno. Monseñor la tararea en la ducha. Lo sabe media diócesis."},
+ {t:"Negarlo todo.",fx:{s:-20,o:-5},r:"[Gabriel|Valentina] deja el coro sin decir nada. Ganas a Monseñor y pierdes lo único bueno del año."},
+ {t:"Pagar a Monseñor para que calle.",fx:{d:-25,s:5},r:"Monseñor cobra, calla y se compra un yate. Lo bautiza «Discreción». Vosotros seguís juntos, pero más pobres."}]},
+
+/* ---------- Exclusivos: Indie desentonado ---------- */
+{id:"indie_cafe",gen:"indie",st:[1,2,3],c:"barista",q:"Te recomiendo nuestro cold brew de cardamomo fermentado en barrica de roble lapón. Son 14 €. La taza es una lata de anchoas reciclada.",opts:[
+ {t:"Pedir tres.",fx:{d:-10,h:5,s:-5},r:"Taquicardia de diseño. Esa noche escribes un disco entero: «Cardamomo». Tiene una sola canción de cuarenta minutos."},
+ {t:"Agua del grifo, por favor.",fx:{o:-5,d:5},r:"Te miran como si hubieras pedido un bocadillo de Nocilla en un restaurante con estrella Michelin."},
+ {t:"Que el café lleve mi nombre.",fx:{d:10,h:5,o:-5},r:"«Cold brew {name}», 16 €. Sabe a ti. Nadie sabe qué significa eso. Se agota."}]},
+{id:"indie_retiro",gen:"indie",st:[1,2,3],c:"guru",q:"Retiro de silencio de diez días en el desierto. Sin móvil, sin hablar, sin gluten y sin juicios. Bueno, juicios sí, pero en silencio.",opts:[
+ {t:"Ir.",fx:{s:15,d:-15,h:-10},f:{secta:1},r:"Vuelves con la piel brillante, la mente limpia y un mandala tatuado que no recuerdas haberte hecho."},
+ {t:"Ir y subir stories todos los días.",fx:{h:10,o:-15},r:"Te echan el segundo día. Subes una story llorando en el desierto. Es tu publicación más vista."},
+ {t:"No ir.",fx:{h:-5,s:-5},r:"Todos tus amigos indies vuelven iluminados. Tú sigues a oscuras. Y con gluten."}]},
+{id:"indie_vinilo",gen:"indie",st:[1,2],c:"montero",q:"Tu disco solo existe en vinilo, casete y tarjeta perforada. ¿Podemos subirlo a plataformas? Por favor.",opts:[
+ {t:"Jamás. El streaming es el sistema.",fx:{o:10,d:-15},r:"Lo escuchan doscientas personas. Todas con bigote. Todas con tote bag."},
+ {t:"Vale, pero en una plataforma que no use nadie.",fx:{h:5,o:5},r:"Tienes treinta y cuatro oyentes mensuales. Uno es tu madre, por error."},
+ {t:"Subirlo a todo, sin complejos.",fx:{d:15,h:10,o:-10},r:"Tus fans te acusan de mainstream. Tus nuevos fans no saben ni lo que significa."}]},
+{id:"indie_festival",gen:"indie",st:[2,3],c:"vero",q:"Te han dado el escenario del festival a las 15:00. Cuarenta grados. Cuarenta personas. Todas con gafas sin graduación.",opts:[
+ {t:"Tocar como si fuera el cierre.",fx:{h:15,s:-15},r:"Te desmayas en la tercera canción. El público cree que es parte del concepto. Aplaude."},
+ {t:"Tocar de espaldas al público.",fx:{h:10,o:-10},r:"Muy de artista. El público también se da la vuelta. Nadie mira a nadie. Es arte."},
+ {t:"Pedir que me pasen al horario de noche.",fx:{o:-5,d:-5},r:"Te ponen a las 4:30 de la madrugada, delante de un guardia de seguridad y dos gaviotas."}]},
+{id:"indie_ayahuasca",gen:"indie",st:[2,3],c:"guru",q:"Ceremonia de ayahuasca para encontrar tu sonido. Verás a tu animal interior. Él te dirá qué acordes usar.",opts:[
+ {t:"Tomarla.",fx:{h:20,s:-10},risk:[.15,"ayahuasca"],r:"Tu animal interior es una nutria. Te dice: «Do, Sol, La menor, Fa». Exactamente los de siempre."},
+ {t:"Fingir que la tomo.",fx:{h:5,o:5},r:"Te pasas la noche fingiendo visiones. Describes «colores con sabor a jazz». El gurú toma nota."},
+ {t:"No tomar nada.",fx:{s:5,h:-5},r:"Te sientas a mirar cómo otros ven a Dios. Uno vomita sobre tus zapatillas veganas."}]},
+{id:"indie_anuncio",gen:"indie",st:[2,3,4],c:"cola",q:"Queremos tu canción más triste para el anuncio de un coche. Sale una familia feliz. Tu canción habla de la muerte de tu gato.",opts:[
+ {t:"Venderla.",fx:{d:25,o:-15},r:"Ahora tu gato muerto vende monovolúmenes. Sientes que le has fallado. El cheque ayuda."},
+ {t:"Negarme. El gato no se vende.",fx:{o:10,d:-5},r:"Usan una canción de Kira Star sobre un hámster. Funciona igual."},
+ {t:"Venderla y donarlo a una protectora.",fx:{o:15,d:5},r:"La protectora pone tu nombre a un gato. El gato te odia, como todos los gatos."}]},
+{id:"indie_cripto",gen:"indie",st:[2,3],c:"brayan",w:5,q:"Bro, lanza tu propia criptomoneda: $DESAFINO. Tus fans la comprarán por ironía. La ironía cotiza muchísimo.",opts:[
+ {t:"Lanzar $DESAFINO.",fx:{d:20,h:10,o:-5},set:{cripto:1},later:["indie_cripto2",4],r:"En una hora, tres mil fans compran $DESAFINO. Ninguno sabe para qué sirve. Tú tampoco."},
+ {t:"Invertir mis ahorros en $KIRA.",fx:{d:-15},set:{cripto:1},later:["indie_cripto2",4],r:"Kira Star también tiene criptomoneda. Inviertes en tu enemiga. La conciencia, sucia; la cartera, diversificada."},
+ {t:"No entiendo nada. Paso.",fx:{o:5},r:"Brayan te mira con lástima: «Tú te lo pierdes, bro». Se va en un patinete de 9.000 €."}]},
+{id:"indie_cripto2",chain:1,st:[2,3,4],c:"brayan",q:"Bro, bro, BRO. El gráfico se ha vuelto loco. O hemos subido un 4.000 % o hemos bajado un 99 %. Va tan rápido que no lo sé.",opts:[
+ {t:"Vender todo YA.",fx:{d:30,o:-10},r:"Te forras. Tus fans pierden sus ahorros. Te llaman «el Madoff del indie». Lo pones en tu biografía."},
+ {t:"Aguantar. Hodl.",fx:{d:35,h:5},alt:[.5,{d:-30},"Era un 99 % hacia abajo. Brayan desaparece. Su patinete aparece flotando en un río."],r:"Era un 4.000 % hacia arriba. Te compras una isla. Pequeña. Una roca, en realidad. Pero tuya."},
+ {t:"Regalárselo todo a mis fans.",fx:{o:20,d:-10},r:"Tus fans te adoran. Tres días después la moneda vale cero. Te siguen adorando, pero menos."}]},
+
+/* ---------- Al resucitar ---------- */
+{id:"rev_benito",chain:1,st:[1,2,3,4],c:"benito",q:"¡Te enterré el martes! ¿Te importa si cuento lo de tu resurrección en la homilía del domingo? Es temporada baja.",opts:[
+ {t:"Cuéntalo, padre.",fx:{h:10,o:5},r:"La iglesia se llena. Benito cobra entrada. Tú no ves un euro, pero bendicen tu coche."},
+ {t:"Mejor que no se sepa.",fx:{o:3},r:"Benito guarda el secreto. Bueno, se lo cuenta a la del bingo. Lo sabe todo el barrio."},
+ {t:"Que cobre entrada a los fieles y vamos a medias.",fx:{d:10,o:-10},r:"Negocio redondo. El obispo pide su parte. San Pedro, también."}]},
+{id:"rev_forense",chain:1,st:[1,2,3,4],c:"forense",q:"Te firmé el certificado de defunción. Ahora tengo que anularlo. ¿Sabes el papeleo que es eso?",opts:[
+ {t:"Lo siento mucho.",fx:{o:3},r:"No lo acepta. Te pide que, la próxima vez, te mueras con menos burocracia."},
+ {t:"Fírmame otro, por si acaso.",fx:{h:5,s:-5},r:"Lo firma sin fecha. Lo guarda en un cajón con tu nombre. El cajón es bastante grande."},
+ {t:"Invitarle a cenar para compensar.",fx:{d:-5,s:5},r:"Se pasa la cena tomándote el pulso. Por curiosidad profesional."}]},
+{id:"rev_mama",chain:1,st:[1,2,3,4],c:"mama",q:"¡Hij[o|a]! Ya había alquilado tu habitación a un estudiante de Erasmus. Pasa, pero no hagas ruido, que está estudiando.",opts:[
+ {t:"Abrazarla fuerte.",fx:{o:5,s:5},r:"Te abraza, te pellizca para comprobar que eres real y te recuerda lo del táper."},
+ {t:"Echar al de Erasmus.",fx:{s:5,o:-5},r:"Se llama Hans. Se queda igualmente. Ahora es tu hermano."},
+ {t:"Pedirle que me devuelva lo del funeral.",fx:{d:10,o:-10},r:"Te devuelve el dinero de las flores. Menos las que le gustaron, que se las ha quedado."}]},
+{id:"rev_kira",chain:1,st:[1,2,3,4],c:"kira",q:"Ya había cantado en tu funeral. Lloré y todo. ¿Me devuelves las flores, o al menos los seguidores?",opts:[
+ {t:"Darle las gracias.",fx:{o:5},r:"Se queda descolocada. La amabilidad le da alergia. Le sale un sarpullido."},
+ {t:"Cantar juntas «Volví del más allá».",fx:{h:15,o:-3},r:"El dueto es número uno. Ninguna de las dos lo reconoce en público."},
+ {t:"Acusarla de haberme matado.",fx:{h:15,o:-10},r:"No hay pruebas. Pero su cara de sorpresa no convence a nadie. Te frotas las manos."}]},
+{id:"rev_cunado",chain:1,st:[1,2,3,4],c:"cunado",q:"Hombre, ¿tú no estabas muert[o|a]? Es que ya había vendido tu coche. Por lo de la herencia, ¿sabes?",opts:[
+ {t:"Exigirle el dinero.",fx:{d:10,o:-5},r:"Te paga la mitad. La otra mitad «se la ha gastado en tu memoria». En una barbacoa."},
+ {t:"Dejarlo estar. Es familia.",fx:{o:5,s:-3},r:"Te invita a la barbacoa que hizo con tu dinero. La carne está buena. Te fastidia."},
+ {t:"Fingir que soy un fantasma y asustarle.",fx:{h:10,s:5},r:"Huye en tu coche. El coche que ya no es tuyo. Te ríes durante una semana."}]}
+];
+const byId=Object.fromEntries(EV.map(e=>[e.id,e]));
+/* Personajes y amenazas que te persiguen también en las etapas 3 y 4 */
+const EXTRA_ST={toni_rep:[3,4],mama_rep:[3,4],ruiz:[3,4],guru:[3],guru_2:[3,4],bruno_dm:[3],gasolinera:[3,4],nazi_ruedas:[3,4],toni_moldavia:[3,4],forense:[3,4],hater:[3,4],mariano:[3],mariano_2:[3,4],kira_venganza:[3,4],afterparty:[3],yate:[3],paparazzi:[3],tuit:[3,4],cola:[3],fausto:[3],maripili:[3],nodulos:[3,4]};
+for(const id in EXTRA_ST) byId[id].st.push(...EXTRA_ST[id]);
+const REVIVE_EV=["rev_benito","rev_forense","rev_mama","rev_kira","rev_cunado"];
+
+/* ============ MUERTES (todas inmediatas) ============ */
+const DEATHS={
+ o0:{i:"🔥",t:"Linchamiento",x:"La opinión pública dicta sentencia: una turba con antorchas, horcas y móviles en vertical te persigue hasta una gasolinera. No sales de ella. El vídeo tiene un filtro de corazoncitos."},
+ o100:{i:"🛐",t:"Disecad[o|a] por amor",x:"Tu fan número uno te quiere tanto que te diseca para tenerte siempre en su salón. Quedas muy natural. Mejor que en tus portadas."},
+ d0:{i:"🫀",t:"Liquidación de órganos",x:"Sin un euro, vendes un riñón. Luego el otro. Luego el hígado, «que total, no lo usas bien». Al vender el corazón, el comprador te pide factura. Mueres antes de emitirla."},
+ d100:{i:"💰",t:"Ahogad[o|a] en dinero",x:"Te tiras de cabeza a una piscina de monedas de oro, como en los dibujos. El oro no flota. Tú tampoco."},
+ h0:{i:"🥱",t:"Muerte por aburrimiento",x:"Nadie te escucha, nadie te llama, nadie te menciona. Te aburres tanto que el corazón se te para por falta de estímulos. El forense escribe: «Causa de la muerte: irrelevancia»."},
+ h100:{i:"📸",t:"Fulminad[o|a] por los flashes",x:"Cuatro mil paparazzi te disparan el flash a la vez. Tu retina se rinde, luego tu cerebro. La foto de tu muerte es la más vendida del año."},
+ s0:{i:"🚑",t:"Colapso",x:"Tu cuerpo dimite en mitad del estribillo. Caes redond[o|a] en el escenario. En tu funeral canta Kira Star. Desafina. Sube el vídeo con #DescansaEnPaz y gana 200.000 seguidores. Con tu cadáver."},
+ s100:{i:"🥦",t:"Sobredosis de vida sana",x:"Tanto kale, ayuno y crossfit que tu cuerpo, desconcertado, se apaga. Eres el primer ser humano muerto por exceso de salud. Tu nutricionista sube un reel."},
+ nazi:{i:"⚰️",t:"Te la tenían jurada",x:"Te enfrentaste tres veces a gente con botas y bates. Ganaste la batalla moral y perdiste todo lo demás. Tu funeral sale en el telediario. La música la elige tu cuñado."},
+ drogas:{i:"💀",t:"Club de los 27 (o los que tuvieras)",x:"Tu Wikipedia incluye ahora la palabra «trágicamente». Tus discos venden más que nunca. Los royalties los cobra Ricky Platino desde Punta Cana."},
+ diving:{i:"🙌",t:"Stage diving",x:"El público se apartó. Eran nueve personas y todas tenían el móvil en la mano. El vídeo de tu caída tiene más visitas que toda tu discografía junta."},
+ electro:{i:"⚡",t:"Final electrizante",x:"El último acorde fue, literalmente, el último. Te quedó el pelo de punta para siempre. Por fin un look con personalidad."},
+ mejillones:{i:"🦪",t:"Intoxicación",x:"Los mejillones estaban «casi» buenos. Ese «casi» te cuesta la vida. Manolo cuelga tu foto en el bar. Al lado de los mejillones. Que siguen en la carta."},
+ selfie:{i:"🤳",t:"El selfie definitivo",x:"Un pasito más. Y otro. El selfie quedó precioso. Lucía lo publica con filtro sepia y la frase «Vuela alto». Tres millones de likes. Ninguno tuyo."},
+ avion:{i:"🛩️",t:"Vuelo low cost",x:"La avioneta aterrizó. No en el aeropuerto, ni entera. El piloto se salvó: llevaba paracaídas. Solo había uno."},
+ tigre:{i:"🐅",t:"Química con el tigre",x:"El tigre se metió en el papel. El videoclip se publica igualmente como «edición póstuma». Es tu mayor éxito. El tigre tiene ahora mánager."},
+ cirugia:{i:"💉",t:"Retoque final",x:"El Dr. Bisturí resultó ser veterinario. Tus labios aparecen en un congreso de medicina. El resto de ti, no."},
+ fans:{i:"🏃",t:"Morir de éxito",x:"Cinco mil fans, doscientos sitios y una puerta. Te aplastaron con muchísimo cariño. Varios se llevaron un mechón de recuerdo. Uno, un diente."},
+ mafia:{i:"🧱",t:"Zapatos de cemento",x:"Don Mariano te llevó a dar un paseo en barco. Volvió el barco. Tú no. Tu último concierto fue para los peces del puerto."},
+ hater:{i:"🔪",t:"Hater con iniciativa",x:"@Pepe_Odio_88 cumplió lo prometido. En el juicio declaró que tu segundo disco era «un atentado». La mitad del jurado asintió."},
+ dictador:{i:"⛓️",t:"Gira penitenciaria",x:"Su Excelencia te encierra en la cárcel de Bananistán. Te dejan cantar una vez. Era el pelotón de fusilamiento pidiendo un bis."},
+ espacio:{i:"🌌",t:"Concierto estelar",x:"Tu concierto espacial fue el más visto de la historia: ocho mil millones de personas vieron la explosión en directo. Nunca habías tenido tanta audiencia."},
+ arnes:{i:"🪢",t:"Entrada triunfal",x:"El arnés aguantó. El techo, no. Sesenta mil personas aplaudieron creyendo que era parte del show. Paco el técnico insiste en que las bridas eran de calidad."},
+ estadio:{i:"🏚️",t:"Cimientos de confianza",x:"El estadio con tu nombre se vino abajo en el concierto inaugural. Los cimientos eran de cartón piedra y de un concejal desaparecido. Don Mariano manda una corona de flores. De hormigón."},
+ infarto:{i:"💔",t:"La última nota",x:"Moriste sobre el escenario, en la última nota. Como siempre quisiste. Bueno, querías morir a los 95 rodeado de nietos, pero esto también queda icónico."},
+ reto:{i:"🏊",t:"Reto superado (a medias)",x:"Saltaste del balcón a la piscina y fallaste por medio metro. Nueve millones de visitas. Los chavales te llaman «leyenda». Un poco tarde."},
+ cirrosis:{i:"🥃",t:"Cirrosis rockera",x:"Tu hígado presentó la dimisión por escrito, con copia a Manolo. Te entierran con una botella de garrafa. El sepulturero se la bebe esa misma noche. Brindando por ti, eso sí."},
+ pelea:{i:"🥊",t:"Pelea de bar",x:"La pelea duró poco. Tú duraste menos. El motero se quedó tu chupa de cuero. Le queda mejor que a ti."},
+ poli:{i:"🎙️",t:"Tapadera descubierta",x:"Encontraron el micro escondido en tu pedal de distorsión. Desapareciste en una boda heavy. Nadie notó la diferencia entre tus gritos y la canción."},
+ fuga:{i:"🧱",t:"Fuga fallida",x:"Saltaste por la ventana de comisaría. Era un séptimo. La cresta no frenó la caída. El comisario la ha enmarcado."},
+ ayahuasca:{i:"🦬",t:"Viaje sin vuelta",x:"Tu animal interior era un ñu. Te uniste a una migración imaginaria y cruzaste la autopista en hora punta. Los conductores dicen que ibas «muy en paz»."},
+ secta:{i:"🧘",t:"Ayuno de luz",x:"Cuarenta días sin comer, alimentándote solo de sol, como manda el gurú. En Lanzarote hay mucho sol, pero no tanto. La Comunidad publica tus maquetas como «mantras». Son un éxito."}
+};
+
+/* ============ MOTOR ============ */
+const CRUEL=1.8; // multiplica todo lo que resta
+const BONUS=0.8; // y recorta todo lo que suma
+/* Etapas: p = desgaste por decisión; la etapa acaba al llevar `min` decisiones en ella con hype >= `hype`, o al llegar a `max`.
+   Al acabar la etapa 4, la partida termina en «Leyenda». */
+const STG={
+ 1:{name:"Etapa 1 · Los garitos",p:{d:1,h:3},min:14,hype:40,max:18,msg:"El público olvida rápido y el alquiler no perdona"},
+ 2:{name:"Etapa 2 · Primer éxito",p:{d:1,h:2},min:13,hype:30,max:16,msg:"Vida de estrella. La fama desgasta"},
+ 3:{name:"Etapa 3 · Estrellato",p:{d:2,h:2},min:13,hype:30,max:16,msg:"Mansión, séquito y abogados"},
+ 4:{name:"Etapa 4 · Decadencia o leyenda",p:{d:1,h:3,s:1},min:12,hype:0,max:12,msg:"Los años pesan y el público busca caras nuevas"}
+};
+const RESPIRO=0.5;       // al cambiar de etapa, cada barra recorre esta fracción del camino hacia 50
+const CHECK_EVERY=7;     // cada cuántas decisiones se guarda un punto de control (además de al empezar cada etapa)
+const REVIVE_BOOST=0.25; // al resucitar, cada barra recorre esta fracción del camino hacia 50
+const INTER={
+ 2:{i:"📻",x:"Tu canción suena en la radio de una gasolinera de Albacete. Un camionero la tararea. Oficialmente, eres famos[o|a]. Ojo: la vida de estrella cuesta dinero y la fama se gasta antes."},
+ 3:{i:"🏟️",x:"Estadio lleno. Sesenta mil personas gritan tu nombre (mal pronunciado). Tienes mansión, mayordomo y tres abogados. También tienes enemigos que todavía no conoces."},
+ 4:{i:"🥀",x:"Han pasado los años. Tu último single lo escucharon tu madre y un algoritmo. Toca elegir: decadencia o leyenda. La dignidad no está incluida en ninguna de las dos."}
+};
+const PEDRO=[
+ "«Aquí no entras con ese historial. Baja y arréglalo». Te devuelve a la Tierra de una patada.",
+ "«¿Otra vez tú? Esto no es una puerta giratoria». Te manda de vuelta con un folleto de autoayuda.",
+ "«En el cielo ya tenemos suficientes cantantes. Y mejores». Resucitas.",
+ "«Tu karma no cuadra. Baja y enmienda tus errores». Firmas un formulario por triplicado y vuelves.",
+ "«Has muerto de una forma ridícula hasta para mí». Te da otra oportunidad por pena.",
+ "«Kira Star ya ha reservado tu nube. Vuelve antes de que se mude». Resucitas por puro orgullo."
+];
+const fmtP=p=>[p.d&&"−"+p.d+" 💰",p.h&&"−"+p.h+" 🔥",p.s&&"−"+p.s+" ❤️"].filter(Boolean).join(", ");
+const STATS=[["o","🗣️","Opinión"],["d","💰","Dinero"],["h","🔥","Hype"],["s","❤️","Salud"]];
+const NAMES={m:["Kiko Trueno","Rafa Neón","Dani Purpurina","Juanjo Maremoto","Rubén Ciclón"],f:["Lola Trueno","Vane Neón","Sheila Purpurina","Maite Huracán","Nerea Ciclón"]};
+/* Tipos de músico: mod = ajuste de las barras al empezar */
+const GEN={
+ rock:{n:"Rockero desfasado",e:"🎸",d:"Rock de los 70 con repertorio de los 70. Alcohol, peleas de bar y solos eternos.",mod:{o:5,h:-5}},
+ punk:{n:"Punki del palo",e:"🧷",d:"Todo gritos y poco argumento. Drogas, policía y escupitajos.",mod:{h:5,o:-5}},
+ laura:{n:"Amo a Laura",e:"✝️",d:"Música católica, apostólica y romana. Iglesia, favores por dinero y cero parejas.",mod:{o:10,h:-5}},
+ indie:{n:"Indie desentonado",e:"🎧",d:"Música mala para gente que quiere ser diferente. Cafés de diseño y retiros espirituales.",mod:{d:5,o:-5}}
+};
+const FORCED=[
+ ["nazi_final",()=>F("neonazis")>=3],
+ ["mariano_final",()=>F("mafia")>=2],
+ ["drogas_final",()=>F("drogas")>=5],
+ ["drogas_aviso",()=>F("drogas")>=3],
+ ["alcohol_final",()=>F("alcohol")>=4],
+ ["punk_carcel",()=>F("policia")>=3],
+ ["secta_final",()=>F("secta")>=2],
+ ["hacienda_final",()=>F("hacienda")>=2],
+ ["encapuchado",()=>S.turn>=S.hoodAt]
+];
+let S=null, pickG="f", pickGen="rock", CK=null;
+const $=s=>document.querySelector(s);
+const scr=$("#screen"), hudEl=$("#hud"), metaEl=$("#meta");
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const tx=str=>esc(str||"").replace(/\[([^|\]]*)\|([^\]]*)\]/g,(m,a,b)=>S&&S.g==="m"?a:b).replace(/\{name\}/g,esc(S?S.name:""));
+const clamp=v=>Math.max(0,Math.min(100,v));
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const rnd=a=>a[Math.floor(Math.random()*a.length)];
+function store(k,v){try{if(v===undefined)return JSON.parse(localStorage.getItem(k)||"null");localStorage.setItem(k,JSON.stringify(v));}catch(e){return null}}
+function toast(msg){const t=$("#toast");t.textContent=msg;t.classList.add("on");clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove("on"),2600);}
+
+/* Puntos de control */
+const snap=()=>JSON.stringify(Object.assign({},S,{used:[...S.used],cur:null}));
+function unsnap(j){const o=JSON.parse(j);o.used=new Set(o.used);return o;}
+function checkpoint(label){
+ S.ckTurn=S.turn; S.ckLabel=label; CK=snap();
+ store("cae_save",{ck:CK,revives:S.revives});
+ toast("💾 Punto de control: "+label);
+}
+
+/* HUD */
+hudEl.innerHTML=STATS.map(([k,i,l])=>`<div class="st" id="st_${k}" title="${l}"><div class="ic">${i}</div><div class="bar"><div class="fill"></div></div>${l}</div>`).join("");
+function drawHud(delta){
+ for(const [k] of STATS){
+  const el=$("#st_"+k), v=S.st[k];
+  el.querySelector(".fill").style.width=v+"%";
+  el.classList.toggle("danger",v<=20||v>=85);
+  el.classList.remove("up","down");
+  if(delta&&delta[k]){el.classList.add(delta[k]>0?"up":"down");setTimeout(()=>el.classList.remove("up","down"),700);}
+ }
+ metaEl.innerHTML=`<span>${S.g==="m"?"👨‍🎤":"👩‍🎤"}${GEN[S.gen].e} ${esc(S.name)}${S.revives?` · 😇×${S.revives}`:""}</span><span>${STG[S.stage].name} · Decisión ${S.turn+1}</span>`;
+}
+
+function newGame(){
+ const inp=$("#name");
+ const name=(inp&&inp.value.trim())||(S&&S.name)||NAMES[pickG][Math.floor(Math.random()*5)];
+ const r0=()=>38+Math.floor(Math.random()*18), mod=GEN[pickGen].mod;
+ S={g:pickG,gen:pickGen,name:name.slice(0,28),st:{o:r0(),d:r0(),h:r0(),s:r0()},f:{},used:new Set(),turn:0,stage:1,t0:0,queue:[],next:null,recent:[],cur:null,revives:0,ckTurn:-1,ckLabel:"",ckPending:null,hoodAt:5+Math.floor(Math.random()*4)};
+ for(const k in mod) S.st[k]=clamp(S.st[k]+mod[k]);
+ CK=null; store("cae_save",null);
+ hudEl.hidden=false; metaEl.hidden=false;
+ drawHud(); advance();
+}
+
+function pick(){
+ if(S.next){const e=byId[S.next];S.next=null;if(e)return e;}
+ for(const [id,fn] of FORCED){ if(!S.used.has(id)&&fn()) return byId[id]; }
+ const qi=S.queue.findIndex(q=>q.at<=S.turn&&!S.used.has(q.id));
+ if(qi>=0) return byId[S.queue.splice(qi,1)[0].id];
+ const ok=e=>e.st.includes(S.stage)&&(!e.gen||e.gen===S.gen)&&(!e.nogen||!e.nogen.includes(S.gen))&&(!e.cond||e.cond());
+ let pool=EV.filter(e=>!e.chain&&ok(e)&&(e.rep||!S.used.has(e.id))&&!S.recent.includes(e.id));
+ if(!pool.length) pool=EV.filter(e=>e.rep&&ok(e));
+ const wt=e=>e.w||(e.rep?1:3);
+ let r=Math.random()*pool.reduce((a,e)=>a+wt(e),0);
+ for(const e of pool){r-=wt(e);if(r<=0)return e;}
+ return pool[pool.length-1];
+}
+
+function advance(){
+ const cfg=STG[S.stage], n=S.turn-S.t0;
+ if((n>=cfg.min&&S.st.h>=cfg.hype)||n>=cfg.max){
+  if(S.stage===4) return endGame(null);
+  S.stage++; S.t0=S.turn;
+  for(const [k] of STATS) S.st[k]=Math.round(S.st[k]+(50-S.st[k])*RESPIRO);
+  drawHud();
+  S.ckPending=null;
+  if(F("alma")) checkpoint(STG[S.stage].name);
+  const it=INTER[S.stage];
+  return interlude(`<div class="big">${it.i}</div>`,STG[S.stage].name,tx(it.x)+" Empiezas la etapa con las barras algo más equilibradas. A partir de ahora, cada decisión: "+fmtP(STG[S.stage].p)+".","Seguir",()=>showEvent(pick()));
+ }
+ if(S.ckPending&&!S.next){checkpoint(S.ckPending);S.ckPending=null;}
+ else if(F("alma")&&!S.next&&S.turn%CHECK_EVERY===0&&S.ckTurn!==S.turn) checkpoint("decisión "+S.turn);
+ showEvent(pick());
+}
+
+function showEvent(e){
+ S.cur=e; drawHud();
+ const c=C[e.c];
+ scr.innerHTML=`<div class="card">
+  ${avatar(e.c)}
+  <div class="who"><b>${tx(c.n)}</b><span>${tx(c.r)}</span></div>
+  <div class="bubble">${tx(e.q)}</div></div>
+  <div class="opts">${shuffle(e.opts.map((o,i)=>i)).map((i,pos)=>`<button class="opt" data-i="${i}"><span class="k">${"ABC"[pos]}</span><span>${tx(e.opts[i].t)}</span></button>`).join("")}</div>`;
+ scr.querySelectorAll(".opt").forEach(b=>b.onclick=()=>choose(+b.dataset.i));
+}
+
+function choose(i){
+ const e=S.cur,o=e.opts[i];
+ S.used.add(e.id); S.recent.push(e.id); if(S.recent.length>4)S.recent.shift();
+ S.turn++;
+ const fx={}, notes=[];
+ let base=o.fx||{}, rtext=o.r;
+ if(o.alt&&Math.random()<o.alt[0]){base=o.alt[1];rtext=o.alt[2];} /* resultado alternativo por azar */
+ for(const k in base){const v=base[k];fx[k]=Math.round(v*(v<0?CRUEL:BONUS));}
+ if(o.f) for(const k in o.f) S.f[k]=F(k)+o.f[k];
+ if(o.set) Object.assign(S.f,o.set);
+ if(o.later) S.queue.push({id:o.later[0],at:S.turn+o.later[1]});
+ if(o.next) S.next=o.next;
+ if(o.ck) S.ckPending=o.ck;
+ let death=o.die||null;
+ if(!death&&o.risk&&Math.random()<o.risk[0]){death=o.risk[1];rtext="Algo sale terriblemente mal…";for(const k in fx)delete fx[k];}
+ if(!death){
+  if(F("drogas")>=2){fx.s=(fx.s||0)-5;notes.push("Tu cuerpo pasa factura: −5 ❤️ por el bajón.");}
+  const p=STG[S.stage].p; for(const k in p) fx[k]=(fx[k]||0)-p[k];
+  notes.push(STG[S.stage].msg+": "+fmtP(p)+".");
+  for(const [k] of STATS) S.st[k]=clamp(S.st[k]+(fx[k]||0));
+  if(o.heal){fx.s=(fx.s||0)+(95-S.st.s);S.st.s=95;notes.push("El pitillo te devuelve toda la salud.");}
+  for(const k of ["s","d","o","h"]){ if(S.st[k]===0){death=k+"0";break;} if(S.st[k]===100){death=k+"100";break;} }
+ }
+ drawHud(fx);
+ const chips=STATS.filter(([k])=>fx[k]).map(([k,ic])=>`<span class="chip ${fx[k]>0?"pos":"neg"}">${ic} ${fx[k]>0?"+":""}${fx[k]}</span>`).join("");
+ scr.innerHTML=`<div class="card">
+  ${avatar(e.c,1)}
+  <div class="bubble narr">${tx(rtext)}</div>
+  ${chips?`<div class="chips">${chips}</div>`:""}
+  ${notes.length?`<div class="note">${notes.join("<br>")}</div>`:""}
+  </div>
+  <button class="btn" id="go">${death?"…":"Continuar"}</button>`;
+ $("#go").onclick=()=>death?endGame(death):advance();
+ $("#go").focus({preventScroll:true});
+}
+
+function interlude(icon,title,text,label,next){
+ scr.innerHTML=`<div class="card">${icon}<div class="dt">${esc(title)}</div><div class="bubble narr">${text}</div></div><button class="btn" id="go">${label}</button>`;
+ $("#go").onclick=next; $("#go").focus({preventScroll:true});
+}
+
+function revive(){
+ const r=S.revives+1, dead=S.lastDeath, ckT=S.ckTurn;
+ const streak=(S.streakCk===ckT?S.streak||0:0)+1; // muertes seguidas desde el mismo punto de control
+ S=unsnap(CK); S.revives=r; S.streak=streak; S.streakCk=S.ckTurn;
+ const boost=Math.min(0.85,REVIVE_BOOST+0.15*(streak-1));
+ for(const [k] of STATS) S.st[k]=Math.round(S.st[k]+(50-S.st[k])*boost);
+ /* San Pedro limpia un poco el expediente para que no vuelvas directo a la misma muerte */
+ if(F("neonazis")>=2) S.f.neonazis=1;
+ if(F("drogas")>=3) S.f.drogas=2;
+ if(F("alcohol")>=3) S.f.alcohol=2;
+ if(F("policia")>=2) S.f.policia=1;
+ if(F("mafia")>=1) S.f.mafia=0;
+ if(F("secta")>=1) S.f.secta=0;
+ S.next=rnd(REVIVE_EV);
+ const why=(dead&&DEATHS[dead]?" Esta vez ya sabes lo que te mató: <b>"+tx(DEATHS[dead].t)+"</b>.":"")+(streak>1?" San Pedro, harto de verte, te devuelve en mejor forma.":"");
+ let speech;
+ if(!F("mision")){ /* primera vez en el cielo: San Pedro revela la misión */
+  S.f.mision=1;
+  speech=tx("«Así que tú eres {name}. Fumaste el pitillo equivocado, pero da igual: ya estás aquí. Escucha bien, porque solo lo diré una vez. El mundo va a ser destruido. No sé cuándo ni cómo; la profecía tiene una letra horrible. Solo sé que se salvará si tú llegas a ser una leyenda. Por eso no puedes morirte. Bueno, puedes, pero yo te devolveré. Una y otra vez. Y vigila al encapuchado».");
+ } else speech=tx(rnd(PEDRO));
+ {const o=JSON.parse(CK);o.f.mision=1;CK=JSON.stringify(o);} /* la misión ya revelada no se olvida al volver a este punto */
+ store("cae_save",{ck:CK,revives:r});
+ hudEl.hidden=false; metaEl.hidden=false; drawHud();
+ interlude(avatar("pedro"),"Resurrección nº "+r,"<b>San Pedro:</b> "+speech+" Vuelves a tu último punto de control ("+esc(S.ckLabel)+")."+why,"Volver a la Tierra",()=>advance());
+}
+
+function endGame(death){
+ const best=store("cae_best")||{turns:0};
+ const isRecord=S.turn>best.turns;
+ if(isRecord) store("cae_best",{turns:S.turn,stage:S.stage});
+ let got=store("cae_deaths")||[];
+ if(death&&!got.includes(death)){got.push(death);store("cae_deaths",got);}
+ S.lastDeath=death;
+ if(!death){store("cae_save",null);CK=null;}
+ const resu=S.revives?", aunque tuviste que resucitar "+S.revives+(S.revives===1?" vez":" veces"):"";
+ const d=death?DEATHS[death]:(F("mision")
+  ?{i:"🌍",t:"Leyenda (y el mundo sigue aquí)",x:"Cantas la última nota de tu última gira"+resu+". En algún lugar, una profecía con muy mala letra se tacha sola. El mundo no se destruye. Nadie se entera. Kira Star se atribuye el mérito. Desde arriba, San Pedro levanta el pulgar. Y en la última fila, alguien con capucha se va sin hacer ruido."}
+  :{i:"👑",t:"Leyenda",x:"Sobreviviste a los garitos, a la fama, a tu cuñado, a Hacienda, a Don Mariano y a ti mism[o|a]"+resu+". Te retiras a una isla con tus royalties. Nunca sabrás que el mundo dependía de ti. Kira Star canta en tu homenaje. Desafina. Por fin, sonríes."});
+ const coll=Object.keys(DEATHS).map(k=>{const on=got.includes(k);return `<div class="${on?"":"lock"}"><span>${on?DEATHS[k].i:"❔"}</span>${on?tx(DEATHS[k].t):"???"}</div>`}).join("");
+ scr.innerHTML=`<div class="card">
+  <div class="big">${d.i}</div>
+  <div class="fin ${death?"":"win"}">${death?"HAS MUERTO":"ERES UNA LEYENDA"}</div>
+  <div class="dt">${tx(d.t)}</div>
+  <div class="bubble narr">${tx(d.x)}</div>
+  ${isRecord?`<span class="badge">¡Nuevo récord!</span>`:""}
+  <div class="stats"><div><b>${S.turn}</b>decisiones</div><div><b>${Math.max(S.turn,best.turns)}</b>récord</div><div><b>${S.revives}</b>resurrecciones</div></div>
+  <h3>Muertes desbloqueadas · ${got.length}/${Object.keys(DEATHS).length}</h3>
+  <div class="coll">${coll}</div></div>
+  ${death&&CK?`<button class="btn gold" id="rev">😇 Resucitar (${esc(S.ckLabel)})</button>`:""}
+  ${death&&!CK?`<p class="small">Aún no te habías cruzado con el encapuchado: sin alma guardada no hay resurrección. Toca empezar de cero.</p>`:""}
+  <button class="btn${death&&CK?" ghost":""}" id="again">Empezar de cero</button>
+  <button class="btn ghost" id="home">Cambiar de personaje</button>`;
+ if($("#rev")) $("#rev").onclick=revive;
+ $("#again").onclick=()=>{pickG=S.g;pickGen=S.gen;newGame();};
+ $("#home").onclick=home;
+}
+
+function home(){
+ const sv=store("cae_save");
+ const keepName=S&&S.name;
+ S=null; hudEl.hidden=true; metaEl.hidden=true;
+ const best=store("cae_best"), got=store("cae_deaths")||[];
+ let svInfo="";
+ if(sv&&sv.ck){try{const o=JSON.parse(sv.ck);svInfo=`${esc(o.name)} · ${esc(o.ckLabel)}${sv.revives?" · 😇×"+sv.revives:""}`;}catch(e){}}
+ scr.innerHTML=`<div class="title">Carrera al<br>Estrellato</div>
+  <p class="tag">Llegar a la fama es fácil. Sobrevivir a ella, no tanto. Morir, facilísimo.</p>
+  ${svInfo?`<button class="btn gold" id="cont">▶ Continuar: ${svInfo}</button>`:""}
+  <label class="lb">Elige personaje</label>
+  <div class="genders">
+   <button class="gender" data-g="m" aria-pressed="${pickG==="m"}"><span class="e">👨‍🎤</span>Cantante</button>
+   <button class="gender" data-g="f" aria-pressed="${pickG==="f"}"><span class="e">👩‍🎤</span>Cantante</button>
+  </div>
+  <label class="lb">Tipo de músico</label>
+  <div class="genres">${Object.entries(GEN).map(([k,g])=>`<button class="genre" data-k="${k}" aria-pressed="${pickGen===k}"><span class="ge">${g.e}</span><b>${g.n}</b><span>${g.d}</span></button>`).join("")}</div>
+  <label class="lb" for="name">Nombre artístico (opcional)</label>
+  <input class="name" id="name" maxlength="28" placeholder="${NAMES[pickG][0]}" autocomplete="off" value="${keepName?esc(keepName):""}">
+  <button class="btn${svInfo?" ghost":""}" id="start">Nueva partida</button>
+  <div class="rules"><b>Cómo se juega:</b> cada decisión mueve tus cuatro barras: 🗣️ opinión pública, 💰 dinero, 🔥 hype y ❤️ salud. Si alguna llega a 0 <b>o a 100</b>, mueres en el acto. Algunas decisiones también pueden matarte sin avisar, y hay cosas que el juego no te enseña pero sí recuerda.<br><br><b>💾 Puntos de control:</b> hasta que no te cruces con cierto desconocido, morir es para siempre. A partir de ahí, tu alma se guarda al empezar cada etapa y cada ${CHECK_EVERY} decisiones, y cuando mueras volverás al último punto para enmendar tus errores.</div>
+  <p class="small">${best?`Récord: ${best.turns} decisiones · `:""}Muertes desbloqueadas: ${got.length}/${Object.keys(DEATHS).length}</p>`;
+ scr.querySelectorAll(".gender").forEach(b=>b.onclick=()=>{pickG=b.dataset.g;scr.querySelectorAll(".gender").forEach(x=>x.setAttribute("aria-pressed",x===b));$("#name").placeholder=NAMES[pickG][0];});
+ scr.querySelectorAll(".genre").forEach(b=>b.onclick=()=>{pickGen=b.dataset.k;scr.querySelectorAll(".genre").forEach(x=>x.setAttribute("aria-pressed",x===b));});
+ $("#start").onclick=newGame;
+ $("#name").onkeydown=e=>{if(e.key==="Enter")newGame();};
+ if($("#cont")) $("#cont").onclick=()=>{CK=sv.ck;S=unsnap(CK);if(!S.gen)S.gen="rock";if(S.hoodAt===undefined){S.hoodAt=S.turn;S.f.alma=1;}S.revives=sv.revives||0;hudEl.hidden=false;metaEl.hidden=false;drawHud();advance();};
+}
+
+/* Teclado: 1-3 / A-C para elegir */
+document.addEventListener("keydown",e=>{
+ if(!S||e.target.tagName==="INPUT")return;
+ const k=e.key.toLowerCase(), idx={"1":0,"2":1,"3":2,a:0,b:1,c:2}[k];
+ const opts=scr.querySelectorAll(".opt");
+ if(idx!==undefined&&opts[idx]){opts[idx].click();e.preventDefault();}
+});
+
+/* Tema: oscuro o claro (fondo blanco, letra negra) */
+function setTheme(t){
+ document.documentElement.dataset.theme=t; store("cae_theme",t);
+ const b=$("#themeBtn"); b.textContent=t==="light"?"🌙":"☀️";
+ b.setAttribute("aria-label",t==="light"?"Cambiar a fondo oscuro":"Cambiar a fondo blanco");
+}
+$("#themeBtn").onclick=()=>setTheme(document.documentElement.dataset.theme==="light"?"dark":"light");
+setTheme(store("cae_theme")||"dark");
+
+home();
+</script>
+</body>
+</html>
