@@ -200,7 +200,22 @@ const C={
  monsenor:{n:"Monseñor Gil",r:"Obispo con buen ojo para los negocios",e:"🙏",c:"#7b2cbf",L:{sk:"a",h:"bald",hc:"#adb5bd",gl:"round",hat:"solideo",top:"priest",cl:"#3c096c",m:"smirk",blush:1}},
  amor:{n:"[Gabriel|Valentina]",r:"Tu [compañero|compañera] de coro. Y algo más.",e:"🎶",c:"#e5989b",L:()=>S&&S.g==="f"?{sk:"c",h:"long",hc:"#5e3023",lash:1,blush:1,cl:"#264653",m:"smile",ear:1}:{sk:"b",h:"curly",hc:"#5e3023",blush:1,cl:"#264653",m:"smile"}},
  barista:{n:"Iñaki",r:"Barista de especialidad",e:"☕",c:"#606c38",L:{sk:"a",h:"short",hc:"#6c584c",beard:1,hat:"beanie",hatc:"#bc6c25",gl:"round",cl:"#283618",m:"smirk"}},
- brayan:{n:"Brayan Blockchain",r:"Gurú de las criptos, bro",e:"🪙",c:"#f4a261",L:{sk:"a",h:"slick",hc:"#ffd60a",gl:"sun",top:"hoodie",cl:"#111",chain:1,m:"grin"}}
+ brayan:{n:"Brayan Blockchain",r:"Gurú de las criptos, bro",e:"🪙",c:"#f4a261",L:{sk:"a",h:"slick",hc:"#ffd60a",gl:"sun",top:"hoodie",cl:"#111",chain:1,m:"grin"}},
+ tito:{n:"El Tito",r:"Cliente fijo del Bar Pepe desde 1987",e:"🍻",c:"#b08968",L:{sk:"b",h:"bald",hc:"#6c584c",mus:1,cl:"#495057",m:"grin",blush:1}},
+ dani:{n:"Dani",r:"El hermano pequeño de Bruno",e:"🎚️",c:"#606c38",L:{sk:"a",h:"shaved",cl:"#2d3a2e",m:"frown",blush:1}},
+ pura:{n:"Doña Pura",r:"La madre de Bruno",e:"🧶",c:"#9a8c98",L:{sk:"a",h:"bun",hc:"#6c757d",gl:"round",cl:"#5e548e",ear:1,m:"frown"}},
+ marta:{n:"Marta Vidal",r:"Periodista de investigación",e:"🕵️",c:"#4a4e69",L:{sk:"c",h:"ponytail",hc:"#111",gl:"round",top:"suit",cl:"#22223b",tie:"#c1121f",m:"flat"}},
+ ex2:{n:"Álex",r:"Otra de tus ex-parejas. Hay más.",e:"💘",c:"#ff8fa3",L:{sk:"c",h:"bob",hc:"#bc6c25",cl:"#7209b7",m:"smirk",ear:1}},
+ sam:{n:"Sam",r:"La nueva pareja de tu ex",e:"🥀",c:"#06d6a0",L:{sk:"a",h:"curly",hc:"#e9c46a",cl:"#118ab2",m:"grin",blush:1}},
+ perro:{n:"Lord Bigotes",r:"Perro. Habla. No preguntes.",e:"🐕",c:"#f4a261",L:{head:"dog"}},
+ nino:{n:"Un niño del barrio",r:"Experto en camiones de helados",e:"🧒",c:"#90be6d",L:{sk:"b",h:"short",hc:"#6f4518",cl:"#e63946",m:"open",blush:1,hat:"capb",hatc:"#1d3557"}},
+ heladero:{n:"El heladero",r:"Conduce un camión con musiquita",e:"🍦",c:"#ffafcc",L:{sk:"a",h:"short",hc:"#adb5bd",bc:"#adb5bd",mus:1,hat:"cap",hatc:"#f8f9fa",cl:"#f8f9fa",m:"grin",blush:1}},
+ fernando:{n:"Don Fernando de la Cruz",r:"Líder de «Patria y Rosario»",e:"🕯️",c:"#9d0208",L:{sk:"a",h:"slick",hc:"#adb5bd",top:"suit",cl:"#14213d",tie:"#ffd60a",m:"smirk"}},
+ iratxe:{n:"Iratxe",r:"Portavoz de «Mareas Unidas por el Cambio Inclusivo»",e:"🌱",c:"#52b788",L:{sk:"b",h:"long",hc:"#9d4edd",gl:"round",cl:"#2d6a4f",ear:1,m:"smile"}},
+ xabi:{n:"Xabi",r:"Líder de «Independencia Ya del Valle de Abajo»",e:"🏴",c:"#e85d04",L:{sk:"b",h:"short",hc:"#111",beard:1,top:"hoodie",cl:"#370617",m:"frown",brow:"angry",ear:1}},
+ gonzalo:{n:"Don Gonzalo Templado",r:"Presidente de «Centro Sensato»",e:"👔",c:"#457b9d",L:{sk:"a",h:"slick",hc:"#6c584c",top:"suit",cl:"#1d3557",tie:"#a8dadc",m:"smile"}},
+ chef:{n:"Chef Aitor Espumas",r:"Tres estrellas y cero raciones",e:"🧑‍🍳",c:"#adb5bd",L:{sk:"a",h:"short",hc:"#111",hat:"chef",top:"coat",cl:"#ced4da",mus:1,m:"smirk"}},
+ fermin:{n:"Fermín",r:"Camarero en tres sitios a la vez",e:"🍔",c:"#ffb703",L:{sk:"c",h:"short",hc:"#111",hat:"cap",hatc:"#e63946",cl:"#e63946",m:"flat",stubble:1}}
 };
 
 /* ============ RETRATOS (SVG dibujado en el propio juego) ============ */
@@ -208,6 +223,10 @@ const SKIN={a:"#f8dcc4",b:"#eabf9a",c:"#c98d62",d:"#8d5a3b",e:"#5c3a24"};
 function portrait(id){
  let L=(C[id]&&C[id].L)||{}; if(typeof L==="function") L=L();
  const P=[],add=x=>P.push(x),dk="rgba(0,0,0,.22)";
+ if(L.head==="dog"){
+  add(`<path d="M14 122 Q16 88 60 85 Q104 88 106 122Z" fill="#7f5539"/><path d="M50 86 Q60 94 70 86 L70 92 Q60 98 50 92Z" fill="#9d0208"/><path d="M58 94 Q54 104 60 110 Q63 102 58 94Z" fill="#fff"/><ellipse cx="34" cy="54" rx="10" ry="23" fill="#6f4518" transform="rotate(14 34 54)"/><ellipse cx="86" cy="54" rx="10" ry="23" fill="#6f4518" transform="rotate(-14 86 54)"/><ellipse cx="60" cy="50" rx="24" ry="25" fill="#b08968"/><ellipse cx="60" cy="65" rx="13" ry="10" fill="#e6ccb2"/><circle cx="50" cy="46" r="3.2" fill="#1a1029"/><circle cx="70" cy="46" r="3.2" fill="#1a1029"/><circle cx="70" cy="46" r="7" stroke="#ffd60a" stroke-width="2" fill="rgba(255,255,255,.2)"/><path d="M77 48 Q82 62 78 74" stroke="#ffd60a" stroke-width="1.2" fill="none"/><ellipse cx="60" cy="58" rx="5" ry="3.6" fill="#1a1029"/><path d="M60 62 Q52 70 42 64 Q46 72 54 70 Q58 68 60 65 Q62 68 66 70 Q74 72 78 64 Q68 70 60 62Z" fill="#3b2a20"/><rect x="46" y="10" width="28" height="18" rx="2" fill="#111"/><rect x="40" y="26" width="40" height="5" rx="2" fill="#111"/><rect x="46" y="22" width="28" height="3" fill="#9d0208"/>`);
+  return svg(P);
+ }
  if(L.head==="hood"){
   add(`<path d="M14 122 Q16 86 60 82 Q104 86 106 122Z" fill="#16161d"/><path d="M24 110 Q18 24 60 14 Q102 24 96 110 Q82 96 60 96 Q38 96 24 110Z" fill="#2b2b36"/><path d="M24 110 Q18 24 60 14 Q102 24 96 110" stroke="#000" stroke-width="2" fill="none" opacity=".4"/><ellipse cx="60" cy="58" rx="22" ry="26" fill="#0b0b10"/><ellipse cx="51" cy="55" rx="4" ry="2.2" fill="#ffd60a"/><ellipse cx="69" cy="55" rx="4" ry="2.2" fill="#ffd60a"/><rect x="60" y="70" width="18" height="3.4" rx="1.7" fill="#f8f9fa"/><rect x="76" y="70" width="3.4" height="3.4" fill="#e85d04"/><path d="M80 67 Q86 59 80 52 Q75 45 82 38" stroke="#ced4da" stroke-width="2" fill="none" opacity=".6"/>`);
   return svg(P);
@@ -283,6 +302,7 @@ function portrait(id){
   case "surg":add(`<path d="M36 40 Q36 15 60 15 Q84 15 84 40Z" fill="#74c69d"/>`);break;
   case "hard":add(`<path d="M35 38 Q35 12 60 12 Q85 12 85 38Z" fill="#ffd60a"/><rect x="30" y="34" width="60" height="7" rx="3" fill="#ffc300"/><path d="M60 12 L60 34" stroke="#e0a800" stroke-width="3"/>`);break;
   case "helmet":add(`<circle cx="60" cy="50" r="35" fill="rgba(180,220,255,.25)" stroke="#e9ecef" stroke-width="4"/><path d="M40 30 Q48 22 58 21" stroke="#fff" stroke-width="3" opacity=".7" fill="none" stroke-linecap="round"/>`);break;
+  case "chef":add(`<path d="M38 34 Q28 14 44 12 Q48 1 60 6 Q72 1 76 12 Q92 14 82 34Z" fill="#fff" stroke="#dee2e6" stroke-width="1.5"/><rect x="38" y="30" width="44" height="8" rx="2" fill="#fff" stroke="#dee2e6" stroke-width="1.5"/>`);break;
   case "solideo":add(`<path d="M45 28 Q60 16 75 28 Q60 24 45 28Z" fill="#7b2cbf"/>`);break;
   case "halo":add(`<ellipse cx="60" cy="13" rx="20" ry="5" fill="none" stroke="#ffd60a" stroke-width="3.5"/>`);break;
   case "mic":add(`<path d="M36 50 Q36 18 60 18 Q84 18 84 50" stroke="#222" stroke-width="4" fill="none"/><rect x="31" y="44" width="9" height="14" rx="3" fill="#222"/><rect x="80" y="44" width="9" height="14" rx="3" fill="#222"/><path d="M35 57 Q38 70 52 68" stroke="#222" stroke-width="2.5" fill="none"/><circle cx="53" cy="68" r="2.5" fill="#222"/>`);break;
@@ -1115,6 +1135,172 @@ const EV=[
  {t:"Aguantar. Hodl.",fx:{d:35,h:5},alt:[.5,{d:-30},"Era un 99 % hacia abajo. Brayan desaparece. Su patinete aparece flotando en un río."],r:"Era un 4.000 % hacia arriba. Te compras una isla. Pequeña. Una roca, en realidad. Pero tuya."},
  {t:"Regalárselo todo a mis fans.",fx:{o:20,d:-10},r:"Tus fans te adoran. Tres días después la moneda vale cero. Te siguen adorando, pero menos."}]},
 
+/* ---------- Neonazis: la trama a fondo ---------- */
+{id:"nazi_madre",st:[2,3],c:"pura",w:4,cond:()=>F("neonazis")>=1||F("nazifan"),q:"Soy la madre de Bruno. Mi Brunito, de pequeño, lloraba con las canciones de Marisol. No sé en qué nos equivocamos. ¿Hablarías con él?",opts:[
+ {t:"Hablar con Bruno.",fx:{o:10,s:-10},set:{charla_bruno:1},r:"Le esperas en la puerta del club. No te pega. Te escucha. Se va sin decir nada, pero pensativo, que ya es algo."},
+ {t:"Darle a ella entradas para mi concierto.",fx:{o:5,d:-5},r:"Doña Pura viene a primera fila con abanico. Bruno la recoge a la salida sin mirarte. Pero lleva una camiseta tuya debajo de la cazadora."},
+ {t:"«Señora, su hijo me quiere matar».",fx:{s:5,o:-5},r:"Doña Pura suspira: «Ya, hij[o|a]. Y a mí, que me arregle el grifo». Te da una magdalena."}]},
+{id:"bruno_cambio",st:[3,4],c:"bruno",w:6,cond:()=>F("charla_bruno"),q:"Mi madre dice que hablaste con ella. He escuchado tu disco. El segundo. Lloré. Como se lo cuentes a los chicos, te mato. Bueno… es una forma de hablar.",opts:[
+ {t:"Animarle a dejar el club.",fx:{o:20,s:-5},set:{neonazis:0,nazifan:0,bruno_redimido:1},r:"Bruno deja el club y se deja crecer el pelo. Le sale rizado. Ahora trabaja en una floristería. Llora con los tulipanes."},
+ {t:"Contárselo a los chicos.",fx:{h:15,o:-10},f:{neonazis:1},r:"Los chicos le dan una paliza por sentimental. Bruno te mira desde el suelo. Eso no se olvida."},
+ {t:"Ofrecerle trabajo de roadie.",fx:{o:10,d:-10},set:{neonazis:0,bruno_redimido:1},r:"Es el mejor roadie que has tenido: carga cuarenta kilos de amplificador y llora con las baladas. El club le declara traidor."}]},
+{id:"dani",st:[2,3],c:"dani",w:4,cond:()=>F("neonazis")>=1||F("nazifan"),q:"Soy Dani, el hermano pequeño de Bruno. Quiero salir del club, pero me da miedo. ¿Me dejas ser tu técnico de sonido? Sé conectar cables. Bueno, cosas.",opts:[
+ {t:"Contratarle.",fx:{o:15,d:-5},f:{neonazis:1},set:{dani:1},r:"Dani conecta los cables al revés, pero con muchísimas ganas. El club os pone a los dos en su lista negra."},
+ {t:"Ponerle en contacto con una ONG.",fx:{o:10},r:"La ONG le ayuda a salir. Te manda una carta de agradecimiento. Con faltas, pero sin esvásticas."},
+ {t:"No quiero líos.",fx:{s:5,o:-10},r:"Dani se va con la cabeza gacha. Lo verás dentro de un año en una manifestación. En el lado equivocado."}]},
+{id:"marta_docu",st:[2,3],c:"marta",w:4,cond:()=>F("neonazis")>=1||F("nazifan"),q:"Investigo la red de Bruno. Necesito a alguien famoso que se infiltre en uno de sus conciertos con una cámara oculta. Será un documental.",opts:[
+ {t:"Infiltrarme.",fx:{h:25,o:20},risk:[.25,"documental"],r:"Grabas cuatro horas de material. Nadie sospecha: cantas sus canciones fatal, como uno más. El documental es demoledor."},
+ {t:"Darle información anónima.",fx:{o:10},f:{neonazis:1},r:"Marta publica un reportaje brutal. Bruno sabe que alguien habló. Sospecha de ti. Sospecha bien."},
+ {t:"Rechazarlo. Ya tengo bastante.",fx:{s:5,o:-5},r:"Marta se va sin decir nada. El documental sale igual, con otra persona. Gana un premio."}]},
+{id:"nazi_marcha",st:[2,3,4],c:"bruno",w:4,cond:()=>F("neonazis")>=1,q:"Mañana hacemos una marcha por tu calle. Con antorchas y tambores. Si bajas a saludar, te guardamos sitio.",opts:[
+ {t:"Concierto antifascista desde el balcón.",fx:{o:25,h:15,s:-15},f:{neonazis:1},r:"Cuatrocientos vecinos se suman desde sus ventanas. La marcha se disuelve entre cacerolas y una tuba. Bruno levanta la vista. Te apunta."},
+ {t:"Cerrar las persianas.",fx:{o:-10,s:5},r:"Escuchas los tambores desde el sofá. Te sientes fatal. Y a salvo. Sobre todo fatal."},
+ {t:"Irme ese día a casa de mi madre.",fx:{o:-5,s:10},r:"Tu madre te hace croquetas. Cuando vuelves, te han pintado el portal. Con faltas, otra vez."}]},
+{id:"nazi_tatuaje",st:[2,3],c:"bruno",w:4,cond:()=>F("nazifan"),q:"Los chicos se van a tatuar tu cara. En el brazo. Al lado de… otras caras. Es un honor, ¿eh?",opts:[
+ {t:"Prohibírselo.",fx:{o:10},f:{neonazis:1},set:{nazifan:0},r:"Bruno no entiende nada: «¿No eras de los nuestros?». No. Nunca. Ahora lo sabe."},
+ {t:"Mientras paguen derechos de imagen…",fx:{d:15,o:-25},r:"Te pagan. Tu cara aparece entre caras horribles. Pierdes contratos, amigos y dignidad. Ganas 1.500 €."},
+ {t:"Que me tatúen sin papada, por favor.",fx:{h:10,o:-15},r:"El tatuador te favorece mucho. Es lo único bueno de esta historia."}]},
+
+/* ---------- Más alcohol ---------- */
+{id:"tito_rep",rep:1,st:[1,2,3,4],c:"tito",q:"¿Una cañita? ¿Un carajillo? ¿Un sol y sombra para el alma? Invito yo. Bueno, pagas tú, pero invito yo.",opts:[
+ {t:"Una caña y me voy.",fx:{o:3,s:-3,h:2},r:"Una caña. Y otra. «Y me voy» resulta ser una expresión hecha."},
+ {t:"Lo que pidas tú, Tito.",fx:{h:8,s:-10},f:{alcohol:1},r:"El Tito pide un licor de hierbas de un pueblo que no existe. Acabáis cantando por bulerías."},
+ {t:"Agua, Tito.",fx:{s:5,o:-3},r:"El Tito te mira como si le hubieras insultado a la madre."}]},
+{id:"apuesta",st:[1,2],c:"tito",q:"Te apuesto cien euros a que no te bebes un litro de cerveza de un trago mientras cantas el estribillo.",opts:[
+ {t:"Aceptar la apuesta.",fx:{d:10,h:10,s:-15},f:{alcohol:1},r:"Lo consigues. El estribillo suena a gárgaras, pero lo consigues. El Tito te paga en monedas de veinte céntimos."},
+ {t:"Contraapuesta: que se lo beba él.",fx:{o:5,d:5},r:"El Tito se lo bebe en cuatro segundos y sin cantar. Es su verdadero talento. Te cobra igual."},
+ {t:"Rechazarla.",fx:{o:-5,s:5},r:"El bar entero te abuchea. El Tito reparte cacahuetes entre el público como consuelo."}]},
+{id:"chupitos",st:[2,3],c:"lucia",q:"¡Ronda de chupitos! Son de algo verde que brilla en la oscuridad. Nadie sabe qué lleva. Eso es lo divertido.",opts:[
+ {t:"Uno, por cortesía.",fx:{h:5,s:-5},r:"Te brillan los dientes toda la noche. Es tendencia."},
+ {t:"Siete. Por el arte.",fx:{h:15,s:-20},f:{alcohol:1},r:"Despiertas en una azotea abrazad[o|a] a una antena. Tienes cobertura 5G. Tú, personalmente."},
+ {t:"Ninguno. Mañana tengo bolo.",fx:{s:5,h:-5},r:"Lucía sube una story: «{name} se ha vuelto aburrid[o|a]». Cuarenta mil visualizaciones."}]},
+{id:"cata",st:[3,4],c:"ambrosio",q:"Señor[|a], la cata de vinos de esta noche: botellas de mil euros. El sumiller insiste en que el vino se escupe.",opts:[
+ {t:"Escupir como un profesional.",fx:{o:5,d:-10},r:"Escupes con tanta elegancia que el sumiller llora. Te ofrecen un puesto en Burdeos."},
+ {t:"Bebérmelo todo.",fx:{h:10,s:-15},f:{alcohol:1},r:"Doce mil euros de vino en el cuerpo. Acabas cantando ópera en la bodega. Desafinas en francés."},
+ {t:"Mezclarlo con gaseosa.",fx:{h:15,o:-15},r:"El sumiller se desmaya. Vídeo viral: «Tinto de verano de mil euros». Lo copian todos los chiringuitos."}]},
+{id:"alcohol_aviso",chain:1,st:[1,2,3,4],c:"salas",q:"Tu hígado me ha mandado un correo electrónico. Con copia a tu madre. Pide que pares. Literalmente pone «por favor».",opts:[
+ {t:"Dejarlo una temporada.",fx:{s:20,h:-10},set:{alcohol:1},r:"Tres meses sin beber. Descubres que tus amigos son aburridísimos sobrios. Y tú también."},
+ {t:"Solo cerveza, a partir de ahora.",fx:{s:-5},r:"La doctora suspira. Tu hígado también. Lo oyes perfectamente."},
+ {t:"Brindar por mi hígado.",fx:{s:-10,h:5},f:{alcohol:1},r:"El brindis sale en todos los medios. Tu hígado redacta su testamento."}]},
+
+/* ---------- Exes ---------- */
+{id:"ex_nueva",st:[2,3],c:"sam",nogen:["laura"],q:"Hola. Soy la nueva pareja de tu ex. Y fan de tu música desde hace años. ¿Me firmas un disco? No se lo digas, por favor.",opts:[
+ {t:"Firmárselo con cariño.",fx:{o:5,h:5},r:"Tu ex encuentra el disco firmado. Discuten. Por ti. Te encanta, y te odias porque te encante."},
+ {t:"Contarle todos los defectos de mi ex.",fx:{h:10,o:-10},r:"Sam toma notas. Muchas. Dos semanas después vuelven a estar sin pareja. Y te culpan los dos."},
+ {t:"Ligar con Sam.",fx:{h:20,o:-20,s:-5},r:"Funciona. Ahora tu ex tiene dos motivos para odiarte. Y Sam también, a la semana."}]},
+{id:"ex2",st:[2,3],c:"ex2",nogen:["laura"],q:"¿Te acuerdas de mí? Salimos tres semanas en 2015. Voy a publicar un libro: «Mis tres semanas con {name}». Tiene seiscientas páginas.",opts:[
+ {t:"Pagarle para que no lo publique.",fx:{d:-15},r:"Coge el dinero y publica otro: «Lo que {name} me pagó por callarme»."},
+ {t:"Contestar con mi libro: «Mis tres semanas con nadie».",fx:{h:15,o:-5},r:"Tu libro tiene doce páginas. Vende más. La gente prefiere los libros cortos."},
+ {t:"Volver tres semanas más, por los viejos tiempos.",fx:{h:10,s:-10},r:"Las tres semanas se vuelven seis. Álex amplía el libro. Ahora es una trilogía."}]},
+{id:"ex_boda",st:[3],c:"ex",nogen:["laura"],q:"Me caso. Quiero que cantes en mi boda la canción que me escribiste. La buena. La de antes de lo del tranvía.",opts:[
+ {t:"Cantarla con toda el alma.",fx:{o:15,s:-10},r:"Lloras tú, llora tu ex, llora la persona con la que se casa. Cada cual por un motivo distinto."},
+ {t:"¡Me opongo!",fx:{h:25,o:-20},r:"Te levantas cuando el cura pregunta. Silencio total. Nadie sabe qué viene después. Tú tampoco. Te sacan los camareros."},
+ {t:"No ir y mandar un regalo pasivo-agresivo.",fx:{h:5,s:5},r:"Les regalas un tranvía de juguete. Lo entienden perfectamente."}]},
+{id:"ex_podcast",st:[3,4],c:"ex2",nogen:["laura"],w:4,q:"Tus exes hemos abierto un pódcast: «Sobreviví a {name}». Vamos por el episodio cuarenta. Queremos que vengas de invitad[o|a].",opts:[
+ {t:"Ir y defenderme.",fx:{h:25,o:-10,s:-10},r:"Tres contra uno durante dos horas. Pierdes. Pero el episodio es número uno en todas las plataformas."},
+ {t:"Demandarles.",fx:{d:-10,o:-10},r:"La demanda se convierte en el episodio cuarenta y uno. Y en el cuarenta y dos."},
+ {t:"Ir y llevar a mi madre.",fx:{o:15,h:10},r:"Tu madre se pone de su lado y cuenta cosas de cuando eras pequeñ[o|a]. Episodio más escuchado de la historia."}]},
+{id:"ex_viejos",st:[4],c:"ex",nogen:["laura"],w:4,q:"Ya somos mayores. Mi boda duró dos años. ¿Y si lo intentamos otra vez? Esta vez sin tranvías.",opts:[
+ {t:"Sí. ¿Por qué no?",fx:{s:15,o:10},r:"Desayunáis juntos cada día. Discutís por el mando de la tele. Es lo más parecido a la paz que has conocido."},
+ {t:"No. Hay heridas que no cierran.",fx:{s:-5,h:5},r:"Escribes una canción sobre ello. Triste y preciosa. Tu ex la escucha en bucle."},
+ {t:"Solo los fines de semana.",fx:{s:5,h:5},r:"Funciona sorprendentemente bien. Los lunes os echáis de menos. Los domingos por la noche, no tanto."}]},
+
+/* ---------- Lord Bigotes, el perro que habla (tres conversaciones) ---------- */
+{id:"perro1",st:[1,2],c:"perro",w:4,q:"Buenas. Soy un perro. No te asustes: solo hablo los martes. Hoy es jueves, así que esto no está pasando. ¿Tienes un yogur de fresa? No es para comer. Es para escucharlo.",opts:[
+ {t:"Darle un yogur de fresa.",fx:{h:5},set:{perro:1},r:"Se lo acerca a la oreja y asiente muy serio. «Lo sabía», dice. No aclara qué sabía."},
+ {t:"«¿Los perros hablan?».",fx:{s:-3},set:{perro:1},r:"«Solo los que tienen algo que decir. Yo no tengo nada que decir. Por eso hablo tanto»."},
+ {t:"Ladrarle.",fx:{o:-3,h:3},set:{perro:1},r:"Te mira con una tristeza infinita. «Qué vulgar», dice, y se aleja dando saltitos."}]},
+{id:"perro2",st:[2,3],c:"perro",w:5,cond:()=>F("perro")===1,q:"Volvemos a vernos. He estado pensando en el yogur. Todos los yogures son el mismo yogur, ¿lo sabías? El universo es un yogur. Tú eres la cuchara. Yo soy el que cierra la tapa.",opts:[
+ {t:"¿Y quién se come el yogur?",fx:{h:5},set:{perro:2},r:"El perro te mira fijamente un minuto entero. Luego dice: «Los martes». Y se rasca la oreja."},
+ {t:"Llamar a un veterinario.",fx:{d:-5},set:{perro:2},r:"El veterinario examina al perro y dice que está perfectamente. El perro le pregunta por su divorcio. El veterinario se echa a llorar."},
+ {t:"Pedirle consejo profesional.",fx:{h:3,o:3},set:{perro:2},r:"«Nunca grabes un disco en Sol si puedes grabarlo en domingo». Lo apuntas. Lo entiendes menos cada vez que lo lees."}]},
+{id:"perro3",st:[3,4],c:"perro",w:6,cond:()=>F("perro")===2,q:"Esta es nuestra última conversación. Me voy a ser alcalde de una ciudad que todavía no existe. Antes de irme: la respuesta es «tres». La pregunta no te la puedo decir.",opts:[
+ {t:"«¿Tres qué?».",fx:{h:5},set:{perro:3},r:"«Exacto», dice, y se da la vuelta. En el collar lleva prendida una pluma blanca. No vuelves a verlo nunca."},
+ {t:"Abrazar al perro.",fx:{s:10},set:{perro:3},r:"Huele a galleta y a algo que no consigues recordar. Un poco a incienso. Un poco a gasolina."},
+ {t:"Pedirle que se quede.",fx:{o:5,s:5},set:{perro:3},r:"«No puedo. Los martes tengo pilates». Te lame la mano y desaparece detrás de una farola demasiado estrecha para un perro."}]},
+
+/* ---------- La persecución del camión de los helados ---------- */
+{id:"helado",st:[1,2,3,4],c:"nino",w:3,q:"¡EL CAMIÓN DE LOS HELADOS! ¡Se va por la avenida! ¡Corre, que el de fresa se acaba!",opts:[
+ {t:"¡A por él!",fx:{s:-3},next:"helado2",r:"Echas a correr detrás de la musiquita. El niño corre a tu lado. Tú jadeas. Él no."},
+ {t:"Ya no tengo edad para esto.",fx:{o:-3,h:-3},r:"El camión se pierde a lo lejos. El niño te mira con desprecio. Tiene ocho años y ya te ha calado."},
+ {t:"Pagar al niño para que corra por mí.",fx:{d:-5},r:"El niño coge el dinero y sale corriendo en dirección contraria. Bien jugado, chaval."}]},
+{id:"helado2",chain:1,st:[1,2,3,4],c:"nino",q:"(El niño frena en seco). ¡Un cruce! La musiquita suena… no sé de dónde. ¿Izquierda, derecha o recto?",opts:[
+ {t:"¡Izquierda!",chase:[.45,"helado3","¡Bien! La musiquita suena más fuerte. Lo ves doblar la siguiente esquina.",{s:-10,h:-5},"Calle sin salida. Solo hay un contenedor y un gato que te juzga. La musiquita se aleja para siempre."]},
+ {t:"¡Derecha!",chase:[.45,"helado3","¡Acierto! Ves el techo del camión asomando por encima de los coches aparcados.",{s:-10,h:-5},"Te metes en un mercadillo. Sales con tres pares de calcetines y sin camión."]},
+ {t:"¡Recto!",chase:[.45,"helado3","¡Ahí está! Lo tienes a cincuenta metros. El heladero no se ha dado cuenta.",{s:-10,h:-5},"Recto había una cuesta. Muy cuesta. Te sientas a mitad. El camión sigue con su vida."]}]},
+{id:"helado3",chain:1,st:[1,2,3,4],c:"nino",q:"¡Ya casi! Pero hay una obra de Don Mariano en medio y un atajo por un parque lleno de palomas. ¿Por dónde?",opts:[
+ {t:"Saltar la valla de la obra.",chase:[.5,"helado_final","Saltas la valla, esquivas una hormigonera y caes justo delante del camión.",{s:-15},"Te quedas colgad[o|a] de la valla por los pantalones. Un obrero te hace una foto. Mañana la tendrá Don Mariano."]},
+ {t:"Por el parque de las palomas.",chase:[.5,"helado_final","Mil palomas levantan el vuelo a tu paso, como en una película. Sales del parque justo delante del camión.",{s:-10,o:-5},"Las palomas te atacan en formación. Sales del parque con plumas en el pelo y sin helado."]},
+ {t:"Por la acera, como una persona normal.",chase:[.5,"helado_final","Funciona. A veces lo normal funciona. El camión para en un semáforo y llegas.",{s:-8},"El semáforo se pone en verde justo cuando llegas. La musiquita se despide con una nota burlona."]}]},
+{id:"helado_final",chain:1,st:[1,2,3,4],c:"heladero",q:"¡Vaaale, vale, ya paro! Nadie me perseguía así desde 1994. Me quedan tres sabores. ¿Qué te pongo?",opts:[
+ {t:"Fresa. Como cuando era pequeñ[o|a].",fx:{h:40},heal:90,safe:1,r:"El primer lametazo te devuelve la infancia, la salud y las ganas de vivir. El niño lo graba. Es lo más bonito que has subido nunca."},
+ {t:"Chocolate con trocitos.",fx:{h:40},heal:90,safe:1,r:"Te lo comes en el bordillo, con el niño. Habláis de la vida. Él sabe más que tú."},
+ {t:"El sabor misterioso.",fx:{h:40},heal:90,safe:1,r:"Sabe a nube. Como en el cielo. El heladero te guiña un ojo. En la gorra lleva prendida una pluma blanca."}]},
+
+/* ---------- Partidos políticos (según tu estilo) ---------- */
+{id:"partido_ultra",gen:"laura",st:[2,3],c:"fernando",w:6,cond:()=>!F("partido"),q:"Patria y Rosario necesita una voz. Alguien que cante, rece y no haga preguntas. Pagamos bien, en efectivo y con bendición incluida.",opts:[
+ {t:"Unirme al partido.",fx:{d:20,h:15,o:-20},set:{partido:"ultra",nazifan:1},r:"Te hacen cantar el himno del partido con mantilla. Bruno «El Calvo» te manda un pulgar arriba. Eso no puede ser bueno."},
+ {t:"Rechazarlo. Mi fe no se vota.",fx:{o:10,d:-5},r:"Don Fernando te mira como a un hereje. Monseñor Gil, en cambio, te guiña un ojo."},
+ {t:"Unirme y cambiarles el himno por una balada de amor.",fx:{h:20,o:5},set:{partido:"ultra"},r:"El mitin acaba con trescientos señores con chaleco acolchado cantando «Te quiero, te quiero». Algunos lloran. Don Fernando no sabe si echarte o subirte el sueldo."}]},
+{id:"ultra_mitin",st:[3],c:"fernando",w:6,cond:()=>F("partido")==="ultra",q:"Mitin en la plaza de toros. Cantarás el himno mientras soltamos cien palomas. Están un poco nerviosas. Y yo también.",opts:[
+ {t:"Cantar con fervor.",fx:{d:15,o:-15,h:10},r:"Las palomas se lo hacen todo encima de la primera fila. Don Fernando dice que es «una señal». No aclara de qué."},
+ {t:"Desafinar a propósito.",fx:{o:10,h:10,d:-10},r:"El himno suena tan mal que la mitad del público se va. La otra mitad cree que es modernidad."},
+ {t:"Soltar las palomas antes de tiempo.",fx:{h:20,o:5},r:"Cien palomas en desbandada dentro de una plaza de toros. El vídeo da la vuelta al mundo con música de película de terror."}]},
+{id:"ultra_escandalo",st:[3,4],c:"marta",w:6,cond:()=>F("partido")==="ultra",q:"He descubierto que Patria y Rosario se financia con dinero de Don Mariano y con donativos de cierto club de «senderismo». ¿Algún comentario antes de publicarlo?",opts:[
+ {t:"Abandonar el partido en directo.",fx:{o:20,d:-15},set:{partido:"ex",nazifan:0},f:{neonazis:1,mafia:1},r:"Don Fernando te llama traidor. Bruno, también. Don Mariano no dice nada, que es peor."},
+ {t:"«Sin comentarios».",fx:{o:-20},r:"Titular: «{name} no lo niega». Tu madre deja de ir a misa por la vergüenza. Y porque el cura la aburre."},
+ {t:"Darle a Marta todos los documentos.",fx:{o:25,h:15,s:-10},set:{partido:"ex"},f:{neonazis:1},r:"El partido se hunde. Don Fernando huye a una finca. Marta gana un premio y te lo dedica en voz baja."}]},
+{id:"partido_progre",gen:"indie",st:[2,3],c:"iratxe",w:6,cond:()=>!F("partido"),q:"Mareas Unidas por el Cambio Inclusivo y Sostenible necesita tu voz. No pagamos: es un acto de compromiso. Hay hummus.",opts:[
+ {t:"Unirme al partido.",fx:{o:10,h:10,d:-10},set:{partido:"progre"},f:{neonazis:1},r:"Te dan una chapa, una bolsa de tela y treinta grupos de WhatsApp. Bruno «El Calvo» te apunta en su lista. Has subido de nivel."},
+ {t:"Rechazarlo. Soy demasiado indie para un partido.",fx:{h:5,o:-5},r:"Iratxe asiente: «Lo entiendo. Te apuntamos como simpatizante igualmente». Ya estás en los treinta grupos."},
+ {t:"Unirme solo por el hummus.",fx:{s:5,h:5},set:{partido:"progre"},r:"El hummus es de garbanzo de proximidad. Está buenísimo. Te quedas por él. Nadie te pregunta nada más."}]},
+{id:"progre_asamblea",st:[3],c:"iratxe",w:6,cond:()=>F("partido")==="progre",q:"Asamblea para decidir el color de la pancarta. Llevamos nueve horas. Hay dos facciones: verde agua y verde menta. Tu voto decide.",opts:[
+ {t:"Verde agua.",fx:{o:5,s:-10},r:"La facción menta abandona la asamblea y funda su propio partido. Ya sois siete."},
+ {t:"Verde menta.",fx:{o:5,s:-10},r:"La facción agua abandona la asamblea y funda su propio partido. Ya sois siete."},
+ {t:"Propongo un color que no sea ninguno de los dos.",fx:{h:15,o:10},r:"Ovación cerrada. Se vota a las cinco de la mañana. La pancarta acaba siendo transparente. Nadie la ve, pero todos la apoyan."}]},
+{id:"progre_escision",st:[3,4],c:"iratxe",w:6,cond:()=>F("partido")==="progre",q:"El partido se ha dividido en Mareas Unidas, Mareas Más Unidas y Mareas Unidas de Verdad. Las tres quieren que seas su cabeza de cartel.",opts:[
+ {t:"Fundar mi propia marea.",fx:{h:20,o:-10},r:"«Marea {name}» saca un concejal. Eres tú. Descubres que los plenos duran más que tus solos."},
+ {t:"Dejar la política y volver a la música.",fx:{o:10,s:10,h:-5},set:{partido:"ex"},r:"Te despides con una canción acústica sobre la sostenibilidad, grabada con un micrófono de bambú."},
+ {t:"Juntarlas en un concierto.",fx:{o:20,h:15,s:-10},r:"Tres mareas, un escenario, cero acuerdos. Pero se abrazan durante tu estribillo. Dura cuatro minutos. Es un récord."}]},
+{id:"partido_indep",gen:"punk",st:[2,3],c:"xabi",w:6,cond:()=>!F("partido"),q:"El Valle de Abajo será libre. Tiene tres mil habitantes, una gasolinera y un bar. Pero será libre. Necesitamos un himno, y tú gritas muy bien.",opts:[
+ {t:"Unirme a la causa.",fx:{h:20,o:-10},set:{partido:"indep"},f:{policia:1},r:"Compones el himno en diez minutos: tres acordes y la palabra «libertad» gritada cuarenta veces. Es perfecto."},
+ {t:"Rechazarlo. Yo no creo ni en los valles.",fx:{o:5},r:"Xabi te declara «enemig[o|a] del pueblo». El pueblo, que son tres mil personas, no se entera."},
+ {t:"Unirme si el valle se llama como yo.",fx:{h:15,o:-5},set:{partido:"indep"},r:"Votación exprés: el Valle de Abajo pasa a llamarse Valle de {name}. La gasolinera cambia el cartel."}]},
+{id:"indep_declaracion",st:[3],c:"xabi",w:6,cond:()=>F("partido")==="indep",q:"Mañana, en tu concierto, declaramos la independencia. Desde el escenario. Ya están avisadas la policía y la gasolinera.",opts:[
+ {t:"Declararla a gritos.",fx:{h:25,o:-10},f:{policia:1},r:"El Valle es independiente durante ocho segundos. Luego llega la policía. Tú sigues cantando desde el furgón."},
+ {t:"Declararla, pero bajito.",fx:{o:5,h:5},r:"Solo te oye la primera fila. Votan a mano alzada. Gana el «sí» por cuatro votos y un perro."},
+ {t:"Sabotearla cantando el himno del pueblo de al lado.",fx:{h:15,o:-15},set:{partido:"ex"},r:"Xabi te persigue con una pancarta. El pueblo de al lado te nombra hij[o|a] predilect[o|a]."}]},
+{id:"indep_exilio",st:[3,4],c:"comisario",w:6,cond:()=>F("partido")==="indep",q:"Tengo una orden contra el gobierno del Valle de Abajo. Y tú sales como «ministr[o|a] de Cultura y Gritos».",opts:[
+ {t:"Exiliarme en una casa rural.",fx:{h:15,s:10,d:-15},set:{partido:"ex"},r:"Te escondes en una casa rural a cuarenta kilómetros. Tiene jacuzzi. El exilio no está tan mal."},
+ {t:"Entregarme y dar un concierto en el juzgado.",fx:{o:15,h:20,s:-10},set:{policia:0},r:"El juez marca el ritmo con el mazo. Te pone una multa y te pide la camiseta."},
+ {t:"Echarle la culpa de todo a Xabi.",fx:{o:-15,s:5},set:{partido:"ex"},r:"Xabi va a juicio. Tú vas de público. Te mira con ojos de himno traicionado."}]},
+{id:"partido_mode",gen:"rock",st:[2,3],c:"gonzalo",w:6,cond:()=>!F("partido"),q:"Centro Sensato: ni de izquierdas ni de derechas, sino de lo que diga la encuesta. Queremos a un rockero que tranquilice a los votantes de cincuenta años.",opts:[
+ {t:"Unirme al partido.",fx:{d:15,o:5,h:-10},set:{partido:"mode"},r:"Te hacen cortar el pelo «un poquito». Te miras al espejo y ves a tu cuñado."},
+ {t:"Rechazarlo. El rock no se modera.",fx:{h:10,o:-5},r:"Don Gonzalo sonríe con una sonrisa perfectamente centrada: «Le esperamos en la próxima encuesta»."},
+ {t:"Unirme, pero con la chupa de cuero.",fx:{h:10,o:5},set:{partido:"mode"},r:"La chupa de cuero sube tres puntos en las encuestas. Don Gonzalo se compra otra. Le queda fatal."}]},
+{id:"mode_debate",st:[3],c:"gonzalo",w:6,cond:()=>F("partido")==="mode",q:"Debate televisado contra los otros partidos. Consejo del asesor: no digas nada que se pueda entender.",opts:[
+ {t:"Seguir el consejo.",fx:{o:10,h:-10},r:"Hablas veinte minutos sin decir nada. Los analistas te dan como ganador. Nadie sabe por qué."},
+ {t:"Hacer un solo de guitarra en mitad del debate.",fx:{h:25,o:-5},r:"El moderador intenta cortarte y no puede. Es el debate más visto de la historia."},
+ {t:"Proponer cerrar los bares a las diez.",fx:{o:-25,h:10},r:"Manolo te retira el saludo. El Tito, la palabra. Pierdes el voto de todo tu barrio en una sola frase."}]},
+{id:"mode_ministerio",st:[3,4],c:"gonzalo",w:6,cond:()=>F("partido")==="mode",q:"Hemos sacado un escaño. Te ofrecemos la consejería de Cultura de una comunidad muy pequeña. Muy, muy pequeña.",opts:[
+ {t:"Aceptar el cargo.",fx:{d:20,o:5,h:-10},r:"Tu primera medida es declarar el rock de los 70 patrimonio inmaterial. La segunda, irte de vacaciones."},
+ {t:"Rechazarlo y volver a la carretera.",fx:{h:15,o:5},set:{partido:"ex"},r:"Dejas el partido con un portazo que suena en Sol mayor. Don Gonzalo lo apunta: «Sol mayor: centrado»."},
+ {t:"Aceptarlo y celebrar los plenos en el bar.",fx:{h:15,o:10},f:{alcohol:1},r:"Los plenos en el Bar Pepe son los más productivos de la historia. Y los más largos."}]},
+
+/* ---------- ¿Dónde comes hoy? ---------- */
+{id:"comida_rep",rep:1,st:[1,2],c:"fermin",q:"¿Hoy dónde comes? Te lo pregunto porque trabajo en los tres sitios: la hamburguesería, el restaurante fino y la tienda de abajo de tu casa.",opts:[
+ {t:"Hamburguesa triple con extra de todo.",fx:{h:3,s:-8,d:-2},r:"Te sienta como un ladrillo con queso. Feliz diez minutos, arrepentid[o|a] dos días."},
+ {t:"Restaurante fino, menú degustación.",fx:{d:-15,h:8,s:3},r:"Diecisiete platos. Cada uno cabe en una uña. Sales con hambre y 150 € menos. Pero subes foto."},
+ {t:"En casa: arroz con lo que haya.",fx:{s:8,h:-4,d:3},r:"Lo que había era un huevo y media cebolla. Te sale rico. Nadie lo sabrá nunca."}]},
+{id:"cena_rep",rep:1,st:[3,4],c:"chef",q:"Esta noche te propongo mi menú «Deconstrucción del ser»: treinta y dos pases, aire de croqueta y lágrima de esturión triste.",opts:[
+ {t:"Aceptar el menú del chef.",fx:{d:-20,h:10,o:3},r:"La lágrima de esturión sabe a lágrima. El aire de croqueta, a aire. Pagas 900 €. Cenas después en el burger de enfrente."},
+ {t:"Escaparme a un burger de incógnito.",fx:{s:-8,h:8,o:5},r:"Te reconocen pese al bigote falso. Foto viral: «La estrella y la hamburguesa». La gente te quiere más."},
+ {t:"Cenar en casa de mi madre.",fx:{s:10,o:5,h:-5},r:"Tres platos, postre y la pregunta de siempre: «¿Por qué estás tan delgad[o|a]?». Engordas dos kilos. Felicidad."}]},
+{id:"kebab",st:[1,2,3],c:"fermin",w:2,q:"Son las cuatro de la mañana. Solo queda abierto el kebab de la esquina. Yo también trabajo ahí, no preguntes.",opts:[
+ {t:"Durum mixto con todas las salsas.",fx:{h:5,s:-10,o:3},r:"La salsa picante te persigue hasta el mediodía siguiente. Pero a las cuatro de la mañana era lo mejor de tu vida."},
+ {t:"Irme a dormir con hambre.",fx:{s:5,h:-3},r:"Sueñas con un kebab gigante que canta tus canciones. Mejor que tú."},
+ {t:"Subirme al mostrador a cantar.",fx:{h:15,o:-5,s:-5},r:"Concierto improvisado para seis trasnochadores y un repartidor. Grabado en vertical. Tu mejor directo."}]},
+
 /* ---------- Al resucitar ---------- */
 {id:"rev_benito",chain:1,st:[1,2,3,4],c:"benito",q:"¡Te enterré el martes! ¿Te importa si cuento lo de tu resurrección en la homilía del domingo? Es temporada baja.",opts:[
  {t:"Cuéntalo, padre.",fx:{h:10,o:5},r:"La iglesia se llena. Benito cobra entrada. Tú no ves un euro, pero bendicen tu coche."},
@@ -1171,6 +1357,7 @@ const DEATHS={
  estadio:{i:"🏚️",t:"Cimientos de confianza",x:"El estadio con tu nombre se vino abajo en el concierto inaugural. Los cimientos eran de cartón piedra y de un concejal desaparecido. Don Mariano manda una corona de flores. De hormigón."},
  infarto:{i:"💔",t:"La última nota",x:"Moriste sobre el escenario, en la última nota. Como siempre quisiste. Bueno, querías morir a los 95 rodeado de nietos, pero esto también queda icónico."},
  reto:{i:"🏊",t:"Reto superado (a medias)",x:"Saltaste del balcón a la piscina y fallaste por medio metro. Nueve millones de visitas. Los chavales te llaman «leyenda». Un poco tarde."},
+ documental:{i:"🎥",t:"Cámara oculta",x:"Te descubrieron a la segunda canción: cantabas sus himnos con demasiada ironía. Marta Vidal terminó el documental sin ti. Ganó un premio. Te lo dedicó."},
  cirrosis:{i:"🥃",t:"Cirrosis rockera",x:"Tu hígado presentó la dimisión por escrito, con copia a Manolo. Te entierran con una botella de garrafa. El sepulturero se la bebe esa misma noche. Brindando por ti, eso sí."},
  pelea:{i:"🥊",t:"Pelea de bar",x:"La pelea duró poco. Tú duraste menos. El motero se quedó tu chupa de cuero. Le queda mejor que a ti."},
  poli:{i:"🎙️",t:"Tapadera descubierta",x:"Encontraron el micro escondido en tu pedal de distorsión. Desapareciste en una boda heavy. Nadie notó la diferencia entre tus gritos y la canción."},
@@ -1221,7 +1408,8 @@ const FORCED=[
  ["mariano_final",()=>F("mafia")>=2],
  ["drogas_final",()=>F("drogas")>=5],
  ["drogas_aviso",()=>F("drogas")>=3],
- ["alcohol_final",()=>F("alcohol")>=4],
+ ["alcohol_final",()=>F("alcohol")>=5],
+ ["alcohol_aviso",()=>F("alcohol")>=3],
  ["punk_carcel",()=>F("policia")>=3],
  ["secta_final",()=>F("secta")>=2],
  ["hacienda_final",()=>F("hacienda")>=2],
@@ -1320,6 +1508,10 @@ function choose(i){
  const fx={}, notes=[];
  let base=o.fx||{}, rtext=o.r;
  if(o.alt&&Math.random()<o.alt[0]){base=o.alt[1];rtext=o.alt[2];} /* resultado alternativo por azar */
+ if(o.chase){ /* persecución: [probabilidad, siguiente paso, texto si aciertas, castigo si fallas, texto si fallas] */
+  if(Math.random()<o.chase[0]){S.next=o.chase[1];rtext=o.chase[2];}
+  else{base=o.chase[3];rtext=o.chase[4];}
+ }
  for(const k in base){const v=base[k];fx[k]=Math.round(v*(v<0?CRUEL:BONUS));}
  if(o.f) for(const k in o.f) S.f[k]=F(k)+o.f[k];
  if(o.set) Object.assign(S.f,o.set);
@@ -1333,7 +1525,8 @@ function choose(i){
   const p=STG[S.stage].p; for(const k in p) fx[k]=(fx[k]||0)-p[k];
   notes.push(STG[S.stage].msg+": "+fmtP(p)+".");
   for(const [k] of STATS) S.st[k]=clamp(S.st[k]+(fx[k]||0));
-  if(o.heal){fx.s=(fx.s||0)+(95-S.st.s);S.st.s=95;notes.push("El pitillo te devuelve toda la salud.");}
+  if(o.heal){const hv=o.heal===1?95:o.heal;fx.s=(fx.s||0)+(hv-S.st.s);S.st.s=hv;notes.push(o.heal===1?"El pitillo te devuelve toda la salud.":"Recuperas casi toda la salud.");}
+  if(o.safe) for(const [k] of STATS) S.st[k]=Math.max(5,Math.min(95,S.st[k])); /* premio que nunca mata */
   for(const k of ["s","d","o","h"]){ if(S.st[k]===0){death=k+"0";break;} if(S.st[k]===100){death=k+"100";break;} }
  }
  drawHud(fx);
