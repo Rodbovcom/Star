@@ -27,7 +27,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 .st.up .ic{transform:scale(1.4) translateY(-3px)}
 .st.down .ic{transform:scale(.75)}
 @keyframes pulse{50%{transform:scale(1.2)}}
-.meta{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:var(--mute);margin:12px 4px 10px}
+.meta{display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 8px;font-size:12px;color:var(--mute);margin:12px 4px 10px}
 #screen{flex:1;display:flex;flex-direction:column}
 /* Tarjeta */
 .card{background:linear-gradient(180deg,var(--panel),#170e2c);border:1px solid rgba(255,255,255,.08);border-radius:24px;padding:22px 18px 20px;display:flex;flex-direction:column;align-items:center;text-align:center;animation:in .35s ease-out;box-shadow:0 20px 50px rgba(0,0,0,.4)}
@@ -85,6 +85,14 @@ input.name:focus{outline:none;border-color:var(--acc)}
 .big{font-size:72px;line-height:1;margin-top:6px}
 .fin{font-family:Bungee,Inter,sans-serif;font-size:14px;letter-spacing:.2em;color:var(--bad);margin-top:12px}
 .fin.win{color:var(--good)}
+.fin.univ{color:#ff7b00}
+/* Camino del diablo: llamas sutiles al pie de la pantalla */
+body:after{content:"";position:fixed;left:0;right:0;bottom:0;height:38vh;pointer-events:none;z-index:-1;opacity:0;transition:opacity 2s;
+ background:radial-gradient(60% 70% at 15% 100%,rgba(255,90,0,.55),transparent 70%),radial-gradient(50% 80% at 50% 100%,rgba(255,40,0,.5),transparent 70%),radial-gradient(60% 70% at 85% 100%,rgba(255,140,0,.45),transparent 70%);
+ filter:blur(6px);transform-origin:50% 100%}
+body.infierno:after{opacity:.22;animation:llama 3.2s ease-in-out infinite alternate}
+html[data-theme="light"] body.infierno:after{opacity:.14}
+@keyframes llama{0%{transform:scaleY(.92) skewX(-1deg)}50%{transform:scaleY(1.06) skewX(1.5deg)}100%{transform:scaleY(.97) skewX(-.5deg)}}
 .dt{font-size:24px;font-weight:800;margin-top:6px}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;margin-top:16px}
 .stats div{background:rgba(255,255,255,.06);border-radius:14px;padding:10px 6px;font-size:11px;color:var(--mute)}
@@ -215,7 +223,10 @@ const C={
  xabi:{n:"Xabi",r:"Líder de «Independencia Ya del Valle de Abajo»",e:"🏴",c:"#e85d04",L:{sk:"b",h:"short",hc:"#111",beard:1,top:"hoodie",cl:"#370617",m:"frown",brow:"angry",ear:1}},
  gonzalo:{n:"Don Gonzalo Templado",r:"Presidente de «Centro Sensato»",e:"👔",c:"#457b9d",L:{sk:"a",h:"slick",hc:"#6c584c",top:"suit",cl:"#1d3557",tie:"#a8dadc",m:"smile"}},
  chef:{n:"Chef Aitor Espumas",r:"Tres estrellas y cero raciones",e:"🧑‍🍳",c:"#adb5bd",L:{sk:"a",h:"short",hc:"#111",hat:"chef",top:"coat",cl:"#ced4da",mus:1,m:"smirk"}},
- fermin:{n:"Fermín",r:"Camarero en tres sitios a la vez",e:"🍔",c:"#ffb703",L:{sk:"c",h:"short",hc:"#111",hat:"cap",hatc:"#e63946",cl:"#e63946",m:"flat",stubble:1}}
+ fermin:{n:"Fermín",r:"Camarero en tres sitios a la vez",e:"🍔",c:"#ffb703",L:{sk:"c",h:"short",hc:"#111",hat:"cap",hatc:"#e63946",cl:"#e63946",m:"flat",stubble:1}},
+ asesor:{n:"Íñigo Rentabilidad",r:"Asesor financiero (titulado por correspondencia)",e:"📈",c:"#2d6a4f",L:{sk:"a",h:"slick",hc:"#b08968",gl:"round",top:"suit",cl:"#1b263b",tie:"#ffd60a",m:"grin",chain:1}},
+ hada:{n:"Hada Madrina de los Compases",r:"Consejos a cambio de salud",e:"🧚",c:"#c77dff",L:{sk:"a",h:"long",hc:"#e0aaff",lash:1,blush:1,ear:1,lips:1,cl:"#7b2cbf",m:"smile",hat:"tiara"}},
+ diablo:{n:"El Diablo de los Acordes",r:"Afina almas. Cobra en royalties.",e:"😈",c:"#6a040f",L:{skc:"#d62828",h:"slick",hc:"#111",bc:"#111",goatee:1,brow:"angry",top:"suit",cl:"#111",tie:"#d00000",m:"smirk",hat:"horns"}}
 };
 
 /* ============ RETRATOS (SVG dibujado en el propio juego) ============ */
@@ -239,7 +250,7 @@ function portrait(id){
   add(`<path d="M28 116 L28 52 Q28 16 60 16 Q92 16 92 52 L92 116 L82 106 L71 116 L60 106 L49 116 L38 106Z" fill="rgba(255,255,255,.9)"/><ellipse cx="49" cy="50" rx="5" ry="7" fill="#1a1029"/><ellipse cx="71" cy="50" rx="5" ry="7" fill="#1a1029"/><ellipse cx="60" cy="72" rx="6" ry="7" fill="#1a1029"/>`);
   return svg(P);
  }
- const s=SKIN[L.sk||"b"],hc=L.hc||"#3b2a20",cl=L.cl||"#444",H=L.h||"short";
+ const s=L.skc||SKIN[L.sk||"b"],hc=L.hc||"#3b2a20",cl=L.cl||"#444",H=L.h||"short";
  /* pelo de detrás */
  if(H==="long") add(`<path d="M35 48 Q33 18 60 18 Q87 18 85 48 L90 98 Q60 106 30 98Z" fill="${hc}"/>`);
  if(H==="bob") add(`<path d="M35 48 Q34 19 60 19 Q86 19 85 48 L87 74 Q80 78 75 70 L45 70 Q40 78 33 74Z" fill="${hc}"/>`);
@@ -266,6 +277,7 @@ function portrait(id){
  add(`<ellipse cx="38" cy="52" rx="4.5" ry="7" fill="${s}"/><ellipse cx="82" cy="52" rx="4.5" ry="7" fill="${s}"/><ellipse cx="60" cy="49" rx="22.5" ry="26" fill="${s}"/>`);
  if(L.ear) add(`<circle cx="38" cy="61" r="2.6" fill="#ffd60a"/><circle cx="82" cy="61" r="2.6" fill="#ffd60a"/>`);
  if(L.beard) add(`<path d="M38 50 Q38 82 60 82 Q82 82 82 50 Q80 66 70 68 Q60 64 50 68 Q40 66 38 50Z" fill="${L.bc||hc}"/>`);
+ if(L.goatee) add(`<path d="M53 70 Q60 74 67 70 L64 84 Q60 90 56 84Z" fill="${L.bc||hc}"/>`);
  if(L.stubble) add(`<path d="M40 56 Q42 76 60 76 Q78 76 80 56 Q74 68 60 69 Q46 68 40 56Z" fill="#000" opacity=".13"/>`);
  const ang=L.brow==="angry", bcol=L.bc||hc;
  add(`<path d="${ang?"M46 43 L55 47":"M46 44 Q50.5 41 55 44"}" stroke="${bcol}" stroke-width="2.6" fill="none" stroke-linecap="round"/><path d="${ang?"M74 43 L65 47":"M65 44 Q69.5 41 74 44"}" stroke="${bcol}" stroke-width="2.6" fill="none" stroke-linecap="round"/>`);
@@ -304,6 +316,8 @@ function portrait(id){
   case "helmet":add(`<circle cx="60" cy="50" r="35" fill="rgba(180,220,255,.25)" stroke="#e9ecef" stroke-width="4"/><path d="M40 30 Q48 22 58 21" stroke="#fff" stroke-width="3" opacity=".7" fill="none" stroke-linecap="round"/>`);break;
   case "chef":add(`<path d="M38 34 Q28 14 44 12 Q48 1 60 6 Q72 1 76 12 Q92 14 82 34Z" fill="#fff" stroke="#dee2e6" stroke-width="1.5"/><rect x="38" y="30" width="44" height="8" rx="2" fill="#fff" stroke="#dee2e6" stroke-width="1.5"/>`);break;
   case "solideo":add(`<path d="M45 28 Q60 16 75 28 Q60 24 45 28Z" fill="#7b2cbf"/>`);break;
+  case "horns":add(`<path d="M42 32 Q30 22 30 6 Q40 18 50 26Z" fill="#f1e3c8" stroke="#9c6644" stroke-width="1.5"/><path d="M78 32 Q90 22 90 6 Q80 18 70 26Z" fill="#f1e3c8" stroke="#9c6644" stroke-width="1.5"/>`);break;
+  case "tiara":add(`<path d="M44 26 L48 16 L54 23 L60 11 L66 23 L72 16 L76 26 Q60 22 44 26Z" fill="#ffd60a" stroke="#e0a800" stroke-width="1"/><circle cx="60" cy="13" r="2.6" fill="#ff70a6"/><circle cx="48" cy="18" r="1.6" fill="#4cc9f0"/><circle cx="72" cy="18" r="1.6" fill="#4cc9f0"/>`);break;
   case "halo":add(`<ellipse cx="60" cy="13" rx="20" ry="5" fill="none" stroke="#ffd60a" stroke-width="3.5"/>`);break;
   case "mic":add(`<path d="M36 50 Q36 18 60 18 Q84 18 84 50" stroke="#222" stroke-width="4" fill="none"/><rect x="31" y="44" width="9" height="14" rx="3" fill="#222"/><rect x="80" y="44" width="9" height="14" rx="3" fill="#222"/><path d="M35 57 Q38 70 52 68" stroke="#222" stroke-width="2.5" fill="none"/><circle cx="53" cy="68" r="2.5" fill="#222"/>`);break;
  }
@@ -989,12 +1003,12 @@ const EV=[
  {t:"Lo haré. Por el mundo. Y por la fama.",fx:{h:10,s:10},set:{mision:1},ck:"El encapuchado",r:"«Sobre todo por la fama, ya», murmura San Pedro. Un empujón suave y caes de vuelta en la acera. Nadie te ha echado de menos."},
  {t:"¿Me puedo llevar una nube de recuerdo?",fx:{s:10,o:3},set:{mision:1},ck:"El encapuchado",r:"Te da una nube pequeña en un tarro. Al llegar abajo, el tarro está vacío. Pero huele a lluvia."}]},
 
-{id:"hood2",st:[3],c:"encapuchado",w:5,cond:()=>F("alma"),q:"(El encapuchado aparece en tu camerino. Ni Iker le ha visto entrar). Vas bien. Pero no te fíes de quien más te aplaude. Y no te comas nada que te ofrezca un amigo.",opts:[
+{id:"hood2",st:[3],c:"encapuchado",w:5,cond:()=>F("alma")&&!F("diablo"),q:"(El encapuchado aparece en tu camerino. Ni Iker le ha visto entrar). Vas bien. Pero no te fíes de quien más te aplaude. Y no te comas nada que te ofrezca un amigo.",opts:[
  {t:"¿Quién eres?",fx:{h:5},r:"Se ríe. Es una risa que te suena muchísimo. Desaparece dejando olor a incienso y gasolina."},
  {t:"¿Me das otro pitillo?",fx:{s:15},r:"Te da uno. No es mágico: es de liar. Pero te sienta de maravilla."},
  {t:"Contratarle como asesor.",fx:{d:-10,h:10},r:"Acepta. Cobra en monedas antiguas que nadie reconoce. Nunca vuelve a aparecer por la oficina."}]},
 
-{id:"hood3",st:[4],c:"encapuchado",w:8,cond:()=>F("alma"),q:"(El encapuchado se baja por fin la capucha. Debajo estás tú. Treinta años más viej[o|a]). Yo ya fallé una vez. El mundo se acabó. Por eso he vuelto. No dejes que pase otra vez.",opts:[
+{id:"hood3",st:[4],c:"encapuchado",w:8,cond:()=>F("alma")&&!F("diablo"),q:"(El encapuchado se baja por fin la capucha. Debajo estás tú. Treinta años más viej[o|a]). Yo ya fallé una vez. El mundo se acabó. Por eso he vuelto. No dejes que pase otra vez.",opts:[
  {t:"¿Qué hice mal?",fx:{o:5,s:5},r:"«Firmé con quien no debía, me fié de quien no debía y me comí los mejillones». Te pone una mano en el hombro y se desvanece."},
  {t:"Abrazarme.",fx:{s:10,o:5},r:"Es un abrazo raro. Hueles a ti mism[o|a], pero con más tabaco. Lloras. Tu yo viej[o|a] también."},
  {t:"Por lo menos, ¿ganamos a Kira?",fx:{h:10},r:"«Eso sí. Eso siempre», dice, y sonríe con tus mismos dientes torcidos."}]},
@@ -1221,17 +1235,17 @@ const EV=[
 
 /* ---------- La persecución del camión de los helados ---------- */
 {id:"helado",st:[1,2,3,4],c:"nino",w:3,q:"¡EL CAMIÓN DE LOS HELADOS! ¡Se va por la avenida! ¡Corre, que el de fresa se acaba!",opts:[
- {t:"¡A por él!",fx:{s:-3},next:"helado2",r:"Echas a correr detrás de la musiquita. El niño corre a tu lado. Tú jadeas. Él no."},
+ {t:"¡A por él!",fx:{s:-2},next:"helado2",r:"Echas a correr detrás de la musiquita. El niño corre a tu lado. Tú jadeas. Él no."},
  {t:"Ya no tengo edad para esto.",fx:{o:-3,h:-3},r:"El camión se pierde a lo lejos. El niño te mira con desprecio. Tiene ocho años y ya te ha calado."},
  {t:"Pagar al niño para que corra por mí.",fx:{d:-5},r:"El niño coge el dinero y sale corriendo en dirección contraria. Bien jugado, chaval."}]},
 {id:"helado2",chain:1,st:[1,2,3,4],c:"nino",q:"(El niño frena en seco). ¡Un cruce! La musiquita suena… no sé de dónde. ¿Izquierda, derecha o recto?",opts:[
- {t:"¡Izquierda!",chase:[.45,"helado3","¡Bien! La musiquita suena más fuerte. Lo ves doblar la siguiente esquina.",{s:-10,h:-5},"Calle sin salida. Solo hay un contenedor y un gato que te juzga. La musiquita se aleja para siempre."]},
- {t:"¡Derecha!",chase:[.45,"helado3","¡Acierto! Ves el techo del camión asomando por encima de los coches aparcados.",{s:-10,h:-5},"Te metes en un mercadillo. Sales con tres pares de calcetines y sin camión."]},
- {t:"¡Recto!",chase:[.45,"helado3","¡Ahí está! Lo tienes a cincuenta metros. El heladero no se ha dado cuenta.",{s:-10,h:-5},"Recto había una cuesta. Muy cuesta. Te sientas a mitad. El camión sigue con su vida."]}]},
+ {t:"¡Izquierda!",chase:[.45,"helado3","¡Bien! La musiquita suena más fuerte. Lo ves doblar la siguiente esquina.",{s:-5,h:-2},"Calle sin salida. Solo hay un contenedor y un gato que te juzga. La musiquita se aleja para siempre.",{h:8}]},
+ {t:"¡Derecha!",chase:[.45,"helado3","¡Acierto! Ves el techo del camión asomando por encima de los coches aparcados.",{s:-5,h:-2},"Te metes en un mercadillo. Sales con tres pares de calcetines y sin camión.",{h:8}]},
+ {t:"¡Recto!",chase:[.45,"helado3","¡Ahí está! Lo tienes a cincuenta metros. El heladero no se ha dado cuenta.",{s:-5,h:-2},"Recto había una cuesta. Muy cuesta. Te sientas a mitad. El camión sigue con su vida.",{h:8}]}]},
 {id:"helado3",chain:1,st:[1,2,3,4],c:"nino",q:"¡Ya casi! Pero hay una obra de Don Mariano en medio y un atajo por un parque lleno de palomas. ¿Por dónde?",opts:[
- {t:"Saltar la valla de la obra.",chase:[.5,"helado_final","Saltas la valla, esquivas una hormigonera y caes justo delante del camión.",{s:-15},"Te quedas colgad[o|a] de la valla por los pantalones. Un obrero te hace una foto. Mañana la tendrá Don Mariano."]},
- {t:"Por el parque de las palomas.",chase:[.5,"helado_final","Mil palomas levantan el vuelo a tu paso, como en una película. Sales del parque justo delante del camión.",{s:-10,o:-5},"Las palomas te atacan en formación. Sales del parque con plumas en el pelo y sin helado."]},
- {t:"Por la acera, como una persona normal.",chase:[.5,"helado_final","Funciona. A veces lo normal funciona. El camión para en un semáforo y llegas.",{s:-8},"El semáforo se pone en verde justo cuando llegas. La musiquita se despide con una nota burlona."]}]},
+ {t:"Saltar la valla de la obra.",chase:[.5,"helado_final","Saltas la valla, esquivas una hormigonera y caes justo delante del camión.",{s:-8},"Te quedas colgad[o|a] de la valla por los pantalones. Un obrero te hace una foto. Mañana la tendrá Don Mariano.",{h:10}]},
+ {t:"Por el parque de las palomas.",chase:[.5,"helado_final","Mil palomas levantan el vuelo a tu paso, como en una película. Sales del parque justo delante del camión.",{s:-5,o:-3},"Las palomas te atacan en formación. Sales del parque con plumas en el pelo y sin helado.",{h:10}]},
+ {t:"Por la acera, como una persona normal.",chase:[.5,"helado_final","Funciona. A veces lo normal funciona. El camión para en un semáforo y llegas.",{s:-4},"El semáforo se pone en verde justo cuando llegas. La musiquita se despide con una nota burlona.",{h:10}]}]},
 {id:"helado_final",chain:1,st:[1,2,3,4],c:"heladero",q:"¡Vaaale, vale, ya paro! Nadie me perseguía así desde 1994. Me quedan tres sabores. ¿Qué te pongo?",opts:[
  {t:"Fresa. Como cuando era pequeñ[o|a].",fx:{h:40},heal:90,safe:1,r:"El primer lametazo te devuelve la infancia, la salud y las ganas de vivir. El niño lo graba. Es lo más bonito que has subido nunca."},
  {t:"Chocolate con trocitos.",fx:{h:40},heal:90,safe:1,r:"Te lo comes en el bordillo, con el niño. Habláis de la vida. Él sabe más que tú."},
@@ -1300,6 +1314,108 @@ const EV=[
  {t:"Durum mixto con todas las salsas.",fx:{h:5,s:-10,o:3},r:"La salsa picante te persigue hasta el mediodía siguiente. Pero a las cuatro de la mañana era lo mejor de tu vida."},
  {t:"Irme a dormir con hambre.",fx:{s:5,h:-3},r:"Sueñas con un kebab gigante que canta tus canciones. Mejor que tú."},
  {t:"Subirme al mostrador a cantar.",fx:{h:15,o:-5,s:-5},r:"Concierto improvisado para seis trasnochadores y un repartidor. Grabado en vertical. Tu mejor directo."}]},
+
+/* ---------- El encapuchado: más encuentros (camino normal) ---------- */
+{id:"hood_s1",st:[1],c:"encapuchado",w:5,cond:()=>F("alma")&&!F("diablo"),q:"(El encapuchado está en la última fila del Bar Pepe. Ha pedido un mosto y no se lo bebe). No te fíes de quien te pague en negro. Ni de quien te pague en blanco. Fíate de quien te pague.",opts:[
+ {t:"¿Y tú me pagas?",fx:{d:5},r:"Deja una moneda antigua sobre la barra. Manolo la muerde, la mira y te la cambia por un bocadillo."},
+ {t:"Invitarle al mosto.",fx:{o:3,s:3},r:"Brindáis. Él no se quita la capucha para beber. No sabes cómo lo hace, pero el vaso se vacía."},
+ {t:"Pedirle un consejo de verdad.",fx:{h:3},r:()=>"Se inclina sobre la barra y te susurra al oído: "+consejo(1)+" Cuando te giras, solo queda el mosto. Lleno."}]},
+{id:"hood_s2a",st:[2],c:"encapuchado",w:5,cond:()=>F("alma")&&!F("diablo"),q:"(En la cola de tu primera firma de discos hay una capucha. Cuando le toca, no trae disco). Si un día un señor con cuernos te ofrece un trato, di que no. Aunque te prometa la luna. Sobre todo si te promete la luna.",opts:[
+ {t:"¿Un señor con cuernos? ¿Mi cuñado?",fx:{h:5},r:"«Ojalá», dice. Y por primera vez le oyes reír. Tiene una risa que te suena muchísimo."},
+ {t:"Prometido.",fx:{o:5,s:3},r:"Te da la mano. Está fría y tiene tus mismos callos de guitarra. Se va sin el autógrafo."},
+ {t:"Firmarle el brazo, ya que estás.",fx:{h:8,o:-3},r:"Se remanga. Ya tiene tu firma tatuada. La misma. Con la misma falta de ortografía."}]},
+{id:"hood_s2b",st:[2],c:"encapuchado",w:4,cond:()=>F("alma")&&!F("diablo"),q:"(Paco Exclusiva te acorrala a la salida de un hotel. De pronto, una capucha se pone en medio y le tapa el objetivo). Corre. Yo me encargo. Y mañana no salgas en chándal: te queda fatal.",opts:[
+ {t:"Correr.",fx:{s:-3,o:5},r:"Escapas. Al día siguiente Paco publica la foto: una capucha negra a contraluz. Titular: «¿Nuevo romance?»."},
+ {t:"Quedarme a ver qué hace.",fx:{h:8},r:"El encapuchado le cuenta algo al oído a Paco. Paco se pone blanco, guarda la cámara y se va a misa."},
+ {t:"Posar igualmente.",fx:{h:10,o:-5},r:"Sales en portada con una capucha negra a tu lado. Parece que tengas una sombra con mánager."}]},
+{id:"hood_s3b",st:[3],c:"encapuchado",w:5,cond:()=>F("alma")&&!F("diablo"),q:"(El encapuchado está sentado en tu trono de la mansión, como si fuera suyo. Ambrosio le ha servido un té). Kira Star no es tu enemiga. Tu enemig[o|a] eres tú a las cuatro de la mañana.",opts:[
+ {t:"¿Y qué hago a las cuatro de la mañana?",fx:{s:10},r:"«Dormir», contesta. Es el consejo más revolucionario que te han dado en años."},
+ {t:"Llamar a Kira para hacer las paces.",fx:{o:10,h:-5},r:"Kira cuelga. Vuelve a llamar. Cuelga otra vez. A la cuarta, habláis tres horas. Os odiáis un poco menos."},
+ {t:"Pedirle que se baje la capucha.",fx:{h:5},r:"«Todavía no», dice. «Cuando estés preparad[o|a]». Ambrosio recoge la taza. Juraría que estaba llena."}]},
+{id:"hood_s4b",st:[4],c:"encapuchado",w:8,cond:()=>F("alma")&&!F("diablo")&&S.used.has("hood3"),q:"(Tu yo viej[o|a] te espera en el banco del parque donde empezó todo, con un helado de fresa en la mano). Ya casi estás. Cuando cantes la última nota, yo dejaré de existir. Es lo justo: tú no cometerás mis errores.",opts:[
+ {t:"Entonces no quiero acabar.",fx:{o:5,s:5},r:"«Claro que quieres», sonríe. «Yo también quise». Te da el helado. Se derrite más despacio de lo normal."},
+ {t:"Gracias por todo.",fx:{o:8},r:"Te abraza. Huele a incienso, a gasolina y a fresa. Cuando abres los ojos, en el banco solo queda una pluma blanca."},
+ {t:"¿Un último consejo?",fx:{h:5},r:()=>"Lo piensa mucho. Luego te dice: "+consejo(1)+" Y se ríe con tus mismos dientes torcidos."}]},
+
+/* ---------- El encapuchado en el camino del diablo ---------- */
+{id:"hood_diablo1",st:[2,3],c:"encapuchado",w:7,cond:()=>F("diablo")&&!F("hood_dead"),q:"(El encapuchado te espera en la oscuridad del backstage. Huele a incienso, a gasolina… y ahora también a azufre). Sé lo que has firmado. Yo también lo firmé una vez. No sigas por ese camino: al final del pacto no hay leyenda, solo silencio.",opts:[
+ {t:"Ya es tarde.",fx:{s:-5,h:5},r:"«Nunca es tarde para no empeorar», dice. Se va arrastrando los pies. Juras que cojea igual que tú."},
+ {t:"¿Y si rompo el contrato?",fx:{o:3},r:"«Ese contrato no se rompe. Lo intenté con los dientes». Sonríe. Tiene una dentadura sospechosamente parecida a la tuya."},
+ {t:"Apártate de mi camino.",fx:{h:8,o:-5},r:"Se aparta. Pero le oyes susurrar: «Ya me apartaste una vez. Así acabó todo»."}]},
+{id:"hood_diablo2",st:[3,4],c:"encapuchado",w:7,cond:()=>F("diablo")&&!F("hood_dead")&&S.used.has("hood_diablo1"),q:"(La capucha aparece en el reflejo del espejo de tu camerino, detrás de ti. Cuando te giras, no hay nadie). Te lo pido por favor. Por mamá, por Chema, por el niño de los helados. El mundo no tiene la culpa de que quisieras un sofá en el infierno.",opts:[
+ {t:"El sofá es muy cómodo.",fx:{h:5,o:-3},r:"El espejo se empaña. Alguien escribe con el dedo: «QUEMA». No sabes si es una advertencia o una reseña del sofá."},
+ {t:"Lo siento. De verdad.",fx:{o:5,s:-3},r:"«Ya lo sé», dice el reflejo. «Yo también lo sentí». El espejo se raja de arriba abajo."},
+ {t:"Tapar el espejo con una toalla.",fx:{s:3},r:"Funciona. Durante diez minutos. Luego la toalla aparece doblada encima de la silla. Con una pluma negra."}]},
+{id:"diablo_mata",chain:1,st:[4],c:"diablo",q:"(El Diablo de los Acordes te tiende una púa negra que todavía humea). Ha llegado la hora del primer detallito del contrato, socio. El encapuchado te espera en la azotea del estadio. Sube y cumple.",opts:[
+ {t:"Subir a la azotea.",next:"diablo_mata2",r:"Subes los escalones de dos en dos. Cada uno está un grado más caliente que el anterior."},
+ {t:"¿No podemos negociarlo?",next:"diablo_mata2",r:"«Lo negociamos cuando firmaste. Tú no leíste la letra pequeña; yo la escribí». Te empuja escaleras arriba."},
+ {t:"Subir… despacio.",next:"diablo_mata2",r:"Subes tan despacio como puedes. La azotea te espera igual. Las azoteas son muy pacientes."}]},
+{id:"diablo_mata2",chain:1,st:[4],c:"encapuchado",q:"(En la azotea, el encapuchado se baja por fin la capucha. Debajo estás tú, treinta años más viej[o|a]). Lo sabía. Yo también subí a esta azotea, con esa misma púa. Si me borras, nadie volverá del futuro para avisarte. No quedará nadie que pueda salvarte. Ni a ti ni al mundo.",opts:[
+ {t:"Cumplir el pacto.",fx:{h:15,o:-10},set:{hood_dead:1},r:"Tocas un acorde con la púa negra. Tu yo viej[o|a] se deshace como el humo de un pitillo. En el suelo queda una pluma. Ya no es blanca."},
+ {t:"Pedirme perdón… y cumplirlo.",fx:{h:10,o:-5,s:-5},set:{hood_dead:1},r:"«Te perdono», dice. «Yo tampoco supe parar». Tocas el acorde. Se desvanece sonriendo con tus dientes torcidos. Abajo, el Diablo aplaude."},
+ {t:"Cerrar los ojos y tocar.",fx:{h:12,s:-8},set:{hood_dead:1},r:"No miras. Solo oyes el acorde, un suspiro y el viento. Cuando abres los ojos, estás sol[o|a] en la azotea. Para siempre."}]},
+{id:"diablo_final",chain:1,st:[4],c:"diablo",q:"Último acorde, {name}. Eres leyenda… en mi idioma. Solo falta el detallito final: todo pacto se firma con la vida del firmante. Borraste a tu yo del futuro; ahora te toca borrarte a ti. A las matemáticas del universo esto les va a sentar fatal.",opts:[
+ {t:"Tocar el último acorde.",end:"universo",r:"Tocas. La nota se queda flotando, sin final. El público contiene el aliento. Y ya no lo suelta."},
+ {t:"Mirar al público por última vez.",end:"universo",r:"Sesenta mil caras. Entre ellas, la de tu madre. Te sonríe sin saber nada. Se te cae la púa."},
+ {t:"Preguntar si en el infierno hay catering.",end:"universo",r:"«Había», suspira el Diablo. «Ahora va a dejar de haber de todo». Chasquea los dedos."}]},
+
+/* ---------- El Diablo de los Acordes: la oferta ---------- */
+{id:"diablo_oferta",st:[2,3],c:"diablo",w:4,cond:()=>!F("diablo")&&F("alma"),q:"(Tu camerino huele de repente a azufre y a pelo quemado. Un señor con cuernos afina tu guitarra sin pedir permiso). Te propongo un trato, artista: cuando mueras, resucitarás conmigo, abajo, y no con el pesado de San Pedro. Fama sin techo. A cambio, dos detallitos: el mundo se destruye y tú te cargas al encapuchado. Ah, y no hay vuelta atrás.",opts:[
+ {t:"Trato hecho. Que arda todo.",fx:{h:20,d:15},set:{diablo:1,alma:1},ck:"El pacto",r:"Firmas con una púa mojada en algo que no es tinta. El contrato se enciende solo. Desde hoy, cuando mueras, bajarás en vez de subir. Notas un calorcito en los pies. No se va."},
+ {t:"Ni hablar. Mi madre me educó bien.",fx:{o:5},r:"El Diablo se ríe. «Tu madre me debe dos favores». Desaparece dejando la guitarra perfectamente afinada. Es lo que más rabia te da."},
+ {t:"¿Me lo puedo pensar?",fx:{h:3},set:{diablo_dudas:1},r:"«Claro. La oferta caduca cuando a mí me dé la gana». Se va silbando tu canción. Mejor que tú."}]},
+{id:"diablo_oferta2",st:[3],c:"diablo",w:6,cond:()=>!F("diablo")&&F("diablo_dudas"),q:"¿Lo has pensado ya? Te he traído el contrato en papel reciclado, que ahora en el infierno somos muy sostenibles. Mismas condiciones: resurrección en mi casa, fama sin techo, el mundo destruido y el encapuchado fuera de la ecuación.",opts:[
+ {t:"Firmo.",fx:{h:20,d:15},set:{diablo:1,alma:1},ck:"El pacto",r:"El papel reciclado arde igual de bien. Desde hoy, cuando mueras, bajarás. Y el suelo de tu casa siempre estará un pelín caliente."},
+ {t:"No. Y es mi última palabra.",fx:{o:8,s:3},set:{diablo_dudas:0},r:"«Eso dicen todos», murmura. Pero se va. Y por primera vez en semanas duermes sin oler a azufre."},
+ {t:"Firmar con el nombre de mi cuñado.",fx:{h:10,o:-3},set:{diablo_dudas:0},r:"El Diablo lee la firma, se ríe a carcajadas y se guarda el contrato. «A ese ya lo tenía». Se va encantado."}]},
+
+/* ---------- En el infierno (solo con el pacto) ---------- */
+{id:"infierno_bienvenida",chain:1,st:[1,2,3,4],c:"diablo",q:"¡Bienvenid[o|a] a casa, socio! Aquí abajo nadie se muere del todo: es malo para el negocio. Te devuelvo arriba. Recuerda el trato: el mundo, el encapuchado y, al final, un detallito sin importancia.",opts:[
+ {t:"¿Qué detallito?",r:"«Ya lo verás. Las sorpresas son lo mejor del infierno». Te empuja por un tobogán de lava templada."},
+ {t:"Aquí hace mucho calor.",r:"«Es un calor seco», dice, como todos los que viven en sitios horribles. Abres los ojos arriba, sudando."},
+ {t:"¿Está San Pedro enfadado?",r:"«Me ha mandado un fax. Le he contestado con otro fax. Ardiendo». Se ríe tanto que se le caen los cuernos. Se los vuelve a poner."}]},
+{id:"infierno_karaoke",chain:1,st:[1,2,3,4],c:"diablo",q:"Ya que estás aquí, pasa por el karaoke. Tenemos a todos los grandes. Bueno, a los que firmaron. Esta noche cantan tus canciones. Con mejor afinación.",opts:[
+ {t:"Cantar con ellos.",r:"Haces un dueto con alguien muy famoso que no puedes nombrar por motivos legales. Abajo te aplauden. Arriba te despiertas tarareando."},
+ {t:"Negarme.",r:"«Como quieras». Pone tu disco de 2019 en bucle. Es el peor castigo del infierno. Lo reservan para los traidores."},
+ {t:"Pedir los derechos de autor.",r:"«Te pagaremos en almas». Te da un recibo que arde. Bajas… digo, subes, con quemaduras en los dedos."}]},
+{id:"infierno_contrato",chain:1,st:[1,2,3,4],c:"diablo",q:"He estado releyendo tu contrato. Es precioso. Tiene una cláusula que me encanta: la de «cuando acabe la gira». Te quiero fresc[o|a] para ese día.",opts:[
+ {t:"¿Qué pasa cuando acabe la gira?",r:"«Que el universo deja de tener gira. Y de tener universo». Tararea algo. Te suena a tu última canción."},
+ {t:"Quiero hablar con mi abogada.",r:"«La Abogada Herrera ya trabaja para mí. Cobra por minuto aquí también, y aquí los minutos son eternos»."},
+ {t:"Volver arriba cuanto antes.",r:"«Así me gusta: prisa por cumplir». Abres los ojos arriba con olor a chamusquina en el pelo."}]},
+{id:"infierno_encapuchado",chain:1,st:[1,2,3,4],c:"diablo",q:"El encapuchado ha intentado bajar a buscarte. Le he cerrado la puerta en las narices. Bueno, en la capucha. Ese tipo me pone nervioso: se parece demasiado a alguien.",opts:[
+ {t:"¿A quién?",r:"El Diablo te mira un buen rato. «A alguien que pierde siempre». Sonríe con demasiados dientes."},
+ {t:"Déjale en paz.",r:"«No puedo. Es parte del trato, ¿recuerdas? Tú, él y una azotea». Te despide con una palmada que quema."},
+ {t:"¿Le tienes miedo?",r:"Se ríe muy alto y muy poco rato. Luego cambia de tema y te manda arriba. Sí: le tiene miedo."}]},
+{id:"infierno_kira",chain:1,st:[1,2,3,4],c:"diablo",q:"Te voy a contar un secreto: Kira Star también vino a verme. Le dije que no. No por bondad: es que canta tan mal que me espanta a los clientes.",opts:[
+ {t:"¡Lo sabía!",r:"«No lo sabías. Pero ahora tienes algo que contar en las entrevistas». Te devuelve arriba de un capirotazo."},
+ {t:"¿Y por qué yo sí?",r:"«Porque tú desafinas con intención. Eso es arte». No sabes si es un piropo. Viniendo de él, seguro que no."},
+ {t:"¿Me guardas su ficha?",r:"Te da una fotocopia. Arde antes de llegar arriba. Solo se salva una línea: «Bótox: 2014-actualidad»."}]},
+
+/* ---------- El asesor: inversiones del primer éxito ---------- */
+{id:"asesor",chain:1,inv:1,st:[2,3,4],c:"asesor",q:"Enhorabuena por el éxito, {name}. Ahora que entra dinero, hay que ponerlo a trabajar. Tú pones el capital y yo pongo el riesgo. Bueno, el riesgo también lo pones tú. ¿Cuánto metemos?",opts:[
+ {t:"10 💰, para empezar.",fx:{d:-10},raw:1,set:{inv_amt:10},next:"asesor2",r:"«Prudente. Me gusta. Los prudentes pagan comisión igual»."},
+ {t:"25 💰. A lo grande.",fx:{d:-25},raw:1,set:{inv_amt:25},next:"asesor2",r:"Se le iluminan los ojos. Literalmente: le brilla un símbolo de euro en cada pupila."},
+ {t:"No me fío de ti.",fx:{o:3},r:"Te deja su tarjeta: «Gestión Patrimonial Rentabilidad & Hijos». Hijos no tiene. Patrimonio, tampoco."}]},
+{id:"asesor2",chain:1,inv:1,st:[2,3,4],c:"asesor",q:"Tengo tres productos. Todos tienen futuro, y uno de ellos incluso presente. Lo que valgan dependerá de lo que hagas a partir de ahora, así que elige con el corazón, que la cabeza ya veo que no la usas.",opts:[
+ {t:"El Fondo {name}: sube y baja con mi fama.",run:()=>invertir("marca"),r:"Firmas. El fondo lleva tu cara en el logo. Si tu fama sube, sube. Si te hundes, te hundes dos veces."},
+ {t:"$MELÓN, la cripto de Brayan: una montaña rusa.",run:()=>invertir("cripto"),r:"Brayan te manda un audio de cuatro minutos gritando «¡A LA LUNA, BRO!». Te da un poco de miedo. Y un poco de ilusión."},
+ {t:"Ladrillo de Don Mariano: sube despacito… si no hay escándalos.",run:()=>invertir("ladrillo"),r:"El asesor baja la voz: «Mientras no te metas en líos con Hacienda, la policía o la mafia, esto solo sube». Lo dice mirando a Don Mariano."}]},
+{id:"asesor_venta",rep:1,w:6,inv:1,st:[2,3,4],c:"asesor",cond:()=>S.inv&&!S.inv.sold&&S.turn-S.inv.t>=6&&S.turn-(S.inv.ask||0)>=8,
+ q:()=>`Tu inversión en ${INV[S.inv.p].n} vale ahora ${Math.round(S.inv.val)} 💰 (pusiste ${S.inv.amt}). ${S.inv.val>=S.inv.amt?"Vas ganando. De momento.":"Vas perdiendo, pero eso es lo que dicen los perdedores justo antes de ganar."} ¿Vendemos?`,opts:[
+ {t:()=>`Vender todo (+${Math.round(S.inv.val)} 💰).`,fx:()=>({d:Math.round(S.inv.val)}),raw:1,run:()=>{S.inv.got=(S.inv.got||0)+Math.round(S.inv.val);S.inv.val=0;S.inv.sold=1;},r:()=>S.inv.got>=S.inv.amt0?"Vendes. El asesor se queda su comisión y te da una palmadita en la espalda. Es la palmadita más cara de tu vida, pero has ganado.":"Vendes. Has perdido dinero, pero el asesor te asegura que es «una pérdida estratégica». Te cobra la comisión igualmente."},
+ {t:"Aguantar. Esto va a subir.",run:()=>{S.inv.ask=S.turn;},fx:{h:2},r:"«Esa es la actitud», dice, apuntándote en una libreta bajo el título «Clientes con fe»."},
+ {t:()=>`Vender la mitad (+${Math.round(S.inv.val/2)} 💰).`,fx:()=>({d:Math.round(S.inv.val/2)}),raw:1,run:()=>{const m=Math.round(S.inv.val/2);S.inv.got=(S.inv.got||0)+m;S.inv.val-=m;S.inv.amt=Math.round(S.inv.amt/2);S.inv.ask=S.turn;},r:"Ni para ti ni para mí. El asesor lo llama «diversificar». Tú lo llamas «no tener ni idea». Ambos tenéis razón."}]},
+{id:"asesor_ultima",chain:1,inv:1,st:[4],c:"asesor",q:()=>`Me jubilo en las Caimán, {name}. Antes de irme, cierro carteras: tu inversión en ${INV[S.inv.p].n} vale ${Math.round(S.inv.val)} 💰. Si no la vendes ahora, se queda en un cajón. Y los cajones de las Caimán no se abren.`,opts:[
+ {t:()=>`Vender (+${Math.round(S.inv.val)} 💰).`,fx:()=>({d:Math.round(S.inv.val)}),raw:1,run:()=>{S.inv.got=(S.inv.got||0)+Math.round(S.inv.val);S.inv.val=0;S.inv.sold=1;},r:"Te transfiere el dinero desde un móvil con funda de flamencos. Se despide con un «nos vemos en otra vida». Te da un escalofrío."},
+ {t:"Regalársela a mi madre.",fx:{o:10},run:()=>{S.inv.val=0;S.inv.sold=1;S.inv.gift=1;},r:"Tu madre no entiende qué le has regalado, pero lo enmarca. Al lado del táper."},
+ {t:"Que se la quede él, por las molestias.",fx:{o:-3,h:5},run:()=>{S.inv.val=0;S.inv.sold=1;},r:"Llora de emoción. Es la primera vez que un cliente le da algo sin que él se lo quite primero."}]},
+
+/* ---------- El Hada Madrina de los Compases ---------- */
+{id:"hada",rep:1,w:6,st:[1,2,3,4],c:"hada",cond:()=>S.turn-(S.hadaT??-99)>=8,
+ q:()=>F("hada_ok")?`(Suena un arpegio de la nada. El Hada Madrina de los Compases flota otra vez a medio metro del suelo). ¿Otro ritual? Diez de salud y te susurro lo que viene. Llevas ${F("hada_ok")}. ${F("hada_ok")%3===2?"Uno más y te regalo un billete de vuelta.":"A la tercera de cada tres, billete de vuelta."}`:"(Suena un arpegio de la nada. Una señora con alas de purpurina y un diapasón por varita flota a medio metro del suelo). Soy el Hada Madrina de los Compases. Conozco la partitura de tu vida, pero no la recito gratis: un ritual, diez de salud, y te susurro lo que viene. Si aceptas tres veces, te regalo un billete de vuelta.",opts:[
+ {t:"Hacer el ritual (−10 ❤️).",fx:{s:-10},raw:1,run:()=>ritualHada()},
+ {t:"No, gracias. Prefiero equivocarme sol[o|a].",run:()=>{S.hadaT=S.turn;},r:"Se encoge de hombros. «Como todos los grandes. Y como todos los muertos». Desaparece en un acorde menor."},
+ {t:"¿Por qué «de los compases»?",fx:{o:2},run:()=>{S.hadaT=S.turn;},r:"«Porque la vida va en cuatro por cuatro y tú siempre entras a destiempo». Se va antes de que puedas preguntar nada más. Muy suyo."}]},
 
 /* ---------- En el cielo: San Pedro (un diálogo distinto en cada muerte) ---------- */
 {id:"pedro_mision",chain:1,st:[1,2,3,4],c:"pedro",q:"Así que tú eres {name}. Escucha bien, que solo lo diré una vez. El mundo va a ser destruido. No sé cuándo ni cómo: la profecía tiene una letra horrible. Solo sé que se salvará si llegas a ser una leyenda. Por eso no puedes morirte. Bueno, puedes, pero yo te devolveré. Una y otra vez.",opts:[
@@ -1392,6 +1508,7 @@ const byId=Object.fromEntries(EV.map(e=>[e.id,e]));
 const EXTRA_ST={toni_rep:[3,4],mama_rep:[3,4],ruiz:[3,4],guru:[3],guru_2:[3,4],bruno_dm:[3],gasolinera:[3,4],nazi_ruedas:[3,4],toni_moldavia:[3,4],forense:[3,4],hater:[3,4],mariano:[3],mariano_2:[3,4],kira_venganza:[3,4],afterparty:[3],yate:[3],paparazzi:[3],tuit:[3,4],cola:[3],fausto:[3],maripili:[3],nodulos:[3,4]};
 for(const id in EXTRA_ST) byId[id].st.push(...EXTRA_ST[id]);
 const REVIVE_EV=["rev_benito","rev_forense","rev_mama","rev_kira","rev_cunado","rev_manolo","rev_toni","rev_salas","rev_paco","rev_tito","rev_herrera","rev_chema","rev_jessica"];
+const INFIERNO_EV=["infierno_karaoke","infierno_contrato","infierno_encapuchado","infierno_kira"];
 const PEDRO_EV=["pedro_profecia","pedro_apuestas","pedro_encapuchado","pedro_kira","pedro_cancion","pedro_mudanza"];
 
 /* ============ MUERTES (todas inmediatas) ============ */
@@ -1428,6 +1545,7 @@ const DEATHS={
  poli:{i:"🎙️",t:"Tapadera descubierta",x:"Encontraron el micro escondido en tu pedal de distorsión. Desapareciste en una boda heavy. Nadie notó la diferencia entre tus gritos y la canción."},
  fuga:{i:"🧱",t:"Fuga fallida",x:"Saltaste por la ventana de comisaría. Era un séptimo. La cresta no frenó la caída. El comisario la ha enmarcado."},
  ayahuasca:{i:"🦬",t:"Viaje sin vuelta",x:"Tu animal interior era un ñu. Te uniste a una migración imaginaria y cruzaste la autopista en hora punta. Los conductores dicen que ibas «muy en paz»."},
+ universo:{i:"🕳️",t:"Paradoja total",x:"Te borras del mundo en el último compás. Como el encapuchado eras tú, y tú ya no existes, nadie volvió del futuro para avisarte; como nadie te avisó, firmaste; como firmaste… El universo intenta entenderlo, se cuelga y se apaga. El Diablo de los Acordes se queda sin infierno, San Pedro sin cielo y Kira Star sin público. Lo último que suena es tu canción. Desafinada."},
  secta:{i:"🧘",t:"Ayuno de luz",x:"Cuarenta días sin comer, alimentándote solo de sol, como manda el gurú. En Lanzarote hay mucho sol, pero no tanto. La Comunidad publica tus maquetas como «mantras». Son un éxito."}
 };
 
@@ -1437,10 +1555,10 @@ const BONUS=0.8; // y recorta todo lo que suma
 /* Etapas: p = desgaste por decisión; la etapa acaba al llevar `min` decisiones en ella con hype >= `hype`, o al llegar a `max`.
    Al acabar la etapa 4, la partida termina en «Leyenda». */
 const STG={
- 1:{name:"Etapa 1 · Los garitos",p:{d:1,h:3},min:16,hype:40,max:20,msg:"El público olvida rápido y el alquiler no perdona"},
- 2:{name:"Etapa 2 · Primer éxito",p:{d:1,h:2},min:13,hype:30,max:16,msg:"Vida de estrella. La fama desgasta"},
- 3:{name:"Etapa 3 · Estrellato",p:{d:2,h:2},min:13,hype:30,max:16,msg:"Mansión, séquito y abogados"},
- 4:{name:"Etapa 4 · Decadencia o leyenda",p:{d:1,h:3,s:1},min:12,hype:0,max:12,msg:"Los años pesan y el público busca caras nuevas"}
+ 1:{name:"Etapa 1 · Los garitos",p:{d:1,h:2},min:30,hype:40,max:36,msg:"El público olvida rápido y el alquiler no perdona"},
+ 2:{name:"Etapa 2 · Primer éxito",p:{d:1,h:1},min:25,hype:30,max:30,msg:"Vida de estrella. La fama desgasta"},
+ 3:{name:"Etapa 3 · Estrellato",p:{d:1,h:2},min:25,hype:30,max:30,msg:"Mansión, séquito y abogados"},
+ 4:{name:"Etapa 4 · Decadencia o leyenda",p:{d:1,h:2,s:1},min:21,hype:0,max:21,msg:"Los años pesan y el público busca caras nuevas"}
 };
 const RESPIRO=0.5;       // al cambiar de etapa, cada barra recorre esta fracción del camino hacia 50
 const CHECK_EVERY=7;     // cada cuántas decisiones se guarda un punto de control (además de al empezar cada etapa)
@@ -1470,8 +1588,64 @@ const FORCED=[
  ["punk_carcel",()=>F("policia")>=3],
  ["secta_final",()=>F("secta")>=2],
  ["hacienda_final",()=>F("hacienda")>=2],
- ["encapuchado",()=>S.turn>=S.hoodAt]
+ ["encapuchado",()=>S.turn>=S.hoodAt],
+ ["diablo_mata",()=>F("diablo")&&!F("hood_dead")&&S.stage===4&&S.turn-S.t0>=6],
+ ["asesor_ultima",()=>S.inv&&!S.inv.sold&&S.stage===4&&S.turn-S.t0>=15]
 ];
+/* ============ INVERSIONES (el asesor) ============ */
+const INV={
+ marca:{n:"Fondo {name}"},
+ cripto:{n:"$MELÓN"},
+ ladrillo:{n:"Ladrillo Mariano"}
+};
+function invertir(p){const a=F("inv_amt")||10;S.inv={p,amt:a,amt0:a,val:a,t:S.turn};}
+/* Cada decisión mueve el valor: el fondo sigue a tu hype y tu opinión, la cripto es puro azar con algo de hype, el ladrillo sube despacio salvo escándalo */
+function invTick(base,o){
+ const I=S.inv, h=base.h||0, op=base.o||0; let m;
+ if(I.p==="marca") m=1+(h+op/2)/160;
+ else if(I.p==="cripto") m=1+(Math.random()*.34-.17)+h/250;
+ else m=(o.f&&(o.f.hacienda||o.f.policia||o.f.mafia))?.5:1.03;
+ I.val=Math.max(0,Math.min(I.amt*4,I.val*m));
+}
+
+/* ============ EL HADA MADRINA DE LOS COMPASES ============ */
+/* Consejos enigmáticos, pero sacados de verdad del estado de la partida */
+function consejo(n){
+ const urg=[], otros=[], f=k=>F(k);
+ const elig=e=>!e.chain&&e.st.includes(S.stage)&&(!e.gen||e.gen===S.gen)&&(!e.nogen||!e.nogen.includes(S.gen))&&(e.rep||!S.used.has(e.id))&&(()=>{try{return !e.cond||e.cond();}catch(x){return false}})();
+ const pool=EV.filter(elig), emo=ids=>[...new Set(ids.map(e=>C[e.c].e))].slice(0,3).join(" ");
+ if(f("drogas")>=2) urg.push("El polvo que brilla no es purpurina. Cuando 💊 llame, no contestes.");
+ if(f("alcohol")>=2) urg.push("Tu hígado ya escribe su testamento. Que 🍺 y 🍻 te sirvan agua.");
+ if(f("neonazis")>=1) urg.push("Las botas que marchan recuerdan tu cara. No les des otro motivo.");
+ if(f("policia")>=1) urg.push("La sirena canta tu nombre. No le hagas los coros.");
+ if(f("hacienda")>=1) urg.push("El hombre de los números 🧾 no olvida. Lo que debas, págalo pronto.");
+ if(f("mafia")>=1) urg.push("El hormigón 🏗️ fragua despacio y no suelta. No firmes nada más con él.");
+ if(f("secta")>=1) urg.push("El sol alimenta a las plantas, no a las estrellas. Desconfía de 🧘.");
+ for(const [k,ic] of STATS){
+  const v=S.st[k];
+  if(v<=30){const who=pool.filter(e=>e.opts.some(o=>typeof o.fx==="object"&&(o.fx[k]||0)>=10&&!o.die&&!o.risk));
+   urg.push(who.length?`Tu ${ic} se apaga. Lo encontrarás junto a ${emo(who)}.`:`Tu ${ic} se apaga. Cuídalo antes de que se apague del todo.`);}
+  else if(v>=75) urg.push(`Tu ${ic} rebosa. Lo que sobra también mata: no aceptes más ${ic}.`);
+ }
+ const peligro=pool.filter(e=>e.opts.some(o=>o.die||o.risk));
+ if(peligro.length) otros.push(`En los compases que vienen acechan ${emo(shuffle(peligro.slice()))}. Cuando aparezcan, elige lo aburrido: lo aburrido no mata.`);
+ const q=S.queue.find(x=>!S.used.has(x.id)&&x.at-S.turn<=8&&byId[x.id]);
+ if(q) otros.push(`Algo que sembraste brota pronto. Lo traerá ${C[byId[q.id].c].e}.`);
+ const buenos=pool.filter(e=>e.opts.every(o=>!o.die&&!o.risk)&&e.opts.some(o=>typeof o.fx==="object"&&(o.fx.s||0)>=10));
+ if(buenos.length) otros.push(`Si ves a ${emo(shuffle(buenos.slice()).slice(0,2))}, escucha: trae salud en el bolsillo.`);
+ const all=urg.concat(shuffle(otros));
+ if(!all.length) all.push("Tu partitura está limpia… de momento. Sonríe a 👵, que te quiere aunque no lo diga.");
+ return all.slice(0,n).map(x=>"«"+x+"»").join(" ");
+}
+function ritualHada(){
+ S.hadaT=S.turn; S.f.hada_ok=F("hada_ok")+1;
+ let t="Bailas un vals con el hada sobre un pentagrama invisible. Te mareas, te sangra un poco la nariz y te sientes más viej[o|a]. Ella te susurra: "+consejo(2);
+ if(F("hada_ok")%3===0){
+  if(F("billete")) t+=" Luego suspira: «Te tocaría otro billete de vuelta, pero solo se puede llevar uno. Las reglas de la magia las hace Hacienda».";
+  else{S.f.billete=1; t+=" Y antes de irse te mete algo en el bolsillo: 🎫 un billete de vuelta. «Una muerte. Solo una. No lo malgastes en tonterías»."; toast("🎫 Billete de vuelta: te salvará de una muerte");}
+ }
+ return t;
+}
 let S=null, pickG="f", pickGen="rock", CK=null;
 const $=s=>document.querySelector(s);
 const scr=$("#screen"), hudEl=$("#hud"), metaEl=$("#meta");
@@ -1480,6 +1654,7 @@ const tx=str=>esc(str||"").replace(/\[([^|\]]*)\|([^\]]*)\]/g,(m,a,b)=>S&&S.g===
 const clamp=v=>Math.max(0,Math.min(100,v));
 const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
 const rnd=a=>a[Math.floor(Math.random()*a.length)];
+const V=x=>typeof x==="function"?x():x; /* textos y efectos que dependen de la partida */
 function store(k,v){try{if(v===undefined)return JSON.parse(localStorage.getItem(k)||"null");localStorage.setItem(k,JSON.stringify(v));}catch(e){return null}}
 function toast(msg){const t=$("#toast");t.textContent=msg;t.classList.add("on");clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove("on"),2600);}
 
@@ -1502,7 +1677,13 @@ function drawHud(delta){
   el.classList.remove("up","down");
   if(delta&&delta[k]){el.classList.add(delta[k]>0?"up":"down");setTimeout(()=>el.classList.remove("up","down"),700);}
  }
- metaEl.innerHTML=`<span>${S.g==="m"?"👨‍🎤":"👩‍🎤"}${GEN[S.gen].e} ${esc(S.name)}${S.revives?` · 😇×${S.revives}`:""}</span><span>${STG[S.stage].name} · Decisión ${S.turn+1}</span>`;
+ const extra=[];
+ if(S.revives) extra.push((F("diablo")?"😈×":"😇×")+S.revives);
+ if(F("billete")) extra.push(`<span title="Billete de vuelta: te salva de una muerte">🎫</span>`);
+ if(F("hada_ok")%3) extra.push(`<span title="Rituales con el hada (a los 3, billete de vuelta)">🧚${F("hada_ok")%3}/3</span>`);
+ if(S.inv&&!S.inv.sold) extra.push(`<span title="Valor de tu inversión (${tx(INV[S.inv.p].n)}); pagaste ${S.inv.amt}">📈${Math.round(S.inv.val)}</span>`);
+ metaEl.innerHTML=`<span>${S.g==="m"?"👨‍🎤":"👩‍🎤"}${GEN[S.gen].e} ${esc(S.name)}${extra.length?" · "+extra.join(" · "):""}</span><span>${STG[S.stage].name} · Decisión ${S.turn+1}</span>`;
+ document.body.classList.toggle("infierno",!!F("diablo"));
 }
 
 function newGame(){
@@ -1535,8 +1716,12 @@ function pick(){
 function advance(){
  const cfg=STG[S.stage], n=S.turn-S.t0;
  if((n>=cfg.min&&S.st.h>=cfg.hype)||n>=cfg.max){
-  if(S.stage===4) return endGame(null);
+  if(S.stage===4){
+   if(F("diablo")&&!S.used.has("diablo_final")) return showEvent(byId.diablo_final); /* el pacto se cobra al final */
+   return endGame(null);
+  }
   S.stage++; S.t0=S.turn;
+  if(S.stage===2&&!S.inv&&!S.used.has("asesor")) S.queue.push({id:"asesor",at:S.turn+3}); /* el asesor llega con el primer éxito */
   for(const [k] of STATS) S.st[k]=Math.round(S.st[k]+(50-S.st[k])*RESPIRO);
   drawHud();
   S.ckPending=null;
@@ -1555,33 +1740,36 @@ function showEvent(e){
  scr.innerHTML=`<div class="card">
   ${avatar(e.c)}
   <div class="who"><b>${tx(c.n)}</b><span>${tx(c.r)}</span></div>
-  <div class="bubble">${tx(e.q)}</div></div>
-  <div class="opts">${shuffle(e.opts.map((o,i)=>i)).map((i,pos)=>`<button class="opt" data-i="${i}"><span class="k">${"ABC"[pos]}</span><span>${tx(e.opts[i].t)}</span></button>`).join("")}</div>`;
+  <div class="bubble">${tx(V(e.q))}</div></div>
+  <div class="opts">${shuffle(e.opts.map((o,i)=>i)).map((i,pos)=>`<button class="opt" data-i="${i}"><span class="k">${"ABC"[pos]}</span><span>${tx(V(e.opts[i].t))}</span></button>`).join("")}</div>`;
  scr.querySelectorAll(".opt").forEach(b=>b.onclick=()=>choose(+b.dataset.i));
 }
 
+const AFTER=id=>/^(pedro_|infierno_)/.test(id)||id==="cielo"||id==="cielo2"; /* en el cielo (o en el infierno) no hay desgaste */
 function choose(i){
  const e=S.cur,o=e.opts[i];
  S.used.add(e.id); S.recent.push(e.id); if(S.recent.length>4)S.recent.shift();
  S.turn++;
  const fx={}, notes=[];
- let base=o.fx||{}, rtext=o.r;
+ let base=V(o.fx)||{}, rtext=o.r;
  if(o.alt&&Math.random()<o.alt[0]){base=o.alt[1];rtext=o.alt[2];} /* resultado alternativo por azar */
- if(o.chase){ /* persecución: [probabilidad, siguiente paso, texto si aciertas, castigo si fallas, texto si fallas] */
-  if(Math.random()<o.chase[0]){S.next=o.chase[1];rtext=o.chase[2];}
+ if(o.chase){ /* persecución: [probabilidad, siguiente paso, texto si aciertas, castigo si fallas, texto si fallas, premio si aciertas] */
+  if(Math.random()<o.chase[0]){S.next=o.chase[1];rtext=o.chase[2];if(o.chase[5])base=o.chase[5];}
   else{base=o.chase[3];rtext=o.chase[4];}
  }
- for(const k in base){const v=base[k];fx[k]=Math.round(v*(v<0?CRUEL:BONUS));}
+ for(const k in base){const v=base[k];fx[k]=o.raw?v:Math.round(v*(v<0?CRUEL:BONUS));} /* raw: cantidades exactas (inversiones, ritual del hada) */
  if(o.f) for(const k in o.f) S.f[k]=F(k)+o.f[k];
  if(o.set) Object.assign(S.f,o.set);
  if(o.later) S.queue.push({id:o.later[0],at:S.turn+o.later[1]});
  if(o.next) S.next=o.next;
- if(e.id.startsWith("pedro_")&&S.revNext){S.next=S.revNext;S.revNext=null;} /* tras San Pedro, alguien te recibe en la Tierra */
+ if(/^(pedro_|infierno_)/.test(e.id)&&S.revNext){S.next=S.revNext;S.revNext=null;} /* tras el más allá, alguien te recibe en la Tierra */
  if(o.ck) S.ckPending=o.ck;
  if(S.avoidN>0) S.avoidN--;
+ if(o.run){const t=o.run(); if(t) rtext=t;}
+ rtext=V(rtext);
  let death=o.die||null;
  if(!death&&o.risk&&Math.random()<o.risk[0]){death=o.risk[1];rtext="Algo sale terriblemente mal…";for(const k in fx)delete fx[k];}
- const enCielo=e.id.startsWith("pedro_")||e.id==="cielo"||e.id==="cielo2"; /* en el cielo no hay desgaste */
+ const enCielo=AFTER(e.id);
  if(!death){
   if(!enCielo){
    if(F("drogas")>=2){fx.s=(fx.s||0)-5;notes.push("Tu cuerpo pasa factura: −5 ❤️ por el bajón.");}
@@ -1593,6 +1781,13 @@ function choose(i){
   if(o.safe) for(const [k] of STATS) S.st[k]=Math.max(5,Math.min(95,S.st[k])); /* premio que nunca mata */
   for(const k of ["s","d","o","h"]){ if(S.st[k]===0){death=k+"0";break;} if(S.st[k]===100){death=k+"100";break;} }
  }
+ if(!enCielo&&!e.inv&&S.inv&&!S.inv.sold) invTick(base,o); /* tus decisiones mueven tu inversión */
+ if(death&&F("billete")){ /* el billete de vuelta del hada: se salva una muerte */
+  S.f.billete=0; S.f.billete_usado=F("billete_usado")+1;
+  for(const [k] of STATS) S.st[k]=Math.max(20,Math.min(80,S.st[k]));
+  notes.unshift(`🎫 Ibas a morir (${tx(DEATHS[death].t)}). El billete de vuelta del hada se rompe en tu bolsillo y la muerte pasa de largo, ofendida.`);
+  death=null;
+ }
  drawHud(fx);
  const chips=STATS.filter(([k])=>fx[k]).map(([k,ic])=>`<span class="chip ${fx[k]>0?"pos":"neg"}">${ic} ${fx[k]>0?"+":""}${fx[k]}</span>`).join("");
  scr.innerHTML=`<div class="card">
@@ -1601,8 +1796,8 @@ function choose(i){
   ${chips?`<div class="chips">${chips}</div>`:""}
   ${notes.length?`<div class="note">${notes.join("<br>")}</div>`:""}
   </div>
-  <button class="btn" id="go">${death?"…":"Continuar"}</button>`;
- $("#go").onclick=()=>death?endGame(death):advance();
+  <button class="btn" id="go">${death||o.end?"…":"Continuar"}</button>`;
+ $("#go").onclick=()=>o.end?endGame(null,o.end):death?endGame(death):advance();
  $("#go").focus({preventScroll:true});
 }
 
@@ -1633,9 +1828,10 @@ function revive(){
  S.queue.forEach(q=>{q.at=Math.max(q.at,S.turn+3+Math.floor(Math.random()*5));});
  S.avoid=lived; S.avoidN=8; S.recent=[];
  /* Diálogo con San Pedro (sin repetir hasta agotar) y personaje que te recibe en la Tierra */
- const first=!F("mision");
- if(first){S.f.mision=1;const o=JSON.parse(CK);o.f.mision=1;CK=JSON.stringify(o);} /* la misión revelada no se olvida */
- const pPool=PEDRO_EV.filter(id=>!pSeen.includes(id)), pid=first?"pedro_mision":rnd(pPool.length?pPool:PEDRO_EV);
+ const hell=!!F("diablo"), POOL=hell?INFIERNO_EV:PEDRO_EV, fk=hell?"inf_visto":"mision"; /* con pacto, resucitas en el infierno */
+ const first=!F(fk);
+ if(first){S.f[fk]=1;const o=JSON.parse(CK);o.f[fk]=1;CK=JSON.stringify(o);} /* lo revelado no se olvida */
+ const pPool=POOL.filter(id=>!pSeen.includes(id)), pid=first?(hell?"infierno_bienvenida":"pedro_mision"):rnd(pPool.length?pPool:POOL);
  const rPool=REVIVE_EV.filter(id=>!rSeen.includes(id)), rid=rnd(rPool.length?rPool:REVIVE_EV);
  S.pSeen=first?pSeen:(pPool.length?pSeen:[]).concat(pid);
  S.rSeen=(rPool.length?rSeen:[]).concat(rid);
@@ -1643,25 +1839,28 @@ function revive(){
  store("cae_save",{ck:CK,revives:r,pSeen:S.pSeen,rSeen:S.rSeen});
  hudEl.hidden=false; metaEl.hidden=false; drawHud();
  const why=(dead&&DEATHS[dead]?"Te mató: <b>"+tx(DEATHS[dead].t)+"</b>. ":"")+(streak>1?"Llevas "+streak+" muertes seguidas en el mismo punto: San Pedro te devolverá en mejor forma. ":"");
- interlude(avatar("pedro"),"Resurrección nº "+r,why+"Todo se vuelve blanco. Otra vez. Huele a nube y a papeleo. Alguien carraspea detrás de un mostrador.","Hablar con San Pedro",()=>advance());
+ if(hell) interlude(avatar("diablo"),"Resurrección infernal nº "+r,why.replace("San Pedro","el Diablo de los Acordes")+"Todo se vuelve rojo. Huele a azufre y a ensayo de batería. Alguien afina una guitarra con los dientes y te hace sitio en un sofá de skai que quema.","Hablar con el Diablo",()=>advance());
+ else interlude(avatar("pedro"),"Resurrección nº "+r,why+"Todo se vuelve blanco. Otra vez. Huele a nube y a papeleo. Alguien carraspea detrás de un mostrador.","Hablar con San Pedro",()=>advance());
 }
 
-function endGame(death){
+function endGame(death,special){ /* special: "universo" = final del pacto con el diablo */
  const best=store("cae_best")||{turns:0};
  const isRecord=S.turn>best.turns;
  if(isRecord) store("cae_best",{turns:S.turn,stage:S.stage});
  let got=store("cae_deaths")||[];
- if(death&&!got.includes(death)){got.push(death);store("cae_deaths",got);}
+ const key=death||special;
+ if(key&&!got.includes(key)){got.push(key);store("cae_deaths",got);}
  S.lastDeath=death;
  if(!death){store("cae_save",null);CK=null;}
+ if(special) document.body.classList.remove("infierno");
  const resu=S.revives?", aunque tuviste que resucitar "+S.revives+(S.revives===1?" vez":" veces"):"";
- const d=death?DEATHS[death]:(F("mision")
+ const d=death?DEATHS[death]:special?DEATHS[special]:(F("mision")
   ?{i:"🌍",t:"Leyenda (y el mundo sigue aquí)",x:"Cantas la última nota de tu última gira"+resu+". En algún lugar, una profecía con muy mala letra se tacha sola. El mundo no se destruye. Nadie se entera. Kira Star se atribuye el mérito. Desde arriba, San Pedro levanta el pulgar. Y en la última fila, alguien con capucha se va sin hacer ruido."}
   :{i:"👑",t:"Leyenda",x:"Sobreviviste a los garitos, a la fama, a tu cuñado, a Hacienda, a Don Mariano y a ti mism[o|a]"+resu+". Te retiras a una isla con tus royalties. Nunca sabrás que el mundo dependía de ti. Kira Star canta en tu homenaje. Desafina. Por fin, sonríes."});
  const coll=Object.keys(DEATHS).map(k=>{const on=got.includes(k);return `<div class="${on?"":"lock"}"><span>${on?DEATHS[k].i:"❔"}</span>${on?tx(DEATHS[k].t):"???"}</div>`}).join("");
  scr.innerHTML=`<div class="card">
   <div class="big">${d.i}</div>
-  <div class="fin ${death?"":"win"}">${death?"HAS MUERTO":"ERES UNA LEYENDA"}</div>
+  <div class="fin ${death?"":special?"univ":"win"}">${death?"HAS MUERTO":special?"HAS DESTRUIDO EL UNIVERSO":"ERES UNA LEYENDA"}</div>
   <div class="dt">${tx(d.t)}</div>
   <div class="bubble narr">${tx(d.x)}</div>
   ${isRecord?`<span class="badge">¡Nuevo récord!</span>`:""}
@@ -1697,7 +1896,7 @@ function home(){
   <label class="lb" for="name">Nombre artístico (opcional)</label>
   <input class="name" id="name" maxlength="28" placeholder="${NAMES[pickG][0]}" autocomplete="off" value="${keepName?esc(keepName):""}">
   <button class="btn${svInfo?" ghost":""}" id="start">Nueva partida</button>
-  <div class="rules"><b>Cómo se juega:</b> cada decisión mueve tus cuatro barras: 🗣️ opinión pública, 💰 dinero, 🔥 hype y ❤️ salud. Si alguna llega a 0 <b>o a 100</b>, mueres en el acto. Algunas decisiones también pueden matarte sin avisar, y hay cosas que el juego no te enseña pero sí recuerda.<br><br><b>💾 Puntos de control:</b> hasta que no te cruces con cierto desconocido, morir es para siempre. A partir de ahí, tu alma se guarda al empezar cada etapa y cada ${CHECK_EVERY} decisiones, y cuando mueras volverás al último punto para enmendar tus errores.</div>
+  <div class="rules"><b>Cómo se juega:</b> cada decisión mueve tus cuatro barras: 🗣️ opinión pública, 💰 dinero, 🔥 hype y ❤️ salud. Si alguna llega a 0 <b>o a 100</b>, mueres en el acto. Algunas decisiones también pueden matarte sin avisar, y hay cosas que el juego no te enseña pero sí recuerda.<br><br><b>💾 Puntos de control:</b> hasta que no te cruces con cierto desconocido, morir es para siempre. A partir de ahí, tu alma se guarda al empezar cada etapa y cada ${CHECK_EVERY} decisiones, y cuando mueras volverás al último punto para enmendar tus errores.<br><br><b>🏁 Meta:</b> llegar a leyenda exige al menos 101 decisiones. Por el camino te cruzarás con un asesor que invierte tu dinero (📈), un hada que vende consejos a cambio de salud (🧚, y a la tercera, 🎫 un billete que te salva de una muerte) y, quizá, con alguien que huele a azufre.</div>
   <p class="small">${best?`Récord: ${best.turns} decisiones · `:""}Muertes desbloqueadas: ${got.length}/${Object.keys(DEATHS).length}</p>`;
  scr.querySelectorAll(".gender").forEach(b=>b.onclick=()=>{pickG=b.dataset.g;scr.querySelectorAll(".gender").forEach(x=>x.setAttribute("aria-pressed",x===b));$("#name").placeholder=NAMES[pickG][0];});
  scr.querySelectorAll(".genre").forEach(b=>b.onclick=()=>{pickGen=b.dataset.k;scr.querySelectorAll(".genre").forEach(x=>x.setAttribute("aria-pressed",x===b));});
