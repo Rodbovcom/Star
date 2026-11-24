@@ -747,7 +747,7 @@ const EV=[
  {t:"Escuchar el disco con sinceridad.",fx:{s:-5,o:5},r:"Es bueno. Muy bueno. Mejor que lo tuyo. Le dices que «tiene cosas». Se le nota la herida."}]},
 
 /* ---------- ETAPA 3 · CD en top mantas (id interno 5) ---------- */
-{id:"tm_ousmane",st:[5],c:"ousmane",w:6,q:"Tu disco es el que más vendo, {name}. Más que el de Kira y más que las gafas de sol. Tres euros la copia. ¿Te parece mal o te hago un descuento por ser tú?",opts:[
+{id:"tm_ousmane",st:[5],c:"ousmane",w:1,q:"Tu disco es el que más vendo, {name}. Más que el de Kira y más que las gafas de sol. Tres euros la copia. ¿Te parece mal o te hago un descuento por ser tú?",opts:[
  {t:"Véndelo. Prefiero que me escuchen a que me paguen.",fx:{h:20,d:-5,o:5},set:{manta_amigo:1},later:["tm_redada",6],r:"Ousmane te da la mano y te regala una copia de tu propio disco. La carátula es mejor que la original."},
  {t:"Quiero mi parte. El 50 %.",fx:{d:10,o:-10},r:"Te da 1,50 € y una mirada que no olvidarás. «El arte es caro, hermano», dice. «Para quien lo compra»."},
  {t:"Le pido que lo quite de la manta.",fx:{o:-5,h:-10},r:"Lo quita. En su lugar pone el de Kira Star. Al día siguiente, Kira está en el número uno de las mantas."}]},
@@ -755,71 +755,71 @@ const EV=[
  {t:"No. Ese disco se lo regalé yo.",fx:{o:15,h:10,d:-5},f:{policia:1},r:"El comisario te mira como a un delincuente con estudios. Ousmane recupera la manta. En el paseo te aplauden."},
  {t:"Sí, que se haga justicia.",fx:{o:-15,d:5},r:"Te dan las gracias en comisaría. En el paseo, alguien pinta en la pared: «{name} vendid[o|a]». Lo pintan bien, eso sí."},
  {t:"Pedir que me devuelvan las copias para firmarlas.",fx:{h:15,o:5,d:10},r:"Firmas cuatrocientas copias piratas. Ahora valen el triple. Ousmane te manda un audio llorando de risa."}]},
-{id:"tm_anselmo",st:[5],c:"anselmo",w:4,q:"Le comunico que la Sociedad de Autores y Editores Cabreados ha detectado su música en una manta, en una boda y en el móvil de un menor. Le corresponden 3,27 € de derechos. Menos gastos de gestión: le debe 40 €.",opts:[
+{id:"tm_anselmo",st:[5],c:"anselmo",w:1,q:"Le comunico que la Sociedad de Autores y Editores Cabreados ha detectado su música en una manta, en una boda y en el móvil de un menor. Le corresponden 3,27 € de derechos. Menos gastos de gestión: le debe 40 €.",opts:[
  {t:"Pagar y no preguntar.",fx:{d:-10},r:"Te da un recibo en papel carbón. Debajo pone «gestión de la gestión». No preguntas."},
  {t:"Denunciar a la Sociedad en Twitter.",fx:{h:15,o:5,d:-5},r:"Tu hilo se hace viral. La Sociedad te contesta con un comunicado de catorce páginas. Nadie pasa de la primera."},
  {t:"Hacerme soci[o|a] para cobrar yo también.",fx:{d:5,o:-10},r:"Te nombran vocal de algo. Cobras dietas por reuniones a las que no vas. Te sientes suci[o|a]. Y descansad[o|a]."}]},
-{id:"tm_mama",st:[5],c:"mama",w:4,q:"Hij[o|a], he comprado veinte discos tuyos a ese chico tan majo del paseo. Para regalar en Navidad. Tres euros, ¡y sin IVA! ¿Ves cómo ayudo?",opts:[
+{id:"tm_mama",st:[5],c:"mama",w:1,q:"Hij[o|a], he comprado veinte discos tuyos a ese chico tan majo del paseo. Para regalar en Navidad. Tres euros, ¡y sin IVA! ¿Ves cómo ayudo?",opts:[
  {t:"Mamá, son piratas.",fx:{o:3,s:-3},r:"«¿Piratas? Si el chico era muy educado». Regala los veinte igualmente. Tu tía dice que suenas «a lata»."},
  {t:"Gracias, mamá. De verdad.",fx:{o:5,s:5},r:"Se emociona y compra veinte más. El paseo entero sabe ya que eres su hij[o|a]."},
  {t:"Pídele factura, por lo menos.",fx:{h:5,o:-3},r:"Ousmane escribe una factura en un posavasos. Tu madre la enmarca. Al lado del táper."}]},
-{id:"tm_montero",st:[5],c:"montero",w:5,q:"Megasound pierde dinero cada vez que un mantero vende tu disco. Vamos a meter un chip anticopia en el próximo. Si alguien lo copia, el CD explota. Un poco.",opts:[
+{id:"tm_montero",st:[5],c:"montero",w:1,q:"Megasound pierde dinero cada vez que un mantero vende tu disco. Vamos a meter un chip anticopia en el próximo. Si alguien lo copia, el CD explota. Un poco.",opts:[
  {t:"Me parece fatal.",fx:{o:10,d:-10},r:"La Sra. Montero apunta tu nombre en una libreta negra. Tiene muchas páginas y casi todas son de artistas con principios."},
  {t:"Me parece bien.",fx:{d:15,o:-15},risk:[.12,"cd"],r:"Sale el disco con chip. Explotan tres equipos de música, un coche y la paciencia de tus fans."},
  {t:"Que el chip toque mi canción al explotar.",fx:{h:15,o:-5},r:"Marketing de guerrilla. Literalmente. Los CDs que explotan se vuelven objeto de culto."}]},
-{id:"tm_cunado",st:[5],c:"cunado",w:4,q:"Me he comprado tu disco en la manta. Tres euros. Y te digo una cosa: para ser pirata, suena mejor que el original. ¿Qué has hecho en el estudio, estropearlo?",opts:[
+{id:"tm_cunado",st:[5],c:"cunado",w:1,q:"Me he comprado tu disco en la manta. Tres euros. Y te digo una cosa: para ser pirata, suena mejor que el original. ¿Qué has hecho en el estudio, estropearlo?",opts:[
  {t:"Darle la razón.",fx:{o:3,h:-3},r:"Se viene arriba y te da consejos de producción toda la cena. Le ha salido un máster en ecualización por WhatsApp."},
  {t:"Pedirle los tres euros para mí.",fx:{d:3,o:-3},r:"Te los da en monedas de céntimo. Tardas veinte minutos en contarlas delante de toda la familia."},
  {t:"Grabar el próximo disco en la manta.",fx:{h:15,s:-5},r:"Grabas con un micro de karaoke en el paseo marítimo. El ruido de las olas queda precioso. Las gaviotas piden royalties."}]},
-{id:"tm_melon",st:[5],c:"melon",w:4,q:"Bro, he hecho un remix de tu canción con el sonido de la manta al recogerse cuando llega la policía. Se llama «Fluuush». Está petando en las discotecas de Lloret.",opts:[
+{id:"tm_melon",st:[5],c:"melon",w:1,q:"Bro, he hecho un remix de tu canción con el sonido de la manta al recogerse cuando llega la policía. Se llama «Fluuush». Está petando en las discotecas de Lloret.",opts:[
  {t:"¡Súbelo con mi nombre!",fx:{h:20,o:-5},r:"«Fluuush (feat. {name})» es la canción del verano. La bailan hasta los municipales."},
  {t:"Exijo mi parte.",fx:{d:10,h:-5},r:"DJ Melón te paga en tickets de copa. Gratis no es. Dinero tampoco."},
  {t:"Prohibirlo. Es una falta de respeto.",fx:{o:5,h:-10},r:"El remix se vuelve más famoso por estar prohibido. Ahora se vende en la manta. Al lado de tu disco."}]},
-{id:"tm_paco",st:[5],c:"paco",w:4,q:"Tengo fotos de usted comprando su propio disco en una manta. Tres copias. ¿Las publico como «artista desesperad[o|a]» o como «artista solidari[o|a]»?",opts:[
+{id:"tm_paco",st:[5],c:"paco",w:1,q:"Tengo fotos de usted comprando su propio disco en una manta. Tres copias. ¿Las publico como «artista desesperad[o|a]» o como «artista solidari[o|a]»?",opts:[
  {t:"Solidari[o|a], por favor.",fx:{d:-10,o:10},r:"Le pagas y sale la portada amable. Debajo, en letra pequeña: «(según fuentes pagadas)»."},
  {t:"Desesperad[o|a]. Es la verdad.",fx:{h:10,o:-5,s:-3},r:"La sinceridad vende. Tu disco sube en las listas. En las oficiales y en las de la manta."},
  {t:"Comprarle la cámara.",fx:{d:-15,h:5},r:"Te la vende. Tiene otra en la mochila. Siempre tienen otra en la mochila."}]},
-{id:"tm_ruiz",st:[5],c:"ruiz",w:3,q:"Hacienda ha detectado ventas de su disco por valor de 40.000 € en el paseo marítimo. ¿Me explica por qué no constan en su declaración?",opts:[
+{id:"tm_ruiz",st:[5],c:"ruiz",w:1,q:"Hacienda ha detectado ventas de su disco por valor de 40.000 € en el paseo marítimo. ¿Me explica por qué no constan en su declaración?",opts:[
  {t:"Porque no las he cobrado yo.",fx:{o:5,d:-5},r:"El inspector Ruiz suspira. Lleva tres meses intentando hacerle una paralela a una manta. No hay manera."},
  {t:"Declararlas por si acaso.",fx:{d:-20,o:5},r:"Pagas impuestos por un dinero que nunca has visto. Ruiz se emociona: es el primer contribuyente voluntario de su carrera."},
  {t:"Culpar a mi cuñado.",fx:{h:5,o:-5},f:{hacienda:1},r:"Ruiz apunta el nombre de tu cuñado. Y el tuyo, por si acaso. Con rotulador rojo."}]},
-{id:"tm_kira",st:[5],c:"kira",w:4,q:"Me he enterado de que tu disco vende más que el mío en las mantas. Así que he comprado todas las copias del paseo. Para quemarlas. Bueno, para que no las compre nadie.",opts:[
+{id:"tm_kira",st:[5],c:"kira",w:1,q:"Me he enterado de que tu disco vende más que el mío en las mantas. Así que he comprado todas las copias del paseo. Para quemarlas. Bueno, para que no las compre nadie.",opts:[
  {t:"Gracias por comprar mi disco, Kira.",fx:{d:10,h:10},r:"Ousmane te manda tu parte, encantado. Kira tarda dos días en darse cuenta de que te ha hecho ric[o|a] la competencia."},
  {t:"Comprar todas las copias del suyo.",fx:{d:-15,h:5},r:"Tienes ahora doscientos CDs de Kira Star en el garaje. Los usas de posavasos. Uno de cada dos tiene su cara."},
  {t:"Montar un cara a cara en el paseo.",fx:{h:20,o:-5,s:-5},r:"Batalla de gallos entre mantas. Ganas por desafinar con más estilo. Ousmane hace de jurado y de taquilla."}]},
-{id:"tm_tito",st:[5],c:"tito",w:3,q:"En el Bar Pepe ponemos tu disco pirata a todo volumen. El original salta. El pirata no. ¿Firmas la copia de la casa?",opts:[
+{id:"tm_tito",st:[5],c:"tito",w:1,q:"En el Bar Pepe ponemos tu disco pirata a todo volumen. El original salta. El pirata no. ¿Firmas la copia de la casa?",opts:[
  {t:"Firmarla con cariño.",fx:{o:5},r:"La cuelgan encima de la tragaperras. La tragaperras ya no aplaude: ahora llora de envidia."},
  {t:"Una caña y la firmo.",fx:{h:3,s:-3},f:{alcohol:1},r:"Una caña y otra. Firmas el CD, la barra y la frente del Tito. Él lo enseña orgulloso a todo el que entra."},
  {t:"Exigir que pongan el original.",fx:{o:-5,d:2},r:"Ponen el original. Salta en el estribillo. Tres veces. Manolo te mira y vuelve a poner el pirata."}]},
-{id:"tm_sindicato",st:[5],c:"ousmane",w:4,cond:()=>F("manta_amigo"),q:"El Sindicato de Manteros quiere hacerte socio de honor. Te diseñamos camiseta propia, con tu cara. Solo te pedimos un concierto gratis en la plaza.",opts:[
+{id:"tm_sindicato",st:[5],c:"ousmane",w:1,cond:()=>F("manta_amigo"),q:"El Sindicato de Manteros quiere hacerte socio de honor. Te diseñamos camiseta propia, con tu cara. Solo te pedimos un concierto gratis en la plaza.",opts:[
  {t:"Concierto en la plaza.",fx:{h:20,o:15,d:-10,s:-5},r:"Cantas encima de cuatro mantas juntas. Cuando llega la policía, el escenario se recoge solo con un tirón. El mejor final de concierto de tu vida."},
  {t:"Acepto la camiseta, pero sin concierto.",fx:{o:-5,h:5},r:"La camiseta se vende más que tu disco. Te alegras. Un poco."},
  {t:"Prefiero no mezclarme.",fx:{o:-10,s:3},r:"Ousmane asiente sin enfadarse. Esa misma tarde, tu disco baja de la primera fila de la manta a la segunda."}]},
-{id:"tm_turista",st:[5],c:"jessica",w:3,q:"¡{name}! ¡Estoy de vacaciones en Benidorm y tu disco está en TODAS las mantas! Me he comprado once. Uno para cada día. ¿Me firmas la manta entera?",opts:[
+{id:"tm_turista",st:[5],c:"jessica",w:1,q:"¡{name}! ¡Estoy de vacaciones en Benidorm y tu disco está en TODAS las mantas! Me he comprado once. Uno para cada día. ¿Me firmas la manta entera?",opts:[
  {t:"Firmar la manta.",fx:{o:5,h:5},r:"Ousmane te deja firmar la manta. Luego la vende como manta firmada. Por cuarenta euros. Jessica la compra."},
  {t:"Huir por el paseo.",fx:{s:-5,h:3},r:"Corres entre sombrillas. Jessica corre más. Te alcanza en el chiringuito y te pide una foto con la boca llena de calamares."},
  {t:"Pedirle que compre originales.",fx:{o:-5,d:3},r:"Compra el original. Lo pone al lado de los once piratas. Dice que es «el raro de la familia»."}]},
-{id:"tm_bea",st:[5],c:"bea",w:4,q:"Te propongo una campaña: «Si me piratean, que sea con estilo». Subimos un tutorial de cómo copiar tu disco bien. Con calidad alta. Los de la discográfica se van a morir.",opts:[
+{id:"tm_bea",st:[5],c:"bea",w:1,q:"Te propongo una campaña: «Si me piratean, que sea con estilo». Subimos un tutorial de cómo copiar tu disco bien. Con calidad alta. Los de la discográfica se van a morir.",opts:[
  {t:"¡Adelante!",fx:{h:25,o:5,d:-10},r:"El tutorial tiene dos millones de visitas. Megasound te manda una carta en mayúsculas. La enmarcas."},
  {t:"Mejor un tutorial de cómo comprarlo.",fx:{o:3,h:-3,d:5},r:"Tiene catorce visitas. Doce son de tu madre. Las otras dos, de Bea comprobando que se ve."},
  {t:"Despedir a Bea.",fx:{o:-5,s:3},r:"Bea se va a trabajar para Kira. A la semana, Kira sube un tutorial de cómo piratearte a ti. Con mejores luces."}]},
-{id:"tm_brayan",st:[5],c:"brayan",w:3,q:"Bro, olvídate del CD, eso es de boomers. Vamos a convertir cada copia pirata en un NFT. Pirata pero en la blockchain. Pirata 3.0. ¿Lo pillas?",opts:[
+{id:"tm_brayan",st:[5],c:"brayan",w:1,q:"Bro, olvídate del CD, eso es de boomers. Vamos a convertir cada copia pirata en un NFT. Pirata pero en la blockchain. Pirata 3.0. ¿Lo pillas?",opts:[
  {t:"No lo pillo, pero entro.",fx:{d:-15,h:10},alt:[.4,{d:25,h:10},"Contra todo pronóstico, los NFT piratas se venden. Un coleccionista de Singapur paga una fortuna por el «CD rayado nº 4»."],r:"Los NFT bajan un 98 % en una tarde. Brayan te manda un audio: «Es la volatilidad, bro». Él se compra un Lambo."},
  {t:"No.",fx:{o:3},r:"Brayan te bloquea, te desbloquea y te manda una invitación a su curso de 900 €."},
  {t:"Le vendo mi CD original como NFT a él.",fx:{d:10,o:-3},r:"Te lo compra sin escucharlo. Lo cuelga en su foto de perfil. Es lo más parecido a un fan que ha tenido nunca."}]},
-{id:"tm_feria",st:[5],c:"alcalde",w:3,q:"Para las fiestas de Villarriba de Abajo queremos que cantes. Pero el presupuesto da para lo que da: te pagamos en copias de tu disco. Piratas. Las incautó la policía local.",opts:[
+{id:"tm_feria",st:[5],c:"alcalde",w:1,q:"Para las fiestas de Villarriba de Abajo queremos que cantes. Pero el presupuesto da para lo que da: te pagamos en copias de tu disco. Piratas. Las incautó la policía local.",opts:[
  {t:"Acepto. Por el pueblo.",fx:{o:10,h:10,d:-5},r:"Cantas en la plaza entre la tómbola y la verbena. Repartes tus copias piratas al público. Te vuelven a comprar el original por pena."},
  {t:"O me pagáis en euros o no canto.",fx:{d:10,o:-10},r:"Te pagan en euros. Te los dan en un sobre con el escudo del pueblo. Al día siguiente sale en el periódico: «Caché de la vergüenza»."},
  {t:"Cantar gratis y vender yo las copias.",fx:{d:15,o:-5},f:{policia:1},r:"Pones tu propia manta en la verbena. El concejal de seguridad te mira raro. Vendes cien copias. Él compra una."}]},
-{id:"tm_herrera",st:[5],c:"herrera",w:3,q:"Puedo demandar a todos los manteros de España en una sola demanda colectiva. Ganaríamos 0 € y saldría en todos los periódicos. Mi minuta, eso sí, son 30.000.",opts:[
+{id:"tm_herrera",st:[5],c:"herrera",w:1,q:"Puedo demandar a todos los manteros de España en una sola demanda colectiva. Ganaríamos 0 € y saldría en todos los periódicos. Mi minuta, eso sí, son 30.000.",opts:[
  {t:"No, gracias.",fx:{o:5},r:"Herrera te cobra igualmente la consulta. Quince minutos. Ha tardado cuarenta en explicarlo."},
  {t:"Demándelos a todos.",fx:{d:-20,o:-20,h:15},r:"Sales en todos los periódicos. Como el villano. Tu disco se convierte en el más pirateado del año, por rabia."},
  {t:"Mejor demande a Kira por plagio.",fx:{d:-10,h:15},r:"El juicio no lleva a nada, pero los dos discos se venden el doble. En la manta, los ponen juntos."}]},
-{id:"tm_ola",st:[5],c:"nino",w:3,q:"¡Corre! ¡Viene una ola gigante y se va a llevar las mantas! ¡Tu disco va a acabar en el mar!",opts:[
+{id:"tm_ola",st:[5],c:"nino",w:1,q:"¡Corre! ¡Viene una ola gigante y se va a llevar las mantas! ¡Tu disco va a acabar en el mar!",opts:[
  {t:"Salvar las mantas.",fx:{o:15,s:-8},r:"Sacas tres mantas del agua. Los CDs están empapados. Ousmane los seca con un secador de pelo y los vende como «edición marina»."},
  {t:"Salvar solo mis discos.",fx:{o:-10,h:3},r:"Te pillan las cámaras eligiendo tus discos de entre los de los demás. Titular: «Ego a prueba de tsunamis»."},
  {t:"Grabar la ola para un videoclip.",fx:{h:15,s:-3},r:"Videoclip épico: tú cantando, la ola de fondo y cuarenta CDs flotando como medusas brillantes."}]},
-{id:"hood_tm",st:[5],c:"encapuchado",w:6,cond:()=>F("alma")&&!F("diablo"),q:"(Entre las mantas del paseo hay una que solo vende un CD. El tuyo. La atiende alguien con capucha). Tres euros. Te lo recomiendo. Lo escuché tantas veces que me lo sé al revés. Literalmente: al revés dice cosas.",opts:[
+{id:"hood_tm",st:[5],c:"encapuchado",w:1,cond:()=>F("alma")&&!F("diablo"),q:"(Entre las mantas del paseo hay una que solo vende un CD. El tuyo. La atiende alguien con capucha). Tres euros. Te lo recomiendo. Lo escuché tantas veces que me lo sé al revés. Literalmente: al revés dice cosas.",opts:[
  {t:"¿Qué dice al revés?",fx:{h:5},r:()=>"Se acerca y te lo canta bajito, al revés. Tardas en entenderlo: "+consejo(1)},
  {t:"Comprarte mi propio disco.",fx:{d:-3,o:5},r:"Te da el cambio en una moneda antigua. Al mirar la carátula, ves que tiene escrita una fecha de dentro de treinta años."},
  {t:"Preguntarle cuánto ha vendido.",fx:{o:3},r:"«Uno», dice. «Siempre al mismo cliente». Se baja un poco la capucha. Solo ves la barbilla. Es la tuya."}]},
@@ -1659,7 +1659,7 @@ const BONUS=0.8; // y recorta todo lo que suma
 const STG={
  1:{name:"Etapa 1 · Los garitos",p:{d:1,h:2},min:15,hype:40,max:18,msg:"El público olvida rápido y el alquiler no perdona"},
  2:{name:"Etapa 2 · Primer éxito",p:{d:1,h:1},min:20,hype:30,max:24,msg:"Vida de estrella. La fama desgasta"},
- 5:{name:"Etapa 3 · CD en top mantas",p:{d:1,h:1},min:20,hype:30,max:24,msg:"Tu disco se vende a tres euros en el paseo y a ti no te llega ni uno"},
+ 5:{name:"Etapa 3 · CD en top mantas",p:{d:1,h:1},min:20,hype:30,max:24,msg:"Te conoce todo el mundo, pero el dinero no llega"},
  3:{name:"Etapa 4 · Estrellato",p:{d:1,h:2},min:25,hype:30,max:30,msg:"Mansión, séquito y abogados"},
  4:{name:"Etapa 5 · Decadencia o leyenda",p:{d:1,h:2,s:1},min:21,hype:0,max:21,msg:"Los años pesan y el público busca caras nuevas"}
 };
@@ -1668,7 +1668,7 @@ const RESPIRO=0.5;       // al cambiar de etapa, cada barra recorre esta fracci�
 const CHECK_EVERY=7;     // cada cuántas decisiones se guarda un punto de control (además de al empezar cada etapa)
 const INTER={
  2:{i:"📻",x:"Tu canción suena en la radio de una gasolinera de Albacete. Un camionero la tararea. Oficialmente, eres famos[o|a]. Ojo: la vida de estrella cuesta dinero y la fama se gasta antes."},
- 5:{i:"🧺",x:"Tu disco ya está en todas las mantas del país, entre gafas de sol de imitación y bolsos de marca dudosa. Te piratean: eso significa que importas. Lo que no significa es que cobres."},
+ 5:{i:'<svg viewBox="0 0 120 90" width="120" height="90" aria-hidden="true"><path d="M18 30 L102 30 L116 78 L4 78Z" fill="#c1121f"/><path d="M18 30 L102 30 L116 78 L4 78Z" fill="none" stroke="#ffd60a" stroke-width="2" stroke-dasharray="5 4"/><path d="M4 78 L6 86 M12 78 L13 86 M20 78 L21 86 M28 78 L28 86 M36 78 L36 86 M44 78 L44 86 M52 78 L52 86 M60 78 L60 86 M68 78 L68 86 M76 78 L76 86 M84 78 L84 86 M92 78 L92 86 M100 78 L99 86 M108 78 L107 86 M116 78 L114 86" stroke="#ffd60a" stroke-width="2"/><g fill="#dee2e6" stroke="#8d99ae" stroke-width="1"><ellipse cx="32" cy="44" rx="11" ry="7"/><ellipse cx="60" cy="44" rx="11" ry="7"/><ellipse cx="88" cy="44" rx="11" ry="7"/><ellipse cx="28" cy="64" rx="12" ry="8"/><ellipse cx="60" cy="64" rx="12" ry="8"/><ellipse cx="92" cy="64" rx="12" ry="8"/></g><g fill="#1a1029"><ellipse cx="32" cy="44" rx="2.4" ry="1.6"/><ellipse cx="60" cy="44" rx="2.4" ry="1.6"/><ellipse cx="88" cy="44" rx="2.4" ry="1.6"/><ellipse cx="28" cy="64" rx="2.6" ry="1.8"/><ellipse cx="60" cy="64" rx="2.6" ry="1.8"/><ellipse cx="92" cy="64" rx="2.6" ry="1.8"/></g><path d="M36 40 Q40 44 38 48 M64 40 Q68 44 66 48 M92 40 Q96 44 94 48" stroke="#ff70a6" stroke-width="1.5" fill="none" opacity=".7"/></svg>',x:"Tu disco ya está en todas las mantas del país, entre gafas de sol de imitación y bolsos de marca dudosa. Te piratean: eso significa que importas. Lo que no significa es que cobres."},
  3:{i:"🏟️",x:"Estadio lleno. Sesenta mil personas gritan tu nombre (mal pronunciado). Tienes mansión, mayordomo y tres abogados. También tienes enemigos que todavía no conoces."},
  4:{i:"🥀",x:"Han pasado los años. Tu último single lo escucharon tu madre y un algoritmo. Toca elegir: decadencia o leyenda. La dignidad no está incluida en ninguna de las dos."}
 };
@@ -1847,7 +1847,7 @@ function pick(){
  let pool=EV.filter(e=>!e.chain&&ok(e)&&(e.rep||!S.used.has(e.id))&&!S.recent.includes(e.id)&&fresh(e));
  if(!pool.length) pool=EV.filter(e=>!e.chain&&ok(e)&&(e.rep||!S.used.has(e.id))&&!S.recent.includes(e.id));
  if(!pool.length) pool=EV.filter(e=>e.rep&&ok(e));
- const wt=e=>(e.w||(e.rep?1:3))*(S.stage===5&&!/^(tm_|hood_tm)/.test(e.id)?.35:1); /* en la etapa de top mantas mandan sus propios eventos */
+ const wt=e=>e.w||(e.rep?1:3);
  let r=Math.random()*pool.reduce((a,e)=>a+wt(e),0);
  for(const e of pool){r-=wt(e);if(r<=0)return e;}
  return pool[pool.length-1];
@@ -1882,7 +1882,7 @@ function showEvent(e){
   ${avatar(e.c)}
   <div class="who"><b>${tx(c.n)}</b><span>${tx(c.r)}</span></div>
   <div class="bubble">${tx(V(e.q))}</div></div>
-  <div class="opts">${shuffle(e.opts.map((o,i)=>i)).map((i,pos)=>`<button class="opt" data-i="${i}"><span class="k">${"ABC"[pos]}</span><span>${tx(V(e.opts[i].t))}${riskTag(e.opts[i])}</span></button>`).join("")}</div>`;
+  <div class="opts">${shuffle(e.opts.map((o,i)=>i)).map((i,pos)=>`<button class="opt" data-i="${i}"><span class="k">${"ABC"[pos]}</span><span>${tx(V(e.opts[i].t))}</span></button>`).join("")}</div>`;
  scr.querySelectorAll(".opt").forEach(b=>b.onclick=()=>choose(+b.dataset.i));
 }
 
