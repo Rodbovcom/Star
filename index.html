@@ -9,10 +9,10 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0d0718;--panel:#221640;--ink:#f5f0ff;--mute:#a99cc7;--acc:#ff3cac;--acc2:#ffd23f;--good:#2ee59d;--bad:#ff4d6d;--r:18px}
+:root{--bg:#0d0718;--panel:#221640;--panel2:var(--panel2);--glow:#3a1466;--btn2:#ff7a5c;--ink:#f5f0ff;--mute:#a99cc7;--acc:#ff3cac;--acc2:#ffd23f;--good:#2ee59d;--bad:#ff4d6d;--r:18px}
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{min-height:100%}
-body{background:var(--bg);background-image:radial-gradient(1200px 600px at 50% -10%,#3a1466 0%,var(--bg) 60%);background-attachment:fixed;color:var(--ink);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;-webkit-tap-highlight-color:transparent;overflow-x:hidden}
+body{background:var(--bg);background-image:radial-gradient(1200px 600px at 50% -10%,var(--glow) 0%,var(--bg) 60%);background-attachment:fixed;color:var(--ink);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;-webkit-tap-highlight-color:transparent;overflow-x:hidden}
 #wrap{max-width:460px;margin:0 auto;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;padding:12px 16px 72px}
 button{font:inherit;color:inherit;cursor:pointer}
 /* HUD */
@@ -30,7 +30,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 .meta{display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 8px;font-size:12px;color:var(--mute);margin:12px 4px 10px}
 #screen{flex:1;display:flex;flex-direction:column}
 /* Tarjeta */
-.card{background:linear-gradient(180deg,var(--panel),#170e2c);border:1px solid rgba(255,255,255,.08);border-radius:24px;padding:22px 18px 20px;display:flex;flex-direction:column;align-items:center;text-align:center;animation:in .35s ease-out;box-shadow:0 20px 50px rgba(0,0,0,.4)}
+.card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid rgba(255,255,255,.08);border-radius:24px;padding:22px 18px 20px;display:flex;flex-direction:column;align-items:center;text-align:center;animation:in .35s ease-out;box-shadow:0 20px 50px rgba(0,0,0,.4)}
 @keyframes in{from{opacity:0;transform:translateY(14px) scale(.98)}}
 .avatar{position:relative;width:132px;height:132px;flex:none}
 .avatar .face{width:100%;height:100%;border-radius:50%;overflow:hidden;background:var(--c);background:radial-gradient(circle at 35% 30%,color-mix(in srgb,var(--c) 55%,white),var(--c));box-shadow:0 0 0 5px rgba(255,255,255,.1),0 10px 30px rgba(0,0,0,.35)}
@@ -48,7 +48,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 .opts{display:flex;flex-direction:column;gap:10px;margin-top:16px}
 .opt{display:flex;gap:12px;align-items:flex-start;text-align:left;width:100%;padding:14px;border-radius:16px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);font-size:15px;font-weight:600;line-height:1.35;transition:transform .12s,background .2s,border-color .2s;animation:in .35s ease-out both}
 .opt:nth-child(2){animation-delay:.06s}.opt:nth-child(3){animation-delay:.12s}
-.opt:hover,.opt:focus-visible{background:rgba(255,60,172,.16);border-color:var(--acc);outline:none}
+.opt:hover,.opt:focus-visible{background:color-mix(in srgb,var(--acc) 16%,transparent);border-color:var(--acc);outline:none}
 .opt:active{transform:scale(.98)}
 .opt .k{flex:none;width:24px;height:24px;border-radius:8px;display:grid;place-items:center;background:var(--acc);color:#fff;font-size:12px;font-weight:800}
 .chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:16px}
@@ -56,7 +56,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 .chip.pos{background:rgba(46,229,157,.15);color:var(--good)}
 .chip.neg{background:rgba(255,77,109,.15);color:var(--bad)}
 .note{margin-top:12px;font-size:13px;color:var(--mute)}
-.btn{margin-top:14px;width:100%;padding:15px;border-radius:16px;border:0;background:linear-gradient(90deg,var(--acc),#ff7a5c);color:#fff;font-weight:800;font-size:16px;letter-spacing:.02em;box-shadow:0 8px 24px rgba(255,60,172,.35)}
+.btn{margin-top:14px;width:100%;padding:15px;border-radius:16px;border:0;background:linear-gradient(90deg,var(--acc),var(--btn2));color:#fff;font-weight:800;font-size:16px;letter-spacing:.02em;box-shadow:0 8px 24px color-mix(in srgb,var(--acc) 35%,transparent)}
 .btn:active{transform:scale(.98)}
 .btn.gold{background:linear-gradient(90deg,#ffd23f,#ff9f1c);color:#1a1029;box-shadow:0 8px 24px rgba(255,190,11,.35)}
 .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,.2);box-shadow:none;color:var(--mute)}
@@ -66,15 +66,15 @@ button{font:inherit;color:inherit;cursor:pointer}
 .genders{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .gender{padding:18px 8px;border-radius:20px;background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.1);display:flex;flex-direction:column;align-items:center;gap:8px;font-weight:700}
 .gender .e{font-size:54px}
-.gender[aria-pressed="true"]{border-color:var(--acc);background:rgba(255,60,172,.15)}
+.gender[aria-pressed="true"]{border-color:var(--acc);background:color-mix(in srgb,var(--acc) 15%,transparent)}
 .genres{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .genre{padding:12px 10px;border-radius:16px;background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.1);display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left}
 .genre .ge{font-size:28px;line-height:1}
 .genre b{font-size:14px}
 .genre span:last-child{font-size:11.5px;color:var(--mute);line-height:1.35}
-.genre[aria-pressed="true"]{border-color:var(--acc);background:rgba(255,60,172,.15)}
+.genre[aria-pressed="true"]{border-color:var(--acc);background:color-mix(in srgb,var(--acc) 15%,transparent)}
 html[data-theme="light"] .genre{background:#fff;border-color:#d9d9e0;color:#111}
-html[data-theme="light"] .genre[aria-pressed="true"]{background:#fff0f7;border-color:var(--acc)}
+html[data-theme="light"] .genre[aria-pressed="true"]{background:color-mix(in srgb,var(--acc) 8%,#fff);border-color:var(--acc)}
 label.lb{display:block;font-size:13px;color:var(--mute);margin:18px 4px 6px}
 input.name{width:100%;padding:14px;border-radius:14px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:var(--ink);font:inherit;font-size:16px}
 input.name:focus{outline:none;border-color:var(--acc)}
@@ -117,9 +117,9 @@ html[data-theme="light"] .card{background:#fff;border-color:#d9d9e0;box-shadow:0
 html[data-theme="light"] .bubble,html[data-theme="light"] .bubble.narr{background:#f2f2f5;color:#111}
 html[data-theme="light"] .bubble:before{border-bottom-color:#f2f2f5}
 html[data-theme="light"] .opt{background:#fff;border-color:#cfcfd8;color:#111}
-html[data-theme="light"] .opt:hover,html[data-theme="light"] .opt:focus-visible{background:#fff0f7;border-color:var(--acc)}
+html[data-theme="light"] .opt:hover,html[data-theme="light"] .opt:focus-visible{background:color-mix(in srgb,var(--acc) 8%,#fff);border-color:var(--acc)}
 html[data-theme="light"] .gender{background:#fff;border-color:#d9d9e0;color:#111}
-html[data-theme="light"] .gender[aria-pressed="true"]{background:#fff0f7;border-color:var(--acc)}
+html[data-theme="light"] .gender[aria-pressed="true"]{background:color-mix(in srgb,var(--acc) 8%,#fff);border-color:var(--acc)}
 html[data-theme="light"] input.name{background:#fff;border-color:#cfcfd8;color:#111}
 html[data-theme="light"] .rules,html[data-theme="light"] .stats div,html[data-theme="light"] .coll div{background:#f2f2f5}
 html[data-theme="light"] .rules b,html[data-theme="light"] .stats b{color:#111}
@@ -129,6 +129,25 @@ html[data-theme="light"] .chip.pos{background:#e3f6ee}
 html[data-theme="light"] .chip.neg{background:#fde8ea}
 html[data-theme="light"] #themeBtn{background:#fff;border-color:#cfcfd8;box-shadow:0 4px 14px rgba(0,0,0,.12)}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+/* Colores según el tipo de músico */
+html[data-gen="rock"]{--acc:#e5383b;--acc2:#ffb347;--btn2:#ff7b39;--bg:#110506;--panel:#2b1013;--panel2:#1a0809;--glow:#5c1016}
+html[data-gen="punk"]{--acc:#2fbf55;--acc2:#c6ff3d;--btn2:#86d930;--bg:#050e08;--panel:#11261a;--panel2:#09170f;--glow:#0f4a26}
+html[data-gen="laura"]{--acc:#9d4edd;--acc2:#e0aaff;--btn2:#c77dff;--bg:#0d0718;--panel:#221640;--panel2:#170e2c;--glow:#3a1466}
+html[data-gen="indie"]{--acc:#8a8a8a;--acc2:#d2b48c;--btn2:#b0916a;--bg:#080808;--panel:#1f1e1c;--panel2:#141312;--glow:#2c2722}
+html[data-theme="light"][data-gen]{--bg:#fff}
+/* Pop-up de rendición */
+#modal{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.65);display:grid;place-items:center;padding:16px;animation:in .2s ease-out}
+#modal .box{width:100%;max-width:420px;max-height:90vh;overflow:auto;background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid rgba(255,255,255,.12);border-radius:24px;padding:22px 18px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+#modal .count{margin-top:14px;font-size:13px;color:var(--mute)}
+#modal .count b{display:block;font-family:Bungee,Inter,sans-serif;font-size:48px;color:var(--acc2);line-height:1.1}
+#modal .count span{display:block;font-size:11px;margin-top:2px}
+#modal h3{margin-top:16px}
+.dlog{list-style:none;display:flex;flex-direction:column;gap:8px;margin-top:8px;text-align:left}
+.dlog li{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.06);border-radius:14px;padding:8px 10px}
+.dlog li .avatar.sm{width:52px;height:52px}.dlog li .avatar.sm .em{width:22px;height:22px;font-size:12px}
+.dlog b{display:block;font-size:14px}.dlog span{font-size:12px;color:var(--mute)}
+html[data-theme="light"] #modal .box{background:#fff;border-color:#d9d9e0}
+html[data-theme="light"] .dlog li{background:#f2f2f5}
 </style>
 </head>
 <body>
@@ -224,6 +243,8 @@ const C={
  gonzalo:{n:"Don Gonzalo Templado",r:"Presidente de «Centro Sensato»",e:"👔",c:"#457b9d",L:{sk:"a",h:"slick",hc:"#6c584c",top:"suit",cl:"#1d3557",tie:"#a8dadc",m:"smile"}},
  chef:{n:"Chef Aitor Espumas",r:"Tres estrellas y cero raciones",e:"🧑‍🍳",c:"#adb5bd",L:{sk:"a",h:"short",hc:"#111",hat:"chef",top:"coat",cl:"#ced4da",mus:1,m:"smirk"}},
  fermin:{n:"Fermín",r:"Camarero en tres sitios a la vez",e:"🍔",c:"#ffb703",L:{sk:"c",h:"short",hc:"#111",hat:"cap",hatc:"#e63946",cl:"#e63946",m:"flat",stubble:1}},
+ ousmane:{n:"Ousmane",r:"Mantero y portavoz del Sindicato de Manteros",e:"🧺",c:"#f4a261",L:{sk:"e",h:"short",hc:"#111",cl:"#2a9d8f",m:"grin",beard:1,bc:"#111",hat:"capb",hatc:"#e76f51"}},
+ anselmo:{n:"Don Anselmo",r:"Sociedad de Autores y Editores Cabreados",e:"📋",c:"#8d99ae",L:{sk:"a",h:"bald",hc:"#adb5bd",bc:"#adb5bd",gl:"round",top:"suit",cl:"#495057",tie:"#6c757d",mus:1,m:"frown"}},
  asesor:{n:"Íñigo Rentabilidad",r:"Asesor financiero (titulado por correspondencia)",e:"📈",c:"#2d6a4f",L:{sk:"a",h:"slick",hc:"#b08968",gl:"round",top:"suit",cl:"#1b263b",tie:"#ffd60a",m:"grin",chain:1}},
  hada:{n:"Hada Madrina de los Compases",r:"Consejos a cambio de salud",e:"🧚",c:"#c77dff",L:{sk:"a",h:"long",hc:"#e0aaff",lash:1,blush:1,ear:1,lips:1,cl:"#7b2cbf",m:"smile",hat:"tiara"}},
  diablo:{n:"El Diablo de los Acordes",r:"Afina almas. Cobra en royalties.",e:"😈",c:"#6a040f",L:{skc:"#d62828",h:"slick",hc:"#111",bc:"#111",goatee:1,brow:"angry",top:"suit",cl:"#111",tie:"#d00000",m:"smirk",hat:"horns"}}
@@ -724,6 +745,83 @@ const EV=[
  {t:"Que me haga él de telonero a mí.",fx:{h:5,o:-5},r:"Chema acepta con una sonrisa que da miedo. Toca el bombo un pelín más fuerte de lo normal."},
  {t:"Escuchar el disco con sinceridad.",fx:{s:-5,o:5},r:"Es bueno. Muy bueno. Mejor que lo tuyo. Le dices que «tiene cosas». Se le nota la herida."}]},
 
+/* ---------- ETAPA 3 · CD en top mantas (id interno 5) ---------- */
+{id:"tm_ousmane",st:[5],c:"ousmane",w:6,q:"Tu disco es el que más vendo, {name}. Más que el de Kira y más que las gafas de sol. Tres euros la copia. ¿Te parece mal o te hago un descuento por ser tú?",opts:[
+ {t:"Véndelo. Prefiero que me escuchen a que me paguen.",fx:{h:20,d:-5,o:5},set:{manta_amigo:1},later:["tm_redada",6],r:"Ousmane te da la mano y te regala una copia de tu propio disco. La carátula es mejor que la original."},
+ {t:"Quiero mi parte. El 50 %.",fx:{d:10,o:-10},r:"Te da 1,50 € y una mirada que no olvidarás. «El arte es caro, hermano», dice. «Para quien lo compra»."},
+ {t:"Le pido que lo quite de la manta.",fx:{o:-5,h:-10},r:"Lo quita. En su lugar pone el de Kira Star. Al día siguiente, Kira está en el número uno de las mantas."}]},
+{id:"tm_redada",chain:1,st:[5],c:"comisario",q:"Redada en el paseo marítimo. Hemos incautado cuatrocientas copias de su disco. ¿Quiere presentar denuncia contra los vendedores?",opts:[
+ {t:"No. Ese disco se lo regalé yo.",fx:{o:15,h:10,d:-5},f:{policia:1},r:"El comisario te mira como a un delincuente con estudios. Ousmane recupera la manta. En el paseo te aplauden."},
+ {t:"Sí, que se haga justicia.",fx:{o:-15,d:5},r:"Te dan las gracias en comisaría. En el paseo, alguien pinta en la pared: «{name} vendid[o|a]». Lo pintan bien, eso sí."},
+ {t:"Pedir que me devuelvan las copias para firmarlas.",fx:{h:15,o:5,d:10},r:"Firmas cuatrocientas copias piratas. Ahora valen el triple. Ousmane te manda un audio llorando de risa."}]},
+{id:"tm_anselmo",st:[5],c:"anselmo",w:4,q:"Le comunico que la Sociedad de Autores y Editores Cabreados ha detectado su música en una manta, en una boda y en el móvil de un menor. Le corresponden 3,27 € de derechos. Menos gastos de gestión: le debe 40 €.",opts:[
+ {t:"Pagar y no preguntar.",fx:{d:-10},r:"Te da un recibo en papel carbón. Debajo pone «gestión de la gestión». No preguntas."},
+ {t:"Denunciar a la Sociedad en Twitter.",fx:{h:15,o:5,d:-5},r:"Tu hilo se hace viral. La Sociedad te contesta con un comunicado de catorce páginas. Nadie pasa de la primera."},
+ {t:"Hacerme soci[o|a] para cobrar yo también.",fx:{d:5,o:-10},r:"Te nombran vocal de algo. Cobras dietas por reuniones a las que no vas. Te sientes suci[o|a]. Y descansad[o|a]."}]},
+{id:"tm_mama",st:[5],c:"mama",w:4,q:"Hij[o|a], he comprado veinte discos tuyos a ese chico tan majo del paseo. Para regalar en Navidad. Tres euros, ¡y sin IVA! ¿Ves cómo ayudo?",opts:[
+ {t:"Mamá, son piratas.",fx:{o:3,s:-3},r:"«¿Piratas? Si el chico era muy educado». Regala los veinte igualmente. Tu tía dice que suenas «a lata»."},
+ {t:"Gracias, mamá. De verdad.",fx:{o:5,s:5},r:"Se emociona y compra veinte más. El paseo entero sabe ya que eres su hij[o|a]."},
+ {t:"Pídele factura, por lo menos.",fx:{h:5,o:-3},r:"Ousmane escribe una factura en un posavasos. Tu madre la enmarca. Al lado del táper."}]},
+{id:"tm_montero",st:[5],c:"montero",w:5,q:"Megasound pierde dinero cada vez que un mantero vende tu disco. Vamos a meter un chip anticopia en el próximo. Si alguien lo copia, el CD explota. Un poco.",opts:[
+ {t:"Me parece fatal.",fx:{o:10,d:-10},r:"La Sra. Montero apunta tu nombre en una libreta negra. Tiene muchas páginas y casi todas son de artistas con principios."},
+ {t:"Me parece bien.",fx:{d:15,o:-15},risk:[.12,"cd"],r:"Sale el disco con chip. Explotan tres equipos de música, un coche y la paciencia de tus fans."},
+ {t:"Que el chip toque mi canción al explotar.",fx:{h:15,o:-5},r:"Marketing de guerrilla. Literalmente. Los CDs que explotan se vuelven objeto de culto."}]},
+{id:"tm_cunado",st:[5],c:"cunado",w:4,q:"Me he comprado tu disco en la manta. Tres euros. Y te digo una cosa: para ser pirata, suena mejor que el original. ¿Qué has hecho en el estudio, estropearlo?",opts:[
+ {t:"Darle la razón.",fx:{o:3,h:-3},r:"Se viene arriba y te da consejos de producción toda la cena. Le ha salido un máster en ecualización por WhatsApp."},
+ {t:"Pedirle los tres euros para mí.",fx:{d:3,o:-3},r:"Te los da en monedas de céntimo. Tardas veinte minutos en contarlas delante de toda la familia."},
+ {t:"Grabar el próximo disco en la manta.",fx:{h:15,s:-5},r:"Grabas con un micro de karaoke en el paseo marítimo. El ruido de las olas queda precioso. Las gaviotas piden royalties."}]},
+{id:"tm_melon",st:[5],c:"melon",w:4,q:"Bro, he hecho un remix de tu canción con el sonido de la manta al recogerse cuando llega la policía. Se llama «Fluuush». Está petando en las discotecas de Lloret.",opts:[
+ {t:"¡Súbelo con mi nombre!",fx:{h:20,o:-5},r:"«Fluuush (feat. {name})» es la canción del verano. La bailan hasta los municipales."},
+ {t:"Exijo mi parte.",fx:{d:10,h:-5},r:"DJ Melón te paga en tickets de copa. Gratis no es. Dinero tampoco."},
+ {t:"Prohibirlo. Es una falta de respeto.",fx:{o:5,h:-10},r:"El remix se vuelve más famoso por estar prohibido. Ahora se vende en la manta. Al lado de tu disco."}]},
+{id:"tm_paco",st:[5],c:"paco",w:4,q:"Tengo fotos de usted comprando su propio disco en una manta. Tres copias. ¿Las publico como «artista desesperad[o|a]» o como «artista solidari[o|a]»?",opts:[
+ {t:"Solidari[o|a], por favor.",fx:{d:-10,o:10},r:"Le pagas y sale la portada amable. Debajo, en letra pequeña: «(según fuentes pagadas)»."},
+ {t:"Desesperad[o|a]. Es la verdad.",fx:{h:10,o:-5,s:-3},r:"La sinceridad vende. Tu disco sube en las listas. En las oficiales y en las de la manta."},
+ {t:"Comprarle la cámara.",fx:{d:-15,h:5},r:"Te la vende. Tiene otra en la mochila. Siempre tienen otra en la mochila."}]},
+{id:"tm_ruiz",st:[5],c:"ruiz",w:3,q:"Hacienda ha detectado ventas de su disco por valor de 40.000 € en el paseo marítimo. ¿Me explica por qué no constan en su declaración?",opts:[
+ {t:"Porque no las he cobrado yo.",fx:{o:5,d:-5},r:"El inspector Ruiz suspira. Lleva tres meses intentando hacerle una paralela a una manta. No hay manera."},
+ {t:"Declararlas por si acaso.",fx:{d:-20,o:5},r:"Pagas impuestos por un dinero que nunca has visto. Ruiz se emociona: es el primer contribuyente voluntario de su carrera."},
+ {t:"Culpar a mi cuñado.",fx:{h:5,o:-5},f:{hacienda:1},r:"Ruiz apunta el nombre de tu cuñado. Y el tuyo, por si acaso. Con rotulador rojo."}]},
+{id:"tm_kira",st:[5],c:"kira",w:4,q:"Me he enterado de que tu disco vende más que el mío en las mantas. Así que he comprado todas las copias del paseo. Para quemarlas. Bueno, para que no las compre nadie.",opts:[
+ {t:"Gracias por comprar mi disco, Kira.",fx:{d:10,h:10},r:"Ousmane te manda tu parte, encantado. Kira tarda dos días en darse cuenta de que te ha hecho ric[o|a] la competencia."},
+ {t:"Comprar todas las copias del suyo.",fx:{d:-15,h:5},r:"Tienes ahora doscientos CDs de Kira Star en el garaje. Los usas de posavasos. Uno de cada dos tiene su cara."},
+ {t:"Montar un cara a cara en el paseo.",fx:{h:20,o:-5,s:-5},r:"Batalla de gallos entre mantas. Ganas por desafinar con más estilo. Ousmane hace de jurado y de taquilla."}]},
+{id:"tm_tito",st:[5],c:"tito",w:3,q:"En el Bar Pepe ponemos tu disco pirata a todo volumen. El original salta. El pirata no. ¿Firmas la copia de la casa?",opts:[
+ {t:"Firmarla con cariño.",fx:{o:5},r:"La cuelgan encima de la tragaperras. La tragaperras ya no aplaude: ahora llora de envidia."},
+ {t:"Una caña y la firmo.",fx:{h:3,s:-3},f:{alcohol:1},r:"Una caña y otra. Firmas el CD, la barra y la frente del Tito. Él lo enseña orgulloso a todo el que entra."},
+ {t:"Exigir que pongan el original.",fx:{o:-5,d:2},r:"Ponen el original. Salta en el estribillo. Tres veces. Manolo te mira y vuelve a poner el pirata."}]},
+{id:"tm_sindicato",st:[5],c:"ousmane",w:4,cond:()=>F("manta_amigo"),q:"El Sindicato de Manteros quiere hacerte socio de honor. Te diseñamos camiseta propia, con tu cara. Solo te pedimos un concierto gratis en la plaza.",opts:[
+ {t:"Concierto en la plaza.",fx:{h:20,o:15,d:-10,s:-5},r:"Cantas encima de cuatro mantas juntas. Cuando llega la policía, el escenario se recoge solo con un tirón. El mejor final de concierto de tu vida."},
+ {t:"Acepto la camiseta, pero sin concierto.",fx:{o:-5,h:5},r:"La camiseta se vende más que tu disco. Te alegras. Un poco."},
+ {t:"Prefiero no mezclarme.",fx:{o:-10,s:3},r:"Ousmane asiente sin enfadarse. Esa misma tarde, tu disco baja de la primera fila de la manta a la segunda."}]},
+{id:"tm_turista",st:[5],c:"jessica",w:3,q:"¡{name}! ¡Estoy de vacaciones en Benidorm y tu disco está en TODAS las mantas! Me he comprado once. Uno para cada día. ¿Me firmas la manta entera?",opts:[
+ {t:"Firmar la manta.",fx:{o:5,h:5},r:"Ousmane te deja firmar la manta. Luego la vende como manta firmada. Por cuarenta euros. Jessica la compra."},
+ {t:"Huir por el paseo.",fx:{s:-5,h:3},r:"Corres entre sombrillas. Jessica corre más. Te alcanza en el chiringuito y te pide una foto con la boca llena de calamares."},
+ {t:"Pedirle que compre originales.",fx:{o:-5,d:3},r:"Compra el original. Lo pone al lado de los once piratas. Dice que es «el raro de la familia»."}]},
+{id:"tm_bea",st:[5],c:"bea",w:4,q:"Te propongo una campaña: «Si me piratean, que sea con estilo». Subimos un tutorial de cómo copiar tu disco bien. Con calidad alta. Los de la discográfica se van a morir.",opts:[
+ {t:"¡Adelante!",fx:{h:25,o:5,d:-10},r:"El tutorial tiene dos millones de visitas. Megasound te manda una carta en mayúsculas. La enmarcas."},
+ {t:"Mejor un tutorial de cómo comprarlo.",fx:{o:3,h:-3,d:5},r:"Tiene catorce visitas. Doce son de tu madre. Las otras dos, de Bea comprobando que se ve."},
+ {t:"Despedir a Bea.",fx:{o:-5,s:3},r:"Bea se va a trabajar para Kira. A la semana, Kira sube un tutorial de cómo piratearte a ti. Con mejores luces."}]},
+{id:"tm_brayan",st:[5],c:"brayan",w:3,q:"Bro, olvídate del CD, eso es de boomers. Vamos a convertir cada copia pirata en un NFT. Pirata pero en la blockchain. Pirata 3.0. ¿Lo pillas?",opts:[
+ {t:"No lo pillo, pero entro.",fx:{d:-15,h:10},alt:[.4,{d:25,h:10},"Contra todo pronóstico, los NFT piratas se venden. Un coleccionista de Singapur paga una fortuna por el «CD rayado nº 4»."],r:"Los NFT bajan un 98 % en una tarde. Brayan te manda un audio: «Es la volatilidad, bro». Él se compra un Lambo."},
+ {t:"No.",fx:{o:3},r:"Brayan te bloquea, te desbloquea y te manda una invitación a su curso de 900 €."},
+ {t:"Le vendo mi CD original como NFT a él.",fx:{d:10,o:-3},r:"Te lo compra sin escucharlo. Lo cuelga en su foto de perfil. Es lo más parecido a un fan que ha tenido nunca."}]},
+{id:"tm_feria",st:[5],c:"alcalde",w:3,q:"Para las fiestas de Villarriba de Abajo queremos que cantes. Pero el presupuesto da para lo que da: te pagamos en copias de tu disco. Piratas. Las incautó la policía local.",opts:[
+ {t:"Acepto. Por el pueblo.",fx:{o:10,h:10,d:-5},r:"Cantas en la plaza entre la tómbola y la verbena. Repartes tus copias piratas al público. Te vuelven a comprar el original por pena."},
+ {t:"O me pagáis en euros o no canto.",fx:{d:10,o:-10},r:"Te pagan en euros. Te los dan en un sobre con el escudo del pueblo. Al día siguiente sale en el periódico: «Caché de la vergüenza»."},
+ {t:"Cantar gratis y vender yo las copias.",fx:{d:15,o:-5},f:{policia:1},r:"Pones tu propia manta en la verbena. El concejal de seguridad te mira raro. Vendes cien copias. Él compra una."}]},
+{id:"tm_herrera",st:[5],c:"herrera",w:3,q:"Puedo demandar a todos los manteros de España en una sola demanda colectiva. Ganaríamos 0 € y saldría en todos los periódicos. Mi minuta, eso sí, son 30.000.",opts:[
+ {t:"No, gracias.",fx:{o:5},r:"Herrera te cobra igualmente la consulta. Quince minutos. Ha tardado cuarenta en explicarlo."},
+ {t:"Demándelos a todos.",fx:{d:-20,o:-20,h:15},r:"Sales en todos los periódicos. Como el villano. Tu disco se convierte en el más pirateado del año, por rabia."},
+ {t:"Mejor demande a Kira por plagio.",fx:{d:-10,h:15},r:"El juicio no lleva a nada, pero los dos discos se venden el doble. En la manta, los ponen juntos."}]},
+{id:"tm_ola",st:[5],c:"nino",w:3,q:"¡Corre! ¡Viene una ola gigante y se va a llevar las mantas! ¡Tu disco va a acabar en el mar!",opts:[
+ {t:"Salvar las mantas.",fx:{o:15,s:-8},r:"Sacas tres mantas del agua. Los CDs están empapados. Ousmane los seca con un secador de pelo y los vende como «edición marina»."},
+ {t:"Salvar solo mis discos.",fx:{o:-10,h:3},r:"Te pillan las cámaras eligiendo tus discos de entre los de los demás. Titular: «Ego a prueba de tsunamis»."},
+ {t:"Grabar la ola para un videoclip.",fx:{h:15,s:-3},r:"Videoclip épico: tú cantando, la ola de fondo y cuarenta CDs flotando como medusas brillantes."}]},
+{id:"hood_tm",st:[5],c:"encapuchado",w:6,cond:()=>F("alma")&&!F("diablo"),q:"(Entre las mantas del paseo hay una que solo vende un CD. El tuyo. La atiende alguien con capucha). Tres euros. Te lo recomiendo. Lo escuché tantas veces que me lo sé al revés. Literalmente: al revés dice cosas.",opts:[
+ {t:"¿Qué dice al revés?",fx:{h:5},r:()=>"Se acerca y te lo canta bajito, al revés. Tardas en entenderlo: "+consejo(1)},
+ {t:"Comprarte mi propio disco.",fx:{d:-3,o:5},r:"Te da el cambio en una moneda antigua. Al mirar la carátula, ves que tiene escrita una fecha de dentro de treinta años."},
+ {t:"Preguntarle cuánto ha vendido.",fx:{o:3},r:"«Uno», dice. «Siempre al mismo cliente». Se baja un poco la capucha. Solo ves la barbilla. Es la tuya."}]},
 /* ---------- ETAPA 3 · Estrellato ---------- */
 {id:"dictador",st:[3],c:"dictador",q:"Concierto privado por mi cumpleaños. Pago dos millones. Tranquil[o|a]: en mi país solo encarcelamos a los que cantan mal.",opts:[
  {t:"Ir y cantarle «Cumpleaños feliz» con sentimiento.",fx:{d:35,o:-25},r:"Su Excelencia llora de emoción. Tú también, pero por otros motivos. Una ONG de derechos humanos te dedica un comunicado."},
@@ -1507,6 +1605,8 @@ const byId=Object.fromEntries(EV.map(e=>[e.id,e]));
 /* Personajes y amenazas que te persiguen también en las etapas 3 y 4 */
 const EXTRA_ST={toni_rep:[3,4],mama_rep:[3,4],ruiz:[3,4],guru:[3],guru_2:[3,4],bruno_dm:[3],gasolinera:[3,4],nazi_ruedas:[3,4],toni_moldavia:[3,4],forense:[3,4],hater:[3,4],mariano:[3],mariano_2:[3,4],kira_venganza:[3,4],afterparty:[3],yate:[3],paparazzi:[3],tuit:[3,4],cola:[3],fausto:[3],maripili:[3],nodulos:[3,4]};
 for(const id in EXTRA_ST) byId[id].st.push(...EXTRA_ST[id]);
+/* La etapa de top mantas (id 5) hereda todo lo que vive a la vez en el primer éxito y en el estrellato */
+for(const e of EV) if(e.st.includes(2)&&e.st.includes(3)&&!e.st.includes(5)) e.st.push(5);
 const REVIVE_EV=["rev_benito","rev_forense","rev_mama","rev_kira","rev_cunado","rev_manolo","rev_toni","rev_salas","rev_paco","rev_tito","rev_herrera","rev_chema","rev_jessica"];
 const INFIERNO_EV=["infierno_karaoke","infierno_contrato","infierno_encapuchado","infierno_kira"];
 const PEDRO_EV=["pedro_profecia","pedro_apuestas","pedro_encapuchado","pedro_kira","pedro_cancion","pedro_mudanza"];
@@ -1545,6 +1645,7 @@ const DEATHS={
  poli:{i:"🎙️",t:"Tapadera descubierta",x:"Encontraron el micro escondido en tu pedal de distorsión. Desapareciste en una boda heavy. Nadie notó la diferencia entre tus gritos y la canción."},
  fuga:{i:"🧱",t:"Fuga fallida",x:"Saltaste por la ventana de comisaría. Era un séptimo. La cresta no frenó la caída. El comisario la ha enmarcado."},
  ayahuasca:{i:"🦬",t:"Viaje sin vuelta",x:"Tu animal interior era un ñu. Te uniste a una migración imaginaria y cruzaste la autopista en hora punta. Los conductores dicen que ibas «muy en paz»."},
+ cd:{i:"💿",t:"Disco de platino",x:"El chip anticopia funcionó. Demasiado bien. Tu propio CD te explotó en las manos durante la presentación. Megasound lo llama «la gira de despedida más corta de la historia». Las copias piratas, sin chip, siguen sonando en el paseo."},
  universo:{i:"🕳️",t:"Paradoja total",x:"Te borras del mundo en el último compás. Como el encapuchado eras tú, y tú ya no existes, nadie volvió del futuro para avisarte; como nadie te avisó, firmaste; como firmaste… El universo intenta entenderlo, se cuelga y se apaga. El Diablo de los Acordes se queda sin infierno, San Pedro sin cielo y Kira Star sin público. Lo último que suena es tu canción. Desafinada."},
  secta:{i:"🧘",t:"Ayuno de luz",x:"Cuarenta días sin comer, alimentándote solo de sol, como manda el gurú. En Lanzarote hay mucho sol, pero no tanto. La Comunidad publica tus maquetas como «mantras». Son un éxito."}
 };
@@ -1555,16 +1656,19 @@ const BONUS=0.8; // y recorta todo lo que suma
 /* Etapas: p = desgaste por decisión; la etapa acaba al llevar `min` decisiones en ella con hype >= `hype`, o al llegar a `max`.
    Al acabar la etapa 4, la partida termina en «Leyenda». */
 const STG={
- 1:{name:"Etapa 1 · Los garitos",p:{d:1,h:2},min:30,hype:40,max:36,msg:"El público olvida rápido y el alquiler no perdona"},
- 2:{name:"Etapa 2 · Primer éxito",p:{d:1,h:1},min:25,hype:30,max:30,msg:"Vida de estrella. La fama desgasta"},
- 3:{name:"Etapa 3 · Estrellato",p:{d:1,h:2},min:25,hype:30,max:30,msg:"Mansión, séquito y abogados"},
- 4:{name:"Etapa 4 · Decadencia o leyenda",p:{d:1,h:2,s:1},min:21,hype:0,max:21,msg:"Los años pesan y el público busca caras nuevas"}
+ 1:{name:"Etapa 1 · Los garitos",p:{d:1,h:2},min:15,hype:40,max:18,msg:"El público olvida rápido y el alquiler no perdona"},
+ 2:{name:"Etapa 2 · Primer éxito",p:{d:1,h:1},min:20,hype:30,max:24,msg:"Vida de estrella. La fama desgasta"},
+ 5:{name:"Etapa 3 · CD en top mantas",p:{d:1,h:1},min:20,hype:30,max:24,msg:"Tu disco se vende a tres euros en el paseo y a ti no te llega ni uno"},
+ 3:{name:"Etapa 4 · Estrellato",p:{d:1,h:2},min:25,hype:30,max:30,msg:"Mansión, séquito y abogados"},
+ 4:{name:"Etapa 5 · Decadencia o leyenda",p:{d:1,h:2,s:1},min:21,hype:0,max:21,msg:"Los años pesan y el público busca caras nuevas"}
 };
+const NEXT={1:2,2:5,5:3,3:4}; /* orden de las etapas: la de top mantas (id 5) va entre el primer éxito y el estrellato */
 const RESPIRO=0.5;       // al cambiar de etapa, cada barra recorre esta fracción del camino hacia 50
 const CHECK_EVERY=7;     // cada cuántas decisiones se guarda un punto de control (además de al empezar cada etapa)
 const REVIVE_BOOST=0.25; // al resucitar, cada barra recorre esta fracción del camino hacia 50
 const INTER={
  2:{i:"📻",x:"Tu canción suena en la radio de una gasolinera de Albacete. Un camionero la tararea. Oficialmente, eres famos[o|a]. Ojo: la vida de estrella cuesta dinero y la fama se gasta antes."},
+ 5:{i:"🧺",x:"Tu disco ya está en todas las mantas del país, entre gafas de sol de imitación y bolsos de marca dudosa. Te piratean: eso significa que importas. Lo que no significa es que cobres."},
  3:{i:"🏟️",x:"Estadio lleno. Sesenta mil personas gritan tu nombre (mal pronunciado). Tienes mansión, mayordomo y tres abogados. También tienes enemigos que todavía no conoces."},
  4:{i:"🥀",x:"Han pasado los años. Tu último single lo escucharon tu madre y un algoritmo. Toca elegir: decadencia o leyenda. La dignidad no está incluida en ninguna de las dos."}
 };
@@ -1663,7 +1767,7 @@ const snap=()=>JSON.stringify(Object.assign({},S,{used:[...S.used],cur:null}));
 function unsnap(j){const o=JSON.parse(j);o.used=new Set(o.used);return o;}
 function checkpoint(label){
  S.ckTurn=S.turn; S.ckLabel=label; CK=snap();
- store("cae_save",{ck:CK,revives:S.revives,pSeen:S.pSeen||[],rSeen:S.rSeen||[]});
+ store("cae_save",{ck:CK,revives:S.revives,pSeen:S.pSeen||[],rSeen:S.rSeen||[],deathLog:S.deathLog||[],clicks:S.clicks||0});
  toast("💾 Punto de control: "+label);
 }
 
@@ -1682,15 +1786,16 @@ function drawHud(delta){
  if(F("billete")) extra.push(`<span title="Billete de vuelta: te salva de una muerte">🎫</span>`);
  if(F("hada_ok")%3) extra.push(`<span title="Rituales con el hada (a los 3, billete de vuelta)">🧚${F("hada_ok")%3}/3</span>`);
  if(S.inv&&!S.inv.sold) extra.push(`<span title="Valor de tu inversión (${tx(INV[S.inv.p].n)}); pagaste ${S.inv.amt}">📈${Math.round(S.inv.val)}</span>`);
- metaEl.innerHTML=`<span>${S.g==="m"?"👨‍🎤":"👩‍🎤"}${GEN[S.gen].e} ${esc(S.name)}${extra.length?" · "+extra.join(" · "):""}</span><span>${STG[S.stage].name} · Decisión ${S.turn+1}</span>`;
+ metaEl.innerHTML=`<span>${S.g==="m"?"👨‍🎤":"👩‍🎤"}${GEN[S.gen].e} ${esc(S.name)}${extra.length?" · "+extra.join(" · "):""}</span><span>${STG[S.stage].name}</span>`;
  document.body.classList.toggle("infierno",!!F("diablo"));
+ document.documentElement.dataset.gen=S.gen;
 }
 
 function newGame(){
  const inp=$("#name");
  const name=(inp&&inp.value.trim())||(S&&S.name)||NAMES[pickG][Math.floor(Math.random()*5)];
  const r0=()=>38+Math.floor(Math.random()*18), mod=GEN[pickGen].mod;
- S={g:pickG,gen:pickGen,name:name.slice(0,28),st:{o:r0(),d:r0(),h:r0(),s:r0()},f:{},used:new Set(),turn:0,stage:1,t0:0,queue:[],next:null,recent:[],cur:null,revives:0,ckTurn:-1,ckLabel:"",ckPending:null,hoodAt:15};
+ S={g:pickG,gen:pickGen,name:name.slice(0,28),st:{o:r0(),d:r0(),h:r0(),s:r0()},f:{},used:new Set(),turn:0,stage:1,t0:0,queue:[],next:null,recent:[],cur:null,revives:0,ckTurn:-1,ckLabel:"",ckPending:null,hoodAt:12};
  for(const k in mod) S.st[k]=clamp(S.st[k]+mod[k]);
  CK=null; store("cae_save",null);
  hudEl.hidden=false; metaEl.hidden=false;
@@ -1707,7 +1812,7 @@ function pick(){
  let pool=EV.filter(e=>!e.chain&&ok(e)&&(e.rep||!S.used.has(e.id))&&!S.recent.includes(e.id)&&fresh(e));
  if(!pool.length) pool=EV.filter(e=>!e.chain&&ok(e)&&(e.rep||!S.used.has(e.id))&&!S.recent.includes(e.id));
  if(!pool.length) pool=EV.filter(e=>e.rep&&ok(e));
- const wt=e=>e.w||(e.rep?1:3);
+ const wt=e=>(e.w||(e.rep?1:3))*(S.stage===5&&!/^(tm_|hood_tm)/.test(e.id)?.35:1); /* en la etapa de top mantas mandan sus propios eventos */
  let r=Math.random()*pool.reduce((a,e)=>a+wt(e),0);
  for(const e of pool){r-=wt(e);if(r<=0)return e;}
  return pool[pool.length-1];
@@ -1720,7 +1825,7 @@ function advance(){
    if(F("diablo")&&!S.used.has("diablo_final")) return showEvent(byId.diablo_final); /* el pacto se cobra al final */
    return endGame(null);
   }
-  S.stage++; S.t0=S.turn;
+  S.stage=NEXT[S.stage]; S.t0=S.turn;
   if(S.stage===2&&!S.inv&&!S.used.has("asesor")) S.queue.push({id:"asesor",at:S.turn+3}); /* el asesor llega con el primer éxito */
   for(const [k] of STATS) S.st[k]=Math.round(S.st[k]+(50-S.st[k])*RESPIRO);
   drawHud();
@@ -1730,7 +1835,7 @@ function advance(){
   return interlude(`<div class="big">${it.i}</div>`,STG[S.stage].name,tx(it.x)+" Empiezas la etapa con las barras algo más equilibradas. A partir de ahora, cada decisión: "+fmtP(STG[S.stage].p)+".","Seguir",()=>showEvent(pick()));
  }
  if(S.ckPending&&!S.next){checkpoint(S.ckPending);S.ckPending=null;}
- else if(F("alma")&&!S.next&&S.turn%CHECK_EVERY===0&&S.ckTurn!==S.turn) checkpoint("decisión "+S.turn);
+ else if(F("alma")&&!S.next&&S.turn%CHECK_EVERY===0&&S.ckTurn!==S.turn) checkpoint(STG[S.stage].name);
  showEvent(pick());
 }
 
@@ -1749,7 +1854,7 @@ const AFTER=id=>/^(pedro_|infierno_)/.test(id)||id==="cielo"||id==="cielo2"; /* 
 function choose(i){
  const e=S.cur,o=e.opts[i];
  S.used.add(e.id); S.recent.push(e.id); if(S.recent.length>4)S.recent.shift();
- S.turn++;
+ S.turn++; S.clicks=(S.clicks||0)+1;
  const fx={}, notes=[];
  let base=V(o.fx)||{}, rtext=o.r;
  if(o.alt&&Math.random()<o.alt[0]){base=o.alt[1];rtext=o.alt[2];} /* resultado alternativo por azar */
@@ -1812,8 +1917,8 @@ function revive(){
  /* Lo que viviste entre el punto de control y la muerte: no se repite enseguida al volver */
  const ckUsed=new Set(JSON.parse(CK).used);
  const lived=[...S.used].filter(id=>!ckUsed.has(id)&&!byId[id].chain);
- const pSeen=S.pSeen||[], rSeen=S.rSeen||[];
- S=unsnap(CK); S.revives=r; S.streak=streak; S.streakCk=S.ckTurn;
+ const pSeen=S.pSeen||[], rSeen=S.rSeen||[], deathLog=S.deathLog||[], clicks=S.clicks||0;
+ S=unsnap(CK); S.revives=r; S.deathLog=deathLog; S.clicks=clicks; S.streak=streak; S.streakCk=S.ckTurn;
  const boost=Math.min(0.85,REVIVE_BOOST+0.15*(streak-1));
  for(const [k] of STATS) S.st[k]=Math.round(S.st[k]+(50-S.st[k])*boost);
  /* San Pedro limpia un poco el expediente para que no vuelvas directo a la misma muerte */
@@ -1836,50 +1941,79 @@ function revive(){
  S.pSeen=first?pSeen:(pPool.length?pSeen:[]).concat(pid);
  S.rSeen=(rPool.length?rSeen:[]).concat(rid);
  S.next=pid; S.revNext=rid;
- store("cae_save",{ck:CK,revives:r,pSeen:S.pSeen,rSeen:S.rSeen});
+ store("cae_save",{ck:CK,revives:r,pSeen:S.pSeen,rSeen:S.rSeen,deathLog:S.deathLog,clicks:S.clicks});
  hudEl.hidden=false; metaEl.hidden=false; drawHud();
  const why=(dead&&DEATHS[dead]?"Te mató: <b>"+tx(DEATHS[dead].t)+"</b>. ":"")+(streak>1?"Llevas "+streak+" muertes seguidas en el mismo punto: San Pedro te devolverá en mejor forma. ":"");
  if(hell) interlude(avatar("diablo"),"Resurrección infernal nº "+r,why.replace("San Pedro","el Diablo de los Acordes")+"Todo se vuelve rojo. Huele a azufre y a ensayo de batería. Alguien afina una guitarra con los dientes y te hace sitio en un sofá de skai que quema.","Hablar con el Diablo",()=>advance());
  else interlude(avatar("pedro"),"Resurrección nº "+r,why+"Todo se vuelve blanco. Otra vez. Huele a nube y a papeleo. Alguien carraspea detrás de un mostrador.","Hablar con San Pedro",()=>advance());
 }
 
-function endGame(death,special){ /* special: "universo" = final del pacto con el diablo */
- const best=store("cae_best")||{turns:0};
- const isRecord=S.turn>best.turns;
- if(isRecord) store("cae_best",{turns:S.turn,stage:S.stage});
+function endGame(death,special){ /* special: "universo" = final del pacto con el diablo · "rendicion" = te rindes */
  let got=store("cae_deaths")||[];
- const key=death||special;
- if(key&&!got.includes(key)){got.push(key);store("cae_deaths",got);}
+ if(death){
+  S.deathLog=(S.deathLog||[]).concat({d:death,c:S.cur?S.cur.c:null}); /* con quién moriste */
+  if(!got.includes(death)){got.push(death);store("cae_deaths",got);}
+ }
+ if(special==="universo"&&!got.includes(special)){got.push(special);store("cae_deaths",got);}
  S.lastDeath=death;
+ const final=!death||!CK; /* sin resurrección posible, la partida acaba aquí */
+ const best=store("cae_best")||{turns:0};
+ const isRecord=final&&S.turn>best.turns;
+ if(isRecord) store("cae_best",{turns:S.turn,stage:S.stage});
  if(!death){store("cae_save",null);CK=null;}
  if(special) document.body.classList.remove("infierno");
  const resu=S.revives?", aunque tuviste que resucitar "+S.revives+(S.revives===1?" vez":" veces"):"";
- const d=death?DEATHS[death]:special?DEATHS[special]:(F("mision")
+ const d=special==="rendicion"?{i:"🏳️",t:"Retirada",x:"Cuelgas la guitarra, apagas el móvil y te vas a vivir al pueblo de tu madre. Kira Star sube un story muy triste. San Pedro archiva tu expediente en el cajón de «casi». Y en algún lugar, alguien con capucha suspira."}
+  :death?DEATHS[death]:special?DEATHS[special]:(F("mision")
   ?{i:"🌍",t:"Leyenda (y el mundo sigue aquí)",x:"Cantas la última nota de tu última gira"+resu+". En algún lugar, una profecía con muy mala letra se tacha sola. El mundo no se destruye. Nadie se entera. Kira Star se atribuye el mérito. Desde arriba, San Pedro levanta el pulgar. Y en la última fila, alguien con capucha se va sin hacer ruido."}
-  :{i:"👑",t:"Leyenda",x:"Sobreviviste a los garitos, a la fama, a tu cuñado, a Hacienda, a Don Mariano y a ti mism[o|a]"+resu+". Te retiras a una isla con tus royalties. Nunca sabrás que el mundo dependía de ti. Kira Star canta en tu homenaje. Desafina. Por fin, sonríes."});
+  :{i:"👑",t:"Leyenda",x:"Sobreviviste a los garitos, a la fama, a las mantas, a tu cuñado, a Hacienda, a Don Mariano y a ti mism[o|a]"+resu+". Te retiras a una isla con tus royalties. Nunca sabrás que el mundo dependía de ti. Kira Star canta en tu homenaje. Desafina. Por fin, sonríes."});
+ const head=special==="rendicion"?["univ","TE HAS RENDIDO"]:death?["","HAS MUERTO"]:special?["univ","HAS DESTRUIDO EL UNIVERSO"]:["win","ERES UNA LEYENDA"];
  const coll=Object.keys(DEATHS).map(k=>{const on=got.includes(k);return `<div class="${on?"":"lock"}"><span>${on?DEATHS[k].i:"❔"}</span>${on?tx(DEATHS[k].t):"???"}</div>`}).join("");
  scr.innerHTML=`<div class="card">
   <div class="big">${d.i}</div>
-  <div class="fin ${death?"":special?"univ":"win"}">${death?"HAS MUERTO":special?"HAS DESTRUIDO EL UNIVERSO":"ERES UNA LEYENDA"}</div>
+  <div class="fin ${head[0]}">${head[1]}</div>
   <div class="dt">${tx(d.t)}</div>
   <div class="bubble narr">${tx(d.x)}</div>
   ${isRecord?`<span class="badge">¡Nuevo récord!</span>`:""}
-  <div class="stats"><div><b>${S.turn}</b>decisiones</div><div><b>${Math.max(S.turn,best.turns)}</b>récord</div><div><b>${S.revives}</b>resurrecciones</div></div>
-  <h3>Muertes desbloqueadas · ${got.length}/${Object.keys(DEATHS).length}</h3>
+  ${final?`<div class="stats"><div><b>${S.turn}</b>decisiones</div><div><b>${Math.max(S.turn,best.turns)}</b>récord</div><div><b>${S.revives}</b>resurrecciones</div></div>`:""}
+  <h3>Finales desbloqueados · ${got.length}/${Object.keys(DEATHS).length}</h3>
   <div class="coll">${coll}</div></div>
-  ${death&&CK?`<button class="btn gold" id="rev">😇 Resucitar (${esc(S.ckLabel)})</button>`:""}
+  ${!final?`<button class="btn gold" id="rev">${F("diablo")?"😈":"😇"} Resucitar (${esc(S.ckLabel)})</button><button class="btn ghost" id="quit">🏳️ Rendirse</button>`:""}
   ${death&&!CK?`<p class="small">Aún no te habías cruzado con el encapuchado: sin alma guardada no hay resurrección. Toca empezar de cero.</p>`:""}
-  <button class="btn${death&&CK?" ghost":""}" id="again">Empezar de cero</button>
-  <button class="btn ghost" id="home">Cambiar de personaje</button>`;
+  ${final?`<button class="btn" id="again">Empezar de cero</button><button class="btn ghost" id="home">Cambiar de personaje</button>`:""}`;
+ window.scrollTo(0,0);
  if($("#rev")) $("#rev").onclick=revive;
- $("#again").onclick=()=>{pickG=S.g;pickGen=S.gen;newGame();};
- $("#home").onclick=home;
+ if($("#quit")) $("#quit").onclick=askQuit;
+ if($("#again")) $("#again").onclick=()=>{pickG=S.g;pickGen=S.gen;newGame();};
+ if($("#home")) $("#home").onclick=home;
+}
+
+/* Rendirse: pop-up de confirmación con el contador y las muertes de la partida */
+function askQuit(){
+ const log=S.deathLog||[], total=S.clicks||S.turn;
+ const rows=log.map(x=>{const c=x.c&&C[x.c];return `<li>${c?avatar(x.c,1):`<span class="big" style="font-size:40px">${DEATHS[x.d].i}</span>`}<div><b>${c?tx(c.n):"Nadie"}</b><span>${DEATHS[x.d].i} ${tx(DEATHS[x.d].t)}</span></div></li>`}).join("");
+ const m=document.createElement("div"); m.id="modal"; m.setAttribute("role","dialog"); m.setAttribute("aria-modal","true");
+ m.innerHTML=`<div class="box">
+  <div class="dt">¿Seguro que quieres rendirte?</div>
+  <div class="count"><b>${total}</b>decisiones tomadas${total!==S.turn?` <span>(contando las que repetiste al resucitar)</span>`:""}</div>
+  <h3>${log.length===1?"Moriste con":"Has muerto con"}…</h3>
+  <ul class="dlog">${rows}</ul>
+  <button class="btn" id="mq_yes">🏳️ Sí, me rindo</button>
+  <button class="btn ghost" id="mq_no">No, quiero resucitar</button></div>`;
+ document.body.appendChild(m);
+ const close=()=>{m.remove();document.removeEventListener("keydown",esc_);};
+ const esc_=e=>{if(e.key==="Escape")close();};
+ document.addEventListener("keydown",esc_);
+ m.onclick=e=>{if(e.target===m)close();};
+ $("#mq_no").onclick=close;
+ $("#mq_yes").onclick=()=>{close();CK=null;store("cae_save",null);endGame(null,"rendicion");};
+ $("#mq_no").focus();
 }
 
 function home(){
  const sv=store("cae_save");
  const keepName=S&&S.name;
- S=null; hudEl.hidden=true; metaEl.hidden=true;
+ S=null; hudEl.hidden=true; metaEl.hidden=true; document.documentElement.dataset.gen=pickGen; document.body.classList.remove("infierno");
  const best=store("cae_best"), got=store("cae_deaths")||[];
  let svInfo="";
  if(sv&&sv.ck){try{const o=JSON.parse(sv.ck);svInfo=`${esc(o.name)} · ${esc(o.ckLabel)}${sv.revives?" · 😇×"+sv.revives:""}`;}catch(e){}}
@@ -1897,12 +2031,12 @@ function home(){
   <input class="name" id="name" maxlength="28" placeholder="${NAMES[pickG][0]}" autocomplete="off" value="${keepName?esc(keepName):""}">
   <button class="btn${svInfo?" ghost":""}" id="start">Nueva partida</button>
   <div class="rules"><b>Cómo se juega:</b> cada decisión mueve tus cuatro barras: 🗣️ opinión pública, 💰 dinero, 🔥 hype y ❤️ salud. Si alguna llega a 0 <b>o a 100</b>, mueres en el acto. Algunas decisiones también pueden matarte sin avisar, y hay cosas que el juego no te enseña pero sí recuerda.<br><br><b>💾 Puntos de control:</b> hasta que no te cruces con cierto desconocido, morir es para siempre. A partir de ahí, tu alma se guarda al empezar cada etapa y cada ${CHECK_EVERY} decisiones, y cuando mueras volverás al último punto para enmendar tus errores.<br><br><b>🏁 Meta:</b> llegar a leyenda exige al menos 101 decisiones. Por el camino te cruzarás con un asesor que invierte tu dinero (📈), un hada que vende consejos a cambio de salud (🧚, y a la tercera, 🎫 un billete que te salva de una muerte) y, quizá, con alguien que huele a azufre.</div>
-  <p class="small">${best?`Récord: ${best.turns} decisiones · `:""}Muertes desbloqueadas: ${got.length}/${Object.keys(DEATHS).length}</p>`;
+  <p class="small">${best?`Récord: ${best.turns} decisiones · `:""}Finales desbloqueados: ${got.length}/${Object.keys(DEATHS).length}</p>`;
  scr.querySelectorAll(".gender").forEach(b=>b.onclick=()=>{pickG=b.dataset.g;scr.querySelectorAll(".gender").forEach(x=>x.setAttribute("aria-pressed",x===b));$("#name").placeholder=NAMES[pickG][0];});
- scr.querySelectorAll(".genre").forEach(b=>b.onclick=()=>{pickGen=b.dataset.k;scr.querySelectorAll(".genre").forEach(x=>x.setAttribute("aria-pressed",x===b));});
+ scr.querySelectorAll(".genre").forEach(b=>b.onclick=()=>{pickGen=b.dataset.k;scr.querySelectorAll(".genre").forEach(x=>x.setAttribute("aria-pressed",x===b));document.documentElement.dataset.gen=pickGen;});
  $("#start").onclick=newGame;
  $("#name").onkeydown=e=>{if(e.key==="Enter")newGame();};
- if($("#cont")) $("#cont").onclick=()=>{CK=sv.ck;S=unsnap(CK);if(!S.gen)S.gen="rock";if(S.hoodAt===undefined){S.hoodAt=S.turn;S.f.alma=1;}S.revives=sv.revives||0;S.pSeen=sv.pSeen||[];S.rSeen=sv.rSeen||[];hudEl.hidden=false;metaEl.hidden=false;drawHud();advance();};
+ if($("#cont")) $("#cont").onclick=()=>{CK=sv.ck;S=unsnap(CK);if(!S.gen)S.gen="rock";if(S.hoodAt===undefined){S.hoodAt=S.turn;S.f.alma=1;}S.revives=sv.revives||0;S.deathLog=sv.deathLog||[];S.clicks=sv.clicks||S.turn;S.pSeen=sv.pSeen||[];S.rSeen=sv.rSeen||[];hudEl.hidden=false;metaEl.hidden=false;drawHud();advance();};
 }
 
 /* Teclado: 1-3 / A-C para elegir */
