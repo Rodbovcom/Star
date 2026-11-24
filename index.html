@@ -1665,7 +1665,6 @@ const STG={
 const NEXT={1:2,2:5,5:3,3:4}; /* orden de las etapas: la de top mantas (id 5) va entre el primer éxito y el estrellato */
 const RESPIRO=0.5;       // al cambiar de etapa, cada barra recorre esta fracción del camino hacia 50
 const CHECK_EVERY=7;     // cada cuántas decisiones se guarda un punto de control (además de al empezar cada etapa)
-const REVIVE_BOOST=0.25; // al resucitar, cada barra recorre esta fracción del camino hacia 50
 const INTER={
  2:{i:"📻",x:"Tu canción suena en la radio de una gasolinera de Albacete. Un camionero la tararea. Oficialmente, eres famos[o|a]. Ojo: la vida de estrella cuesta dinero y la fama se gasta antes."},
  5:{i:"🧺",x:"Tu disco ya está en todas las mantas del país, entre gafas de sol de imitación y bolsos de marca dudosa. Te piratean: eso significa que importas. Lo que no significa es que cobres."},
@@ -1919,8 +1918,7 @@ function revive(){
  const lived=[...S.used].filter(id=>!ckUsed.has(id)&&!byId[id].chain);
  const pSeen=S.pSeen||[], rSeen=S.rSeen||[], deathLog=S.deathLog||[], clicks=S.clicks||0;
  S=unsnap(CK); S.revives=r; S.deathLog=deathLog; S.clicks=clicks; S.streak=streak; S.streakCk=S.ckTurn;
- const boost=Math.min(0.85,REVIVE_BOOST+0.15*(streak-1));
- for(const [k] of STATS) S.st[k]=Math.round(S.st[k]+(50-S.st[k])*boost);
+ for(const [k] of STATS) S.st[k]=50; /* al resucitar, todas las barras vuelven a la mitad */
  /* San Pedro limpia un poco el expediente para que no vuelvas directo a la misma muerte */
  if(F("neonazis")>=2) S.f.neonazis=1;
  if(F("drogas")>=3) S.f.drogas=2;
@@ -1943,7 +1941,7 @@ function revive(){
  S.next=pid; S.revNext=rid;
  store("cae_save",{ck:CK,revives:r,pSeen:S.pSeen,rSeen:S.rSeen,deathLog:S.deathLog,clicks:S.clicks});
  hudEl.hidden=false; metaEl.hidden=false; drawHud();
- const why=(dead&&DEATHS[dead]?"Te mató: <b>"+tx(DEATHS[dead].t)+"</b>. ":"")+(streak>1?"Llevas "+streak+" muertes seguidas en el mismo punto: San Pedro te devolverá en mejor forma. ":"");
+ const why=(dead&&DEATHS[dead]?"Te mató: <b>"+tx(DEATHS[dead].t)+"</b>. ":"")+"Vuelves con todas las barras a la mitad. ";
  if(hell) interlude(avatar("diablo"),"Resurrección infernal nº "+r,why.replace("San Pedro","el Diablo de los Acordes")+"Todo se vuelve rojo. Huele a azufre y a ensayo de batería. Alguien afina una guitarra con los dientes y te hace sitio en un sofá de skai que quema.","Hablar con el Diablo",()=>advance());
  else interlude(avatar("pedro"),"Resurrección nº "+r,why+"Todo se vuelve blanco. Otra vez. Huele a nube y a papeleo. Alguien carraspea detrás de un mostrador.","Hablar con San Pedro",()=>advance());
 }
