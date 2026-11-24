@@ -148,6 +148,7 @@ html[data-theme="light"][data-gen]{--bg:#fff}
 .dlog b{display:block;font-size:14px}.dlog span{font-size:12px;color:var(--mute)}
 html[data-theme="light"] #modal .box{background:#fff;border-color:#d9d9e0}
 html[data-theme="light"] .dlog li{background:#f2f2f5}
+.opt .rk{display:block;margin-top:5px;font-style:normal;font-size:12px;font-weight:600;color:var(--bad)}
 </style>
 </head>
 <body>
@@ -368,7 +369,7 @@ const EV=[
 {id:"kevin_nazis",st:[1,2],c:"kevin",q:"Bolo el sábado. Pagan 3.000 pavos en efectivo. El público es… muy de cabeza rapada. Pero aplauden con un ritmo marcial precioso.",opts:[
  {t:"Pago es pago.",fx:{d:25,o:-20},set:{nazifan:1},later:["video_nazi",5],r:"Cantas «Que viva España» doce veces. Alguien lo graba con el móvil. Ese vídeo existirá para siempre."},
  {t:"Paso. Tengo dignidad. Y alergia al cuero.",fx:{o:10,d:-10},r:"Kevin se encoge de hombros: «Tú te lo pierdes, artista». Te lo pierdes, sí. Y lo celebras."},
- {t:"Voy… y les suelto un alegato antifascista.",fx:{o:25,h:15,s:-30},f:{neonazis:1},r:"Les hablas de tolerancia. Te responden con una silla plegable. Sales en las noticias con un ojo morado y mucha dignidad."}]},
+ {t:"Voy… y les suelto un alegato antifascista.",fx:{o:25,h:15,s:-12},f:{neonazis:1},r:"Les hablas de tolerancia. Te responden con una silla plegable. Sales en las noticias con un ojo morado y mucha dignidad."}]},
 
 {id:"video_nazi",chain:1,st:[1,2],c:"paco",q:"Tengo un vídeo tuyo cantando ante doscientos cabezas rapadas haciendo… gestos. ¿Algún comentario antes de publicarlo?",opts:[
  {t:"Te pago para que lo borres.",fx:{d:-25},r:"Lo borra. Tiene copia. Siempre tienen copia."},
@@ -1749,6 +1750,41 @@ function ritualHada(){
  }
  return t;
 }
+/* ============ RIESGOS DE MUERTE ============
+   Cada muerte por azar depende de una barra: [barra, umbral, ">=" o "<=", por qué te salva].
+   Si cumples el umbral, no mueres. Si no, la probabilidad original se duplica (máx. 85 %). */
+const RIESGO={
+ diving:["h",60,">=","el público te quiere tanto que te recoge"],
+ electro:["s",50,">=","un cuerpo sano aguanta la descarga"],
+ mejillones:["s",60,">=","tu estómago es de hierro"],
+ selfie:["s",50,">=","tienes reflejos para no caerte"],
+ drogas:["s",60,">=","tu cuerpo aguanta lo que le eches"],
+ avion:["d",60,">=","pagas un piloto sobrio"],
+ tigre:["s",50,">=","corres más que el tigre"],
+ cirugia:["d",60,">=","pagas un cirujano de verdad"],
+ fans:["s",50,">=","aguantas el achuchón"],
+ mafia:["o",60,">=","eres demasiado famos[o|a] para desaparecer"],
+ hater:["o",60,">=","tus fans te protegen"],
+ cd:["s",50,">=","esquivas la explosión"],
+ dictador:["o",70,">=","la presión internacional te protege"],
+ espacio:["d",70,">=","la nave es buena"],
+ arnes:["d",60,">=","el técnico tiene título"],
+ estadio:["d",60,">=","pagas una inspección de verdad"],
+ infarto:["s",60,">=","tu corazón aguanta"],
+ reto:["s",50,">=","calculas bien el salto"],
+ pelea:["s",60,">=","pegas más fuerte que el motero"],
+ poli:["o",60,">=","nadie sospecha de ti"],
+ fuga:["s",60,">=","caes rodando como un gato"],
+ ayahuasca:["s",60,">=","tu cabeza vuelve del viaje"],
+ documental:["h",40,"<=","nadie te reconoce"]
+};
+const statIc=k=>STATS.find(x=>x[0]===k)[1];
+const riskOk=rr=>rr[2]==="<="?S.st[rr[0]]<=rr[1]:S.st[rr[0]]>=rr[1];
+function riskTag(o){
+ if(!o.risk) return "";
+ const rr=RIESGO[o.risk[1]];
+ return `<em class="rk">☠️ Puede matarte${rr?` · a salvo con ${statIc(rr[0])} ${rr[2]==="<="?"≤":"≥"} ${rr[1]}`:""}</em>`;
+}
 let S=null, pickG="f", pickGen="rock", CK=null;
 const $=s=>document.querySelector(s);
 const scr=$("#screen"), hudEl=$("#hud"), metaEl=$("#meta");
@@ -1826,6 +1862,7 @@ function advance(){
   }
   S.stage=NEXT[S.stage]; S.t0=S.turn;
   if(S.stage===2&&!S.inv&&!S.used.has("asesor")) S.queue.push({id:"asesor",at:S.turn+3}); /* el asesor llega con el primer éxito */
+  if(S.stage===2&&!F("diablo")&&!S.used.has("diablo_oferta")) S.queue.push({id:"diablo_oferta",at:S.turn+6+Math.floor(Math.random()*50)}); /* el diablo aparece seguro una vez: en el primer éxito, en las mantas o en el estrellato */
   for(const [k] of STATS) S.st[k]=Math.round(S.st[k]+(50-S.st[k])*RESPIRO);
   drawHud();
   S.ckPending=null;
@@ -1845,7 +1882,7 @@ function showEvent(e){
   ${avatar(e.c)}
   <div class="who"><b>${tx(c.n)}</b><span>${tx(c.r)}</span></div>
   <div class="bubble">${tx(V(e.q))}</div></div>
-  <div class="opts">${shuffle(e.opts.map((o,i)=>i)).map((i,pos)=>`<button class="opt" data-i="${i}"><span class="k">${"ABC"[pos]}</span><span>${tx(V(e.opts[i].t))}</span></button>`).join("")}</div>`;
+  <div class="opts">${shuffle(e.opts.map((o,i)=>i)).map((i,pos)=>`<button class="opt" data-i="${i}"><span class="k">${"ABC"[pos]}</span><span>${tx(V(e.opts[i].t))}${riskTag(e.opts[i])}</span></button>`).join("")}</div>`;
  scr.querySelectorAll(".opt").forEach(b=>b.onclick=()=>choose(+b.dataset.i));
 }
 
@@ -1872,7 +1909,11 @@ function choose(i){
  if(o.run){const t=o.run(); if(t) rtext=t;}
  rtext=V(rtext);
  let death=o.die||null;
- if(!death&&o.risk&&Math.random()<o.risk[0]){death=o.risk[1];rtext="Algo sale terriblemente mal…";for(const k in fx)delete fx[k];}
+ if(!death&&o.risk){ /* riesgo de muerte: depende de una barra (ver RIESGO) */
+  const rr=RIESGO[o.risk[1]], ok=rr&&riskOk(rr), pr=rr?(ok?0:Math.min(.85,o.risk[0]*2)):o.risk[0];
+  if(Math.random()<pr){death=o.risk[1];rtext="Algo sale terriblemente mal…";for(const k in fx)delete fx[k];}
+  else if(rr) notes.push(ok?`Tu ${statIc(rr[0])} te ha salvado: ${tx(rr[3])}.`:`Te has librado de milagro: con tu ${statIc(rr[0])} así, era muy arriesgado.`);
+ }
  const enCielo=AFTER(e.id);
  if(!death){
   if(!enCielo){
