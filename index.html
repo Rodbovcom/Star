@@ -149,6 +149,7 @@ html[data-theme="light"][data-gen]{--bg:#fff}
 html[data-theme="light"] #modal .box{background:#fff;border-color:#d9d9e0}
 html[data-theme="light"] .dlog li{background:#f2f2f5}
 .opt .rk{display:block;margin-top:5px;font-style:normal;font-size:12px;font-weight:600;color:var(--bad)}
+.btn.wa{background:linear-gradient(90deg,#25d366,#128c7e);color:#fff;box-shadow:0 8px 24px rgba(37,211,102,.3)}
 </style>
 </head>
 <body>
@@ -1998,6 +1999,12 @@ function endGame(death,special){ /* special: "universo" = final del pacto con el
  const final=!death||!CK; /* sin resurrección posible, la partida acaba aquí */
  const best=store("cae_best")||{turns:0};
  const isRecord=final&&S.turn>best.turns;
+ /* Estadísticas acumuladas de todas las partidas (para compartir) */
+ const T=store("cae_stats")||{games:0,win:0,univ:0,quit:0,perma:0,deaths:0,revives:0,turns:0};
+ if(death) T.deaths++;
+ if(final&&!S.counted){S.counted=1;T.games++;T.turns+=S.turn;T.revives+=S.revives;
+  if(special==="rendicion")T.quit++;else if(special==="universo")T.univ++;else if(death)T.perma++;else T.win++;}
+ store("cae_stats",T);
  if(isRecord) store("cae_best",{turns:S.turn,stage:S.stage});
  if(!death){store("cae_save",null);CK=null;}
  if(special) document.body.classList.remove("infierno");
@@ -2014,7 +2021,7 @@ function endGame(death,special){ /* special: "universo" = final del pacto con el
   <div class="dt">${tx(d.t)}</div>
   <div class="bubble narr">${tx(d.x)}</div>
   ${isRecord?`<span class="badge">¡Nuevo récord!</span>`:""}
-  ${final?`<div class="stats"><div><b>${S.turn}</b>decisiones</div><div><b>${Math.max(S.turn,best.turns)}</b>récord</div><div><b>${S.revives}</b>resurrecciones</div></div>`:""}
+  ${final?`<div class="stats"><div><b>${S.turn}</b>decisiones</div><div><b>${Math.max(S.turn,best.turns)}</b>récord</div><div><b>${S.revives}</b>resurrecciones</div></div><button class="btn wa" id="share">📲 Compartir por WhatsApp</button>`:""}
   <h3>Finales desbloqueados · ${got.length}/${Object.keys(DEATHS).length}</h3>
   <div class="coll">${coll}</div></div>
   ${!final?`<button class="btn gold" id="rev">${F("diablo")?"😈":"😇"} Resucitar (${esc(S.ckLabel)})</button><button class="btn ghost" id="quit">🏳️ Rendirse</button>`:""}
@@ -2023,10 +2030,25 @@ function endGame(death,special){ /* special: "universo" = final del pacto con el
  window.scrollTo(0,0);
  if($("#rev")) $("#rev").onclick=revive;
  if($("#quit")) $("#quit").onclick=askQuit;
+ if($("#share")) $("#share").onclick=()=>window.open("https://wa.me/?text="+encodeURIComponent(shareText(d,head[1],death,special,T,Math.max(S.turn,best.turns),got.length)),"_blank","noopener");
  if($("#again")) $("#again").onclick=()=>{pickG=S.g;pickGen=S.gen;newGame();};
  if($("#home")) $("#home").onclick=home;
 }
 
+
+/* Texto para compartir: resultado de esta partida + acumulado */
+function shareText(d,head,death,special,T,record,nFin){
+ const strip=x=>tx(x).replace(/<[^>]+>/g,"").replace(/&amp;/g,"&").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&quot;/g,'"');
+ const g=GEN[S.gen], log=S.deathLog||[];
+ const res=special==="rendicion"?"🏳️ Me he rendido":special==="universo"?"🕳️ He destruido el universo (paradoja total)":death?`☠️ He muerto para siempre: ${strip(DEATHS[death].t)}`:"👑 ¡Soy una LEYENDA!";
+ const L=[`🎤 *Carrera al Estrellato*`,`${S.g==="m"?"👨‍🎤":"👩‍🎤"} ${S.name} · ${g.e} ${g.n}`,``,res,
+  `📊 *Esta partida:* ${S.turn} decisiones · ${S.revives} ${S.revives===1?"resurrección":"resurrecciones"} · ${STG[S.stage].name.replace(/^Etapa \d+ · /,"")}`];
+ if(log.length){const top=log.slice(-3).map(x=>`${DEATHS[x.d].i} ${x.c&&C[x.c]?strip(C[x.c].n):"yo sol"+(S.g==="m"?"o":"a")}`).join(", ");L.push(`💀 Me mataron: ${top}${log.length>3?` y ${log.length-3} más`:""}`);}
+ L.push(``,`🏆 *Acumulado:* ${T.games} partida${T.games===1?"":"s"} · ${T.win} leyenda${T.win===1?"":"s"} · ${T.univ} universo${T.univ===1?"":"s"} destruido${T.univ===1?"":"s"} · ${T.deaths} muerte${T.deaths===1?"":"s"} · ${T.quit} ${T.quit===1?"rendición":"rendiciones"}`,
+  `📈 Récord: ${record} decisiones · Finales desbloqueados: ${nFin}/${Object.keys(DEATHS).length}`);
+ L.push(``,`¿Llegas tú más lejos?`+(/^https?:/.test(location.href)?" "+location.href.split("#")[0]:""));
+ return L.join("\n");
+}
 /* Rendirse: pop-up de confirmación con el contador y las muertes de la partida */
 function askQuit(){
  const log=S.deathLog||[], total=S.clicks||S.turn;
