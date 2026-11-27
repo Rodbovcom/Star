@@ -2066,6 +2066,11 @@ const V=x=>typeof x==="function"?x():x; /* textos y efectos que dependen de la p
 function store(k,v){try{if(v===undefined)return JSON.parse(localStorage.getItem(k)||"null");localStorage.setItem(k,JSON.stringify(v));}catch(e){return null}}
 function toast(msg){const t=$("#toast");t.textContent=msg;t.classList.add("on");clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove("on"),2600);}
 
+/* Autoguardado: cada vez que aparece una decisión se guarda la partida tal cual, para poder recargar la página sin perderla.
+   No es un punto de control: no sirve para resucitar, solo para continuar donde lo dejaste. */
+function liveSave(){ if(S&&S.cur) store("cae_live",{s:JSON.stringify(Object.assign({},S,{used:[...S.used],cur:null,curId:S.cur.id})),ck:CK}); }
+function liveLoad(lv){ CK=lv.ck; S=unsnap(lv.s); const e=byId[S.curId]; hudEl.hidden=false; metaEl.hidden=false; if(e) showEvent(e); else{drawHud();advance();} }
+const canStore=(()=>{try{localStorage.setItem("cae_t","1");localStorage.removeItem("cae_t");return true;}catch(e){return false;}})();
 /* Puntos de control */
 const snap=()=>JSON.stringify(Object.assign({},S,{used:[...S.used],cur:null}));
 function unsnap(j){const o=JSON.parse(j);o.used=new Set(o.used);return o;}
@@ -2104,7 +2109,7 @@ function newGame(){
  for(const k in mod) S.st[k]=clamp(S.st[k]+mod[k]);
  S.next="intro"; /* la conversación con mamá abre siempre la partida */
  S.f.moon_g=Math.random()<.5?"m":"f"; /* Ana o Alfredo Moon: se sortea, no depende de tu personaje */
- CK=null; store("cae_save",null);
+ CK=null; store("cae_save",null); store("cae_live",null);
  hudEl.hidden=false; metaEl.hidden=false;
  drawHud(); advance();
 }
@@ -2150,7 +2155,7 @@ function advance(){
 }
 
 function showEvent(e){
- S.cur=e; drawHud();
+ S.cur=e; drawHud(); liveSave();
  const c=C[e.c];
  scr.innerHTML=`<div class="card">
   ${avatar(e.c)}
@@ -2266,6 +2271,7 @@ function revive(){
 }
 
 function endGame(death,special){ /* special: "universo" = final del pacto con el diablo · "rendicion" = te rindes */
+ store("cae_live",null);
  let got=store("cae_deaths")||[];
  if(death){
   S.deathLog=(S.deathLog||[]).concat({d:death,c:S.cur?S.cur.c:null}); /* con quién moriste */
@@ -2350,12 +2356,13 @@ function askQuit(){
 }
 
 function home(){
- const sv=store("cae_save");
+ const sv=store("cae_save"), lv=store("cae_live");
  const keepName=S&&S.name;
  S=null; hudEl.hidden=true; metaEl.hidden=true; document.documentElement.dataset.gen=pickGen; document.body.classList.remove("infierno");
  const best=store("cae_best"), got=store("cae_deaths")||[];
  let svInfo="";
- if(sv&&sv.ck){try{const o=JSON.parse(sv.ck);svInfo=`${esc(o.name)} · ${esc(o.ckLabel)}${sv.revives?" · 😇×"+sv.revives:""}`;}catch(e){}}
+ if(lv&&lv.s){try{const o=JSON.parse(lv.s);svInfo=`${esc(o.name)} · ${esc(STG[o.stage].name.replace(/ · .*/,""))} · decisión ${o.turn+1}`;}catch(e){}}
+ else if(sv&&sv.ck){try{const o=JSON.parse(sv.ck);svInfo=`${esc(o.name)} · ${esc(o.ckLabel)}${sv.revives?" · 😇×"+sv.revives:""}`;}catch(e){}}
  scr.innerHTML=`<div class="title">Carrera al<br>Estrellato</div>
   <p class="tag">Llegar a la fama es fácil. Sobrevivir a ella, no tanto. Morir, facilísimo.</p>
   ${svInfo?`<button class="btn gold" id="cont">▶ Continuar: ${svInfo}</button>`:""}
@@ -2369,13 +2376,15 @@ function home(){
   <label class="lb" for="name">Nombre artístico (opcional)</label>
   <input class="name" id="name" maxlength="28" placeholder="${NAMES[pickG][0]}" autocomplete="off" value="${keepName?esc(keepName):""}">
   <button class="btn${svInfo?" ghost":""}" id="start">Nueva partida</button>
-  <div class="rules"><b>Cómo se juega:</b> cada decisión mueve tus cuatro barras: 🗣️ opinión pública, 💰 dinero, 🔥 hype y ❤️ salud. Si alguna llega a 0 <b>o a 100</b>, mueres en el acto. Algunas decisiones también pueden matarte sin avisar, y hay cosas que el juego no te enseña pero sí recuerda.<br><br><b>💾 Puntos de control:</b> hasta que no te cruces con cierto desconocido, morir es para siempre. A partir de ahí, tu alma se guarda al empezar cada etapa y cada ${CHECK_EVERY} decisiones, y cuando mueras volverás al último punto para enmendar tus errores.<br><br><b>🏁 Meta:</b> llegar a leyenda exige al menos 101 decisiones, y cada etapa guarda una condición secreta para dejarte pasar a la siguiente. Por el camino te cruzarás con un asesor que invierte tu dinero (📈), un hada que vende consejos a cambio de salud (🧚, y a la tercera, 🎫 un billete que te salva de una muerte) y, quizá, con alguien que huele a azufre.</div>
+  <div class="rules"><b>Cómo se juega:</b> cada decisión mueve tus cuatro barras: 🗣️ opinión pública, 💰 dinero, 🔥 hype y ❤️ salud. Si alguna llega a 0 <b>o a 100</b>, mueres en el acto. Algunas decisiones también pueden matarte sin avisar, y hay cosas que el juego no te enseña pero sí recuerda.<br><br><b>💾 Guardado:</b> la partida se guarda sola a cada decisión, así que puedes cerrar y seguir luego. <b>Resucitar</b> es otra cosa: hasta que no te cruces con cierto desconocido, morir es para siempre. A partir de ahí, tu alma se guarda al empezar cada etapa y cada ${CHECK_EVERY} decisiones, y cuando mueras volverás al último punto para enmendar tus errores.<br><br><b>🏁 Meta:</b> llegar a leyenda exige al menos 101 decisiones, y cada etapa guarda una condición secreta para dejarte pasar a la siguiente. Por el camino te cruzarás con un asesor que invierte tu dinero (📈), un hada que vende consejos a cambio de salud (🧚, y a la tercera, 🎫 un billete que te salva de una muerte) y, quizá, con alguien que huele a azufre.</div>
+  ${canStore?"":`<p class="small" style="color:var(--bad)">⚠️ Este navegador no deja guardar datos en esta página: si recargas, perderás la partida. Ábrelo en Chrome o Safari como archivo o desde una web.</p>`}
   <p class="small">${best?`Récord: ${best.turns} decisiones · `:""}Finales desbloqueados: ${got.length}/${Object.keys(DEATHS).length}</p>`;
  scr.querySelectorAll(".gender").forEach(b=>b.onclick=()=>{pickG=b.dataset.g;scr.querySelectorAll(".gender").forEach(x=>x.setAttribute("aria-pressed",x===b));$("#name").placeholder=NAMES[pickG][0];});
  scr.querySelectorAll(".genre").forEach(b=>b.onclick=()=>{pickGen=b.dataset.k;scr.querySelectorAll(".genre").forEach(x=>x.setAttribute("aria-pressed",x===b));document.documentElement.dataset.gen=pickGen;});
  $("#start").onclick=newGame;
  $("#name").onkeydown=e=>{if(e.key==="Enter")newGame();};
- if($("#cont")) $("#cont").onclick=()=>{CK=sv.ck;S=unsnap(CK);if(!S.gen)S.gen="rock";if(S.hoodAt===undefined){S.hoodAt=S.turn;S.f.alma=1;}S.revives=sv.revives||0;S.deathLog=sv.deathLog||[];S.clicks=sv.clicks||S.turn;S.pSeen=sv.pSeen||[];S.rSeen=sv.rSeen||[];hudEl.hidden=false;metaEl.hidden=false;drawHud();advance();};
+ if($("#cont")&&lv&&lv.s) $("#cont").onclick=()=>liveLoad(lv);
+ else if($("#cont")) $("#cont").onclick=()=>{CK=sv.ck;S=unsnap(CK);if(!S.gen)S.gen="rock";if(S.hoodAt===undefined){S.hoodAt=S.turn;S.f.alma=1;}S.revives=sv.revives||0;S.deathLog=sv.deathLog||[];S.clicks=sv.clicks||S.turn;S.pSeen=sv.pSeen||[];S.rSeen=sv.rSeen||[];hudEl.hidden=false;metaEl.hidden=false;drawHud();advance();};
 }
 
 /* Teclado: 1-3 / A-C para elegir */
