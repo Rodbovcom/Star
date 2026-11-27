@@ -158,6 +158,26 @@ html[data-theme="light"] .dlog li{background:#f2f2f5}
 .acts .btn{padding:14px 8px;font-size:15px;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.2}
 .acts .btn small{font-size:11px;font-weight:600;opacity:.75;margin-top:3px}
 .btn.slim{padding:10px;font-size:14px;margin-top:10px}
+/* Botón de sonido (encima del de tema) */
+#soundBtn{position:fixed;right:14px;bottom:66px;z-index:5;width:44px;height:44px;border-radius:50%;border:1px solid rgba(255,255,255,.2);background:rgba(20,10,40,.85);font-size:20px;display:grid;place-items:center;box-shadow:0 4px 14px rgba(0,0,0,.3)}
+html[data-theme="light"] #soundBtn{background:#fff;border-color:#cfcfd8;box-shadow:0 4px 14px rgba(0,0,0,.12)}
+/* Puntos de intensidad y pistas de deslizar */
+.opt .fxd{margin-left:auto;padding-left:8px;color:var(--acc2);letter-spacing:2px;font-size:14px;flex:none;align-self:center}
+.opt .sw{display:none;flex:none;align-self:center;color:var(--mute);font-size:13px;padding-left:4px}
+@media (pointer:coarse){.opt .sw{display:inline}}
+.opt.hint{border-color:var(--acc2);background:color-mix(in srgb,var(--acc2) 18%,transparent)}
+/* Momento de destino: tarjeta con borde dorado animado */
+@property --ang{syntax:"<angle>";initial-value:0deg;inherits:false}
+.card.esp{border:2px solid transparent;background:linear-gradient(180deg,var(--panel),var(--panel2)) padding-box,conic-gradient(from var(--ang),var(--acc2),var(--acc),#fff7,var(--acc2)) border-box;box-shadow:0 0 34px color-mix(in srgb,var(--acc2) 45%,transparent),0 20px 50px rgba(0,0,0,.4);animation:in .35s ease-out,gira 4s linear infinite}
+html[data-theme="light"] .card.esp{background:linear-gradient(#fff,#fff) padding-box,conic-gradient(from var(--ang),var(--acc2),var(--acc),#fff,var(--acc2)) border-box}
+@keyframes gira{to{--ang:360deg}}
+.espTag{font-family:Bungee,Inter,sans-serif;font-size:12px;letter-spacing:.14em;color:var(--acc2);margin-bottom:10px;text-shadow:0 0 12px color-mix(in srgb,var(--acc2) 60%,transparent)}
+/* Botones de sonido y tema: al pie de la página, para que no tapen las opciones */
+#tools{display:flex;gap:10px;justify-content:center;margin:-60px auto 18px;position:relative}
+#tools button{position:static}
+.genre.locked{opacity:.45;filter:grayscale(1);cursor:not-allowed}
+.unlock{margin-top:12px;padding:10px 14px;border-radius:14px;background:color-mix(in srgb,var(--acc2) 18%,transparent);border:1px solid var(--acc2);font-size:13px;width:100%}
+.unlock b{display:block;font-size:18px;margin-top:4px}
 </style>
 </head>
 <body>
@@ -167,7 +187,7 @@ html[data-theme="light"] .dlog li{background:#f2f2f5}
   <main id="screen"></main>
 </div>
 <div id="toast" role="status" aria-live="polite"></div>
-<button id="themeBtn" type="button" aria-label="Cambiar a fondo blanco" title="Cambiar colores">☀️</button>
+<div id="tools"><button id="soundBtn" type="button" aria-label="Silenciar" title="Sonido">🔊</button><button id="themeBtn" type="button" aria-label="Cambiar a fondo blanco" title="Cambiar colores">☀️</button></div>
 <script>
 "use strict";
 /* ============ PERSONAJES ============
@@ -1823,6 +1843,7 @@ const EV=[
  {t:"Fingir que soy un fantasma y asustarle.",fx:{h:10,s:5},r:"Huye en tu coche. El coche que ya no es tuyo. Te ríes durante una semana."}]}
 ];
 const byId=Object.fromEntries(EV.map(e=>[e.id,e]));
+for(const e of EV) if(/^tr_/.test(e.id)) e.esp=1; /* las transformaciones se ven distintas: momento de destino */
 /* Si Bruno se redime, ni él ni su entorno vuelven a perseguirte */
 for(const id of ["bruno_dm","gasolinera","nazi_gira","nazi_ruedas","nazi_estadio","nazi_marcha","nazi_tatuaje","nazi_madre","dani"]){const e=byId[id],c=e.cond;e.cond=()=>!F("bruno_redimido")&&(!c||c());}
 /* Personajes y amenazas que te persiguen también en las etapas 3 y 4 */
@@ -2059,7 +2080,11 @@ function riskTag(o){
  const rr=RIESGO[o.risk[1]];
  return `<em class="rk">☠️ Puede matarte${rr?` · a salvo con ${statIc(rr[0])} ${rr[2]==="<="?"≤":"≥"} ${rr[1]}`:""}</em>`;
 }
-let S=null, pickG="f", pickGen="rock", CK=null;
+/* Personajes desbloqueables: se empieza con el punki y cada partida terminada (leyenda o universo destruido) desbloquea el siguiente */
+const UNLOCK_ORDER=["punk","rock","indie","laura"];
+function unlockedN(){ let n=store("cae_unlock"); if(n==null){const T=store("cae_stats")||{}; n=1+(T.win||0)+(T.univ||0);} return Math.max(1,Math.min(UNLOCK_ORDER.length,n)); } /* quien ya había terminado partidas conserva lo ganado */
+const isUnlocked=k=>UNLOCK_ORDER.indexOf(k)<unlockedN();
+let S=null, pickG="f", pickGen="punk", CK=null;
 const $=s=>document.querySelector(s);
 const scr=$("#screen"), hudEl=$("#hud"), metaEl=$("#meta");
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -2073,16 +2098,58 @@ function toast(msg){const t=$("#toast");t.textContent=msg;t.classList.add("on");
 
 /* Autoguardado: cada vez que aparece una decisión se guarda la partida tal cual, para poder recargar la página sin perderla.
    No es un punto de control: no sirve para resucitar, solo para continuar donde lo dejaste. */
-function liveSave(){ if(S&&S.cur) store("cae_live",{s:JSON.stringify(Object.assign({},S,{used:[...S.used],cur:null,curId:S.cur.id})),ck:CK}); }
+function liveSave(atInterlude){ if(S&&(S.cur||atInterlude)) store("cae_live",{s:JSON.stringify(Object.assign({},S,{used:[...S.used],cur:null,curId:atInterlude?null:S.cur.id})),ck:CK}); }
 function liveLoad(lv){ CK=lv.ck; S=unsnap(lv.s); const e=byId[S.curId]; hudEl.hidden=false; metaEl.hidden=false; if(e) showEvent(e); else{drawHud();advance();} }
 const canStore=(()=>{try{localStorage.setItem("cae_t","1");localStorage.removeItem("cae_t");return true;}catch(e){return false;}})();
+/* ============ SONIDO (sintetizado con Web Audio: no hace falta ningún archivo) ============ */
+const SND={on:store("cae_sound")!==false,ctx:null};
+function au(){ if(!SND.on) return null; try{ SND.ctx=SND.ctx||new (window.AudioContext||window.webkitAudioContext)(); if(SND.ctx.state==="suspended") SND.ctx.resume(); return SND.ctx; }catch(e){ return null; } }
+function tone(f,t0,dur,type,vol){ const a=au(); if(!a) return; const o=a.createOscillator(), g=a.createGain(), t=a.currentTime+t0;
+ o.type=type||"triangle"; o.frequency.value=f; g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol||.1,t+.012); g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+ o.connect(g); g.connect(a.destination); o.start(t); o.stop(t+dur+.05); }
+const SFX={
+ good:()=>[523,659,784].forEach((f,i)=>tone(f,i*.07,.28,"triangle",.09)),
+ bad:()=>[392,311].forEach((f,i)=>tone(f,i*.1,.32,"sawtooth",.045)),
+ death:()=>[392,349,311,233].forEach((f,i)=>tone(f,i*.18,.55,"sawtooth",.06)),
+ stage:()=>{[262,330,392,523].forEach((f,i)=>tone(f,i*.1,.7,"triangle",.09)); tone(523,.42,1,"square",.035);},
+ win:()=>[523,659,784,1047,784,1047].forEach((f,i)=>tone(f,i*.13,.55,"triangle",.1)),
+ special:()=>[880,1175,1568,1760].forEach((f,i)=>tone(f,i*.07,.9,"sine",.06)),
+ hell:()=>[110,104,98].forEach((f,i)=>tone(f,i*.25,1,"sawtooth",.07)),
+ chime:()=>tone(1318,0,.45,"sine",.045)
+};
+function sfx(k){ try{ SFX[k]&&SFX[k](); }catch(e){} }
+
+/* Puntos de intensidad: cuánto mueve una opción en total, sin decir qué barra ni en qué dirección */
+function fxDots(o){
+ if(o.end) return "";
+ let f={}; try{ f=V(o.fx)||{}; }catch(e){}
+ let m=0; for(const k in f){ const v=f[k]; m+=Math.abs(o.raw?v:v*(v<0?CRUEL:BONUS)); }
+ if(o.heal) m+=20; if(o.chase) m+=8;
+ return m<1?"":m<=12?"•":m<=28?"••":"•••";
+}
+
+/* Deslizar la tarjeta: a la izquierda elige la opción A, a la derecha la B (la C, tocándola) */
+function enableSwipe(){
+ const card=scr.querySelector(".card"), b=[...scr.querySelectorAll(".opt")];
+ if(!card||b.length<2) return;
+ let x0=null, dx=0;
+ card.style.touchAction="pan-y";
+ card.onpointerdown=e=>{ x0=e.clientX; dx=0; card.style.transition="none"; try{card.setPointerCapture(e.pointerId);}catch(_){} };
+ card.onpointermove=e=>{ if(x0===null) return; dx=e.clientX-x0; card.style.transform=`translateX(${dx}px) rotate(${dx/18}deg)`;
+  b[0].classList.toggle("hint",dx<-40); b[1].classList.toggle("hint",dx>40); };
+ const end=()=>{ if(x0===null) return; const d=dx; x0=null; card.style.transition="transform .25s"; b.forEach(x=>x.classList.remove("hint"));
+  if(Math.abs(d)>90){ card.style.transform=`translateX(${d>0?600:-600}px) rotate(${d/6}deg)`; setTimeout(()=>b[d<0?0:1].click(),170); }
+  else card.style.transform=""; };
+ card.onpointerup=end; card.onpointercancel=end;
+}
+
 /* Puntos de control */
 const snap=()=>JSON.stringify(Object.assign({},S,{used:[...S.used],cur:null}));
 function unsnap(j){const o=JSON.parse(j);o.used=new Set(o.used);return o;}
 function checkpoint(label){
  S.ckTurn=S.turn; S.ckLabel=label; CK=snap();
  store("cae_save",{ck:CK,revives:S.revives,pSeen:S.pSeen||[],rSeen:S.rSeen||[],deathLog:S.deathLog||[],clicks:S.clicks||0});
- toast("💾 Punto de control: "+label);
+ toast("💾 Punto de control: "+label); sfx("chime");
 }
 
 /* HUD */
@@ -2152,7 +2219,8 @@ function advance(){
   S.ckPending=null;
   if(F("alma")) checkpoint(STG[S.stage].name);
   const it=INTER[S.stage];
-  return interlude(`<div class="big">${it.i}</div>`,STG[S.stage].name,tx(it.x)+" Empiezas la etapa con las barras algo más equilibradas. A partir de ahora, cada decisión: "+fmtP(STG[S.stage].p)+".","Seguir",()=>showEvent(pick()));
+  sfx("stage"); liveSave(true); /* guardado al cerrar capítulo: si lo dejas aquí, continúas en la etapa nueva */
+  return interlude(`<div class="big">${it.i}</div>`,STG[S.stage].name,tx(it.x)+" Empiezas la etapa con las barras algo más equilibradas. A partir de ahora, cada decisión: "+fmtP(STG[S.stage].p)+".<br><br>📖 <b>Capítulo completado y partida guardada.</b> Buen momento para un descanso.","Seguir",()=>showEvent(pick()),["☕ Descansar y volver luego",()=>home()]);
  }
  if(S.ckPending&&!S.next){checkpoint(S.ckPending);S.ckPending=null;}
  else if(F("alma")&&!S.next&&S.turn%CHECK_EVERY===0&&S.ckTurn!==S.turn) checkpoint(STG[S.stage].name);
@@ -2162,12 +2230,15 @@ function advance(){
 function showEvent(e){
  S.cur=e; drawHud(); liveSave();
  const c=C[e.c];
- scr.innerHTML=`<div class="card">
+ if(e.esp) sfx("special");
+ scr.innerHTML=`<div class="card${e.esp?" esp":""}">
+  ${e.esp?`<div class="espTag">✨ Momento de destino ✨</div>`:""}
   ${avatar(e.c)}
   <div class="who"><b>${tx(c.n)}</b><span>${tx(c.r)}</span></div>
   <div class="bubble">${tx(V(e.q))}</div></div>
-  <div class="opts">${shuffle(e.opts.map((o,i)=>i)).map((i,pos)=>`<button class="opt" data-i="${i}"><span class="k">${"ABC"[pos]}</span><span>${tx(V(e.opts[i].t))}</span></button>`).join("")}</div>`;
+  <div class="opts">${shuffle(e.opts.map((o,i)=>i)).map((i,pos)=>`<button class="opt" data-i="${i}"><span class="k">${"ABC"[pos]}</span><span>${tx(V(e.opts[i].t))}</span><span class="fxd" aria-hidden="true">${fxDots(e.opts[i])}</span>${pos<2?`<span class="sw" aria-hidden="true">${pos?"→":"←"}</span>`:""}</button>`).join("")}</div>`;
  scr.querySelectorAll(".opt").forEach(b=>b.onclick=()=>choose(+b.dataset.i));
+ enableSwipe();
 }
 
 const AFTER=id=>/^(pedro_|infierno_)/.test(id)||id==="cielo"||id==="cielo2"; /* en el cielo (o en el infierno) no hay desgaste */
@@ -2222,8 +2293,9 @@ function choose(i){
   death=null;
  }
  drawHud(fx);
+ {const net=Object.values(fx).reduce((a,b)=>a+b,0); sfx(death?"death":o.end?"hell":net>=0?"good":"bad");}
  const chips=STATS.filter(([k])=>fx[k]).map(([k,ic])=>`<span class="chip ${fx[k]>0?"pos":"neg"}">${ic} ${fx[k]>0?"+":""}${fx[k]}</span>`).join("");
- scr.innerHTML=`<div class="card">
+ scr.innerHTML=`<div class="card${e.esp?" esp":""}">
   ${avatar(e.c,1)}
   <div class="bubble narr">${tx(rtext)}</div>
   ${chips?`<div class="chips">${chips}</div>`:""}
@@ -2234,9 +2306,9 @@ function choose(i){
  $("#go").focus({preventScroll:true});
 }
 
-function interlude(icon,title,text,label,next){
- scr.innerHTML=`<div class="card">${icon}<div class="dt">${esc(title)}</div><div class="bubble narr">${text}</div></div><button class="btn" id="go">${label}</button>`;
- $("#go").onclick=next; $("#go").focus({preventScroll:true});
+function interlude(icon,title,text,label,next,alt){
+ scr.innerHTML=`<div class="card">${icon}<div class="dt">${esc(title)}</div><div class="bubble narr">${text}</div></div><button class="btn" id="go">${label}</button>${alt?`<button class="btn ghost slim" id="alt">${alt[0]}</button>`:""}`;
+ $("#go").onclick=next; if(alt) $("#alt").onclick=alt[1]; $("#go").focus({preventScroll:true});
 }
 
 function revive(){
@@ -2271,12 +2343,14 @@ function revive(){
  store("cae_save",{ck:CK,revives:r,pSeen:S.pSeen,rSeen:S.rSeen,deathLog:S.deathLog,clicks:S.clicks});
  hudEl.hidden=false; metaEl.hidden=false; drawHud();
  const why=(dead&&DEATHS[dead]?"Te mató: <b>"+tx(DEATHS[dead].t)+"</b>. ":"")+"Vuelves con todas las barras a la mitad. ";
+ sfx(hell?"hell":"special");
  if(hell) interlude(avatar("diablo"),"Resurrección infernal nº "+r,why.replace("San Pedro","el Diablo de los Acordes")+"Todo se vuelve rojo. Huele a azufre y a ensayo de batería. Alguien afina una guitarra con los dientes y te hace sitio en un sofá de skai que quema.","Hablar con el Diablo",()=>advance());
  else interlude(avatar("pedro"),"Resurrección nº "+r,why+"Todo se vuelve blanco. Otra vez. Huele a nube y a papeleo. Alguien carraspea detrás de un mostrador.","Hablar con San Pedro",()=>advance());
 }
 
 function endGame(death,special){ /* special: "universo" = final del pacto con el diablo · "rendicion" = te rindes */
  store("cae_live",null);
+ if(!death) sfx(special==="universo"?"hell":special==="rendicion"?"bad":"win");
  let got=store("cae_deaths")||[];
  if(death){
   S.deathLog=(S.deathLog||[]).concat({d:death,c:S.cur?S.cur.c:null}); /* con quién moriste */
@@ -2285,6 +2359,8 @@ function endGame(death,special){ /* special: "universo" = final del pacto con el
  if(special==="universo"&&!got.includes(special)){got.push(special);store("cae_deaths",got);}
  S.lastDeath=death;
  const final=!death||!CK; /* sin resurrección posible, la partida acaba aquí */
+ let newUnlock=null; /* llegar al final (leyenda o universo) desbloquea el siguiente personaje */
+ if(!death&&special!=="rendicion"&&!S.unlockDone){S.unlockDone=1;const n=unlockedN();if(n<UNLOCK_ORDER.length){store("cae_unlock",n+1);newUnlock=GEN[UNLOCK_ORDER[n]];}else store("cae_unlock",n);}
  const best=store("cae_best")||{turns:0};
  const isRecord=final&&S.turn>best.turns;
  /* Estadísticas acumuladas de todas las partidas (para compartir) */
@@ -2309,6 +2385,7 @@ function endGame(death,special){ /* special: "universo" = final del pacto con el
   <div class="dt">${tx(d.t)}</div>
   <div class="bubble narr">${tx(d.x)}</div>
   ${isRecord?`<span class="badge">¡Nuevo récord!</span>`:""}
+  ${newUnlock?`<div class="unlock">🔓 Nuevo personaje desbloqueado:<b>${newUnlock.e} ${newUnlock.n}</b></div>`:""}
   ${final?`<div class="stats"><div><b>${S.turn}</b>decisiones</div><div><b>${Math.max(S.turn,best.turns)}</b>récord</div><div><b>${S.revives}</b>resurrecciones</div></div>`:""}
   ${death&&!CK?`<p class="small">Aún no te habías cruzado con el encapuchado: sin alma guardada no hay resurrección. Toca empezar de cero.</p>`:""}
   ${final?`<div class="acts"><button class="btn wa" id="share">📲 WhatsApp</button><button class="btn" id="again">🔄 Empezar de cero</button></div><button class="btn ghost slim" id="home">Cambiar de personaje</button>`
@@ -2363,6 +2440,7 @@ function askQuit(){
 function home(){
  const sv=store("cae_save"), lv=store("cae_live");
  const keepName=S&&S.name;
+ if(!isUnlocked(pickGen)) pickGen=UNLOCK_ORDER[0];
  S=null; hudEl.hidden=true; metaEl.hidden=true; document.documentElement.dataset.gen=pickGen; document.body.classList.remove("infierno");
  const best=store("cae_best"), got=store("cae_deaths")||[];
  let svInfo="";
@@ -2377,15 +2455,15 @@ function home(){
    <button class="gender" data-g="f" aria-pressed="${pickG==="f"}"><span class="e">👩‍🎤</span>Cantante</button>
   </div>
   <label class="lb">Tipo de músico</label>
-  <div class="genres">${Object.entries(GEN).map(([k,g])=>`<button class="genre" data-k="${k}" aria-pressed="${pickGen===k}"><span class="ge">${g.e}</span><b>${g.n}</b><span>${g.d}</span></button>`).join("")}</div>
+  <div class="genres">${UNLOCK_ORDER.map(k=>{const g=GEN[k],on=isUnlocked(k);return on?`<button class="genre" data-k="${k}" aria-pressed="${pickGen===k}"><span class="ge">${g.e}</span><b>${g.n}</b><span>${g.d}</span></button>`:`<button class="genre locked" data-k="${k}" aria-disabled="true" title="Bloqueado"><span class="ge">🔒</span><b>${g.n}</b><span>Llega al final de una partida para desbloquearlo.</span></button>`;}).join("")}</div>
   <label class="lb" for="name">Nombre artístico (opcional)</label>
   <input class="name" id="name" maxlength="28" placeholder="${NAMES[pickG][0]}" autocomplete="off" value="${keepName?esc(keepName):""}">
   <button class="btn${svInfo?" ghost":""}" id="start">Nueva partida</button>
-  <div class="rules"><b>Cómo se juega:</b> cada decisión mueve tus cuatro barras: 🗣️ opinión pública, 💰 dinero, 🔥 hype y ❤️ salud. Si alguna llega a 0 <b>o a 100</b>, mueres en el acto. Algunas decisiones también pueden matarte sin avisar, y hay cosas que el juego no te enseña pero sí recuerda.<br><br><b>💾 Guardado:</b> la partida se guarda sola a cada decisión, así que puedes cerrar y seguir luego. <b>Resucitar</b> es otra cosa: hasta que no te cruces con cierto desconocido, morir es para siempre. A partir de ahí, tu alma se guarda al empezar cada etapa y cada ${CHECK_EVERY} decisiones, y cuando mueras volverás al último punto para enmendar tus errores.<br><br><b>🏁 Meta:</b> llegar a leyenda exige al menos 101 decisiones, y cada etapa guarda una condición secreta para dejarte pasar a la siguiente. Por el camino te cruzarás con un asesor que invierte tu dinero (📈), un hada que vende consejos a cambio de salud (🧚, y a la tercera, 🎫 un billete que te salva de una muerte) y, quizá, con alguien que huele a azufre.</div>
+  <div class="rules"><b>Cómo se juega:</b> cada decisión mueve tus cuatro barras: 🗣️ opinión pública, 💰 dinero, 🔥 hype y ❤️ salud. Si alguna llega a 0 <b>o a 100</b>, mueres en el acto. Algunas decisiones también pueden matarte sin avisar, y hay cosas que el juego no te enseña pero sí recuerda.<br><br><b>••• </b>Los puntos de cada opción indican cuánto te va a mover la vida, no qué ni hacia dónde. En el móvil puedes deslizar la tarjeta: a la izquierda eliges la A y a la derecha la B.<br><br><b>💾 Guardado:</b> la partida se guarda sola a cada decisión, así que puedes cerrar y seguir luego. <b>Resucitar</b> es otra cosa: hasta que no te cruces con cierto desconocido, morir es para siempre. A partir de ahí, tu alma se guarda al empezar cada etapa y cada ${CHECK_EVERY} decisiones, y cuando mueras volverás al último punto para enmendar tus errores.<br><br><b>🏁 Meta:</b> llegar a leyenda exige al menos 101 decisiones, y cada etapa guarda una condición secreta para dejarte pasar a la siguiente. Empiezas con el punki: cada vez que llegas al final de una partida desbloqueas otro tipo de músico. Por el camino te cruzarás con un asesor que invierte tu dinero (📈), un hada que vende consejos a cambio de salud (🧚, y a la tercera, 🎫 un billete que te salva de una muerte) y, quizá, con alguien que huele a azufre.</div>
   ${canStore?"":`<p class="small" style="color:var(--bad)">⚠️ Este navegador no deja guardar datos en esta página: si recargas, perderás la partida. Ábrelo en Chrome o Safari como archivo o desde una web.</p>`}
   <p class="small">${best?`Récord: ${best.turns} decisiones · `:""}Finales desbloqueados: ${got.length}/${Object.keys(DEATHS).length}</p>`;
  scr.querySelectorAll(".gender").forEach(b=>b.onclick=()=>{pickG=b.dataset.g;scr.querySelectorAll(".gender").forEach(x=>x.setAttribute("aria-pressed",x===b));$("#name").placeholder=NAMES[pickG][0];});
- scr.querySelectorAll(".genre").forEach(b=>b.onclick=()=>{pickGen=b.dataset.k;scr.querySelectorAll(".genre").forEach(x=>x.setAttribute("aria-pressed",x===b));document.documentElement.dataset.gen=pickGen;});
+ scr.querySelectorAll(".genre").forEach(b=>b.onclick=()=>{if(b.classList.contains("locked")){toast("🔒 Llega al final de una partida para desbloquearlo");return;} pickGen=b.dataset.k;scr.querySelectorAll(".genre").forEach(x=>x.setAttribute("aria-pressed",x===b));document.documentElement.dataset.gen=pickGen;});
  $("#start").onclick=newGame;
  $("#name").onkeydown=e=>{if(e.key==="Enter")newGame();};
  if($("#cont")&&lv&&lv.s) $("#cont").onclick=()=>liveLoad(lv);
@@ -2406,6 +2484,8 @@ function setTheme(t){
  const b=$("#themeBtn"); b.textContent=t==="light"?"🌙":"☀️";
  b.setAttribute("aria-label",t==="light"?"Cambiar a fondo oscuro":"Cambiar a fondo blanco");
 }
+function setSound(on,quiet){ SND.on=on; store("cae_sound",on); const b=$("#soundBtn"); b.textContent=on?"🔊":"🔇"; b.setAttribute("aria-label",on?"Silenciar":"Activar sonido"); if(on&&!quiet) sfx("chime"); }
+$("#soundBtn").onclick=()=>setSound(!SND.on); setSound(SND.on,true);
 $("#themeBtn").onclick=()=>setTheme(document.documentElement.dataset.theme==="light"?"dark":"light");
 setTheme(store("cae_theme")||"dark");
 
